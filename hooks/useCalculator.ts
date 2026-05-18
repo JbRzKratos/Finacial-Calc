@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CalculatorInputs, CalculatorResult } from "@/types/calculator";
 import { saveState, loadState } from "@/lib/storage";
 
@@ -22,14 +22,9 @@ export function useCalculator(
     return saved ? { ...defaultInputs, ...saved } : { ...defaultInputs };
   });
   const [result, setResult] = useState<CalculatorResult | null>(null);
-  const rafRef = useRef<number | null>(null);
 
   const calculate = useCallback(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      setResult(calcFn(inputs));
-      rafRef.current = null;
-    });
+    setResult(calcFn(inputs));
   }, [inputs, calcFn]);
 
   const updateInput = useCallback((key: string, value: number | string | boolean) => {
