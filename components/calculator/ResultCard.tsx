@@ -22,6 +22,7 @@ function AnimatedNumber({ value, duration = 800 }: { value: string; duration?: n
   const prevRef = useRef(0);
 
   useEffect(() => {
+    const unit = value.endsWith(" Cr") ? " Cr" : value.endsWith(" L") ? " L" : "";
     const raw = value.replace(/[₹,L,Cr,\s]/g, "");
     const num = parseFloat(raw) || 0;
     const start = prevRef.current;
@@ -32,7 +33,7 @@ function AnimatedNumber({ value, duration = 800 }: { value: string; duration?: n
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(start + (num - start) * eased);
-      const formatted = "₹" + current.toLocaleString("en-IN");
+      const formatted = "₹" + current.toLocaleString("en-IN") + unit;
       setDisplay(formatted);
       if (progress < 1) requestAnimationFrame(animate);
     };
