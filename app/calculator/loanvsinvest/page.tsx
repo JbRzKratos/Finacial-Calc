@@ -33,17 +33,24 @@ export default function LoanVsInvestPage() {
       labels: r.rows.map((row: { year: number }) => `Y${row.year}`),
       datasets: [
         {
-          label: "Net Worth (Invest)",
-          data: r.rows.map((row: { investValue: number }) => row.investValue),
+          label: "Net Benefit (Invest)",
+          data: r.rows.map((row: { investValue: number; totalPaid: number }) => row.investValue - row.totalPaid),
           borderColor: "#818cf8",
           backgroundColor: "rgba(129,140,248,0.1)",
           fill: true,
         },
         {
-          label: "Total Paid",
+          label: "Investment Growth",
+          data: r.rows.map((row: { investValue: number }) => row.investValue),
+          borderColor: "#a78bfa",
+          borderDash: [4, 4],
+          fill: false,
+        },
+        {
+          label: "Loan Cost",
           data: r.rows.map((row: { totalPaid: number }) => row.totalPaid),
           borderColor: "#f87171",
-          borderDash: [6, 3],
+          borderDash: [4, 4],
           fill: false,
         }
       ]

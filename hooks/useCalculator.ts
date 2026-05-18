@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { CalculatorInputs, CalculatorResult } from "@/types/calculator";
 import { saveState, loadState } from "@/lib/storage";
 
@@ -17,33 +17,32 @@ export function useCalculator(
   defaultInputs: CalculatorInputs,
   calcFn: (inputs: CalculatorInputs) => CalculatorResult
 ): CalculatorHookReturn {
-  const [inputs, setInputs] = useState<CalculatorInputs>(() => {
+  const [state, setState] = useState<{ inputs: CalculatorInputs; result: CalculatorResult }>(() => {
     const saved = loadState(calcId);
-    return saved ? { ...defaultInputs, ...saved } : { ...defaultInputs };
+    const inputs = saved ? { ...defaultInputs, ...saved } : { ...defaultInputs };
+    return { inputs, result: calcFn(inputs) };
   });
-  const [result, setResult] = useState<CalculatorResult | null>(null);
 
   const calculate = useCallback(() => {
-    setResult(calcFn(inputs));
-  }, [inputs, calcFn]);
+    setState(prev => {
+      const r = calcFn(prev.inputs);
+      return prev.result !== r ? { ...prev, result: r } : prev;
+    });
+  }, [calcFn]);
 
   const updateInput = useCallback((key: string, value: number | string | boolean) => {
-    setInputs(prev => {
-      const next = { ...prev, [key]: value };
-      saveState(calcId, next);
-      return next;
+    setState(prev => {
+      const nextInputs = { ...prev.inputs, [key]: value };
+      saveState(calcId, nextInputs);
+      return { inputs: nextInputs, result: calcFn(nextInputs) };
     });
-  }, [calcId]);
+  }, [calcId, calcFn]);
 
   const resetInputs = useCallback(() => {
-    const defaults = { ...defaultInputs };
-    setInputs(defaults);
-    saveState(calcId, defaults);
-  }, [calcId, defaultInputs]);
+    const inputs = { ...defaultInputs };
+    saveState(calcId, inputs);
+    setState({ inputs, result: calcFn(inputs) });
+  }, [calcId, defaultInputs, calcFn]);
 
-  useEffect(() => {
-    calculate();
-  }, [calculate]);
-
-  return { inputs, result, updateInput, resetInputs, calculate };
+  return { inputs: state.inputs, result: state.result, updateInput, resetInputs, calculate };
 }

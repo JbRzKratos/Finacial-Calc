@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -29,6 +29,11 @@ export function InputSlider({
 }: InputSliderProps) {
   const [localValue, setLocalValue] = useState(value);
   const [inputStr, setInputStr] = useState(formatValue ? formatValue(value) : String(value));
+
+  useEffect(() => {
+    setLocalValue(value);
+    setInputStr(formatValue ? formatValue(value) : String(value));
+  }, [value, formatValue]);
 
   const handleSliderChange = useCallback((vals: number[]) => {
     const v = vals[0];

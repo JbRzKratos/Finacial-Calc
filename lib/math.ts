@@ -185,7 +185,7 @@ export function loanVsInvest(amount: number, loanRate: number, investRate: numbe
   } else {
     fv = amount * Math.pow(1 + r, months);
   }
-  const netDifference = fv - totalInterest;
+  const netDifference = fv - totalPaid;
   const rows: { year: number; investValue: number; totalPaid: number }[] = [];
   for (let y = 1; y <= years; y++) {
     rows.push({

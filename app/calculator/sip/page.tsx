@@ -28,7 +28,7 @@ function calcFn(inputs: Record<string, unknown>) {
 }
 
 export default function SIPPage() {
-  const { inputs, result, updateInput, resetInputs, calculate } = useCalculator("sip", defaultInputs, calcFn);
+  const { inputs, result, updateInput, resetInputs } = useCalculator("sip", defaultInputs, calcFn);
 
   const r = result as ReturnType<typeof calcFn> | null;
   const chartConfig = r ? {
