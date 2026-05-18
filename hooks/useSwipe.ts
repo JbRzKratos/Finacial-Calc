@@ -1,33 +1,39 @@
-import { useRef, useCallback } from "react";
+"use client";
 
-interface SwipeHandlers {
+import { useCallback, useRef } from "react";
+
+interface SwipeConfig {
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
+  threshold?: number;
 }
 
-export function useSwipe(handlers: SwipeHandlers, threshold = 60) {
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const isSwiping = useRef(false);
+export function useSwipe({ onSwipeLeft, onSwipeRight, threshold = 60 }: SwipeConfig) {
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const startTime = useRef(0);
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
-    const el = e.target as HTMLElement;
-    if (el.closest("input") || el.closest("select") || el.closest(".mobile-nav")) return;
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    isSwiping.current = true;
+    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
+    startTime.current = Date.now();
   }, []);
 
   const onTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (!isSwiping.current) return;
-    isSwiping.current = false;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    const dy = e.changedTouches[0].clientY - touchStartY.current;
-    if (Math.abs(dx) > threshold && Math.abs(dx) > Math.abs(dy) * 1.5) {
-      if (dx < 0) handlers.onSwipeLeft?.();
-      else handlers.onSwipeRight?.();
+    const deltaX = e.changedTouches[0].clientX - startX.current;
+    const deltaY = e.changedTouches[0].clientY - startY.current;
+    const deltaTime = Date.now() - startTime.current;
+
+    if (deltaTime > 400) return;
+    if (Math.abs(deltaX) < threshold) return;
+    if (Math.abs(deltaX) < Math.abs(deltaY) * 1.5) return;
+
+    if (deltaX > 0) {
+      onSwipeRight?.();
+    } else {
+      onSwipeLeft?.();
     }
-  }, [handlers, threshold]);
+  }, [onSwipeLeft, onSwipeRight, threshold]);
 
   return { onTouchStart, onTouchEnd };
 }

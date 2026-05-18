@@ -1,33 +1,38 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useCalculator } from "@/hooks/useCalculator";
-import { formatINRFull, formatINR } from "@/lib/formatter";
+import { formatINR, formatINRFull } from "@/lib/formatter";
 import { loanVsInvest } from "@/lib/math";
 import { generateInsights } from "@/lib/insights";
-import { InputSlider } from "@/components/calculator/InputSlider";
-import { InsightCard } from "@/components/calculator/InsightCard";
-import { CalcChart } from "@/components/calculator/CalcChart";
-import { ResetCopyBar } from "@/components/calculator/ResetCopyBar";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { CalcIcon } from "@/components/shared/CalcIcon";
+import { SplitShell } from "@/components/layout/SplitShell";
+import { InputRow } from "@/components/ui-custom/InputRow";
+import { ToggleGroup } from "@/components/ui-custom/ToggleGroup";
+import { ActionButtonRow } from "@/components/ui-custom/ActionButtonRow";
+import { ResultHero } from "@/components/ui-custom/ResultHero";
+import { MetricRow } from "@/components/ui-custom/MetricRow";
+import { InsightBanner } from "@/components/ui-custom/InsightBanner";
+import { SegmentedResult } from "@/components/ui-custom/SegmentedResult";
+import { ResultChart } from "@/components/ui-custom/ResultChart";
+import { WinnerBanner } from "@/components/ui-custom/WinnerBanner";
 
-const defaultInputs = { amount: 1000000, loanRate: 10, investRate: 12, years: 10 };
+const defaultInputs = { amount: 1000000, loanRate: 10, investRate: 12, years: 10, mode: "lump" };
 
 function calcFn(inputs: Record<string, unknown>) {
   const amount = Math.max(0, Number(inputs.amount) || 0);
   const loanRate = Math.max(0, Number(inputs.loanRate) || 0);
   const investRate = Math.max(0, Number(inputs.investRate) || 0);
   const years = Math.max(1, Number(inputs.years) || 1);
-  return loanVsInvest(amount, loanRate, investRate, years);
+  const mode = String(inputs.mode || "lump");
+  return loanVsInvest(amount, loanRate, investRate, years, mode);
 }
 
 export default function LoanVsInvestPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("loanvsinvest", defaultInputs, calcFn);
-
+  const [segment, setSegment] = useState("compare");
   const r = result as ReturnType<typeof calcFn> | null;
 
-  const chartConfig = r ? {
+  const chartConfig = useMemo(() => r ? {
     type: "line" as const,
     data: {
       labels: r.rows.map((row: { year: number }) => `Y${row.year}`),
@@ -35,27 +40,30 @@ export default function LoanVsInvestPage() {
         {
           label: "Net Benefit (Invest)",
           data: r.rows.map((row: { investValue: number; totalPaid: number }) => row.investValue - row.totalPaid),
-          borderColor: "#818cf8",
-          backgroundColor: "rgba(129,140,248,0.1)",
+          borderColor: "#FF6B00",
+          backgroundColor: "rgba(255,107,0,0.08)",
           fill: true,
         },
         {
           label: "Investment Growth",
           data: r.rows.map((row: { investValue: number }) => row.investValue),
-          borderColor: "#a78bfa",
-          borderDash: [4, 4],
+          borderColor: "#FF6B00",
+          borderDash: [4, 4] as [number, number],
           fill: false,
         },
         {
           label: "Loan Cost",
           data: r.rows.map((row: { totalPaid: number }) => row.totalPaid),
-          borderColor: "#f87171",
-          borderDash: [4, 4],
+          borderColor: "#1A1A1A",
+          borderDash: [4, 4] as [number, number],
           fill: false,
-        }
+        },
       ]
+    },
+    options: {
+      plugins: { legend: { position: "bottom" as const } },
     }
-  } : null;
+  } : null, [r]);
 
   const insights = r ? generateInsights("loanvsinvest", r, inputs) : [];
 
@@ -63,73 +71,118 @@ export default function LoanVsInvestPage() {
   const investingWins = diff >= 0;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold flex items-center gap-2"><CalcIcon name="⚖️" className="w-5 h-5" /> Loan vs Invest</h2>
-        <p className="text-sm text-muted-foreground">Should you repay debt or invest? Let's find out.</p>
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Debt vs Investment</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Opportunity Cost</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Smart Decision</span>
-        </div>
-      </div>
-
-      <Card className="p-4 text-sm text-muted-foreground leading-relaxed">
-        You have <strong>{formatINRFull(Number(inputs.amount))}</strong>. Should you pay off your loan faster OR invest that money? We'll calculate which gives you more in the end.
-      </Card>
-
-      <div className="space-y-5">
-        <InputSlider id="lvi-amount" label="Loan / Investment Amount" icon="💰" value={Number(inputs.amount)} min={10000} max={10000000} step={10000} unit="₹" unitPosition="prefix" formatValue={(v) => formatINR(v)} helperText="Total amount you're deciding about" onChange={(v) => updateInput("amount", v)} />
-
-        <InputSlider id="lvi-loanRate" label="Loan Interest Rate" icon="📊" value={Number(inputs.loanRate)} min={0.1} max={50} step={0.25} unit="%" unitPosition="suffix" formatValue={(v) => `${v}%`} helperText="Your current loan's interest rate" onChange={(v) => updateInput("loanRate", v)} />
-
-        <InputSlider id="lvi-investRate" label="Investment Return Rate" icon="📈" value={Number(inputs.investRate)} min={0.1} max={50} step={0.25} unit="%" unitPosition="suffix" formatValue={(v) => `${v}%`} helperText="Expected return if you invest instead" onChange={(v) => updateInput("investRate", v)} />
-
-        <InputSlider id="lvi-years" label="Duration" icon="📅" value={Number(inputs.years)} min={1} max={50} step={1} unit="yr" unitPosition="suffix" formatValue={(v) => `${v} years`} helperText="Over how many years?" onChange={(v) => updateInput("years", v)} />
-      </div>
-
-      <ResetCopyBar onReset={resetInputs} summaryObj={r ? { Calculator: "Loan vs Invest", Amount: formatINR(Number(inputs.amount)), "Loan Rate": `${inputs.loanRate}%`, "Invest Return": `${inputs.investRate}%`, Duration: `${inputs.years} years`, "Final Invest Value": formatINRFull(r.finalInvestValue), "Total Interest": formatINRFull(r.totalInterest), Difference: formatINRFull(Math.abs(r.netDifference)) + (investingWins ? " (Invest wins)" : " (Repay wins)") } : undefined} />
-
-      {r && (
+    <SplitShell
+      left={
         <>
-          <Card className={`p-6 ${investingWins ? "bg-calc-positive-bg border-calc-positive" : "bg-calc-negative-bg border-calc-negative"}`}>
-            <div className="flex items-center gap-3">
-              <CalcIcon name={investingWins ? "🏆" : "✅"} className="w-8 h-8" />
-              <div>
-                <p className="text-lg font-bold">{investingWins ? "INVESTING WINS" : "REPAYING WINS"} by {formatINRFull(Math.abs(diff))}</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {investingWins
-                    ? `Investing gives you ${formatINRFull(Math.abs(diff))} more than repaying the loan.`
-                    : `Repaying saves you ${formatINRFull(Math.abs(diff))} more than investing.`
-                  }
-                </p>
+          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
+            FinCalc Pro <span className="text-white/30">›</span>{" "}
+            <span className="text-white/90 font-bold">Loan vs Invest</span>
+          </p>
+          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
+            Loan vs Invest
+          </p>
+          <p className="text-[12px] font-medium text-white/70 mb-5">
+            Find what works better for you
+          </p>
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            The Amount
+          </p>
+          <InputRow
+            fields={[{
+              value: Number(inputs.amount),
+              onChange: (v) => updateInput("amount", parseFloat(v.replace(/[₹,\s]/g, "")) || 0),
+              label: "AMOUNT IN QUESTION",
+            }]}
+            className="mb-5"
+          />
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Loan Details
+          </p>
+          <InputRow
+            fields={[
+              { value: Number(inputs.loanRate), onChange: (v) => updateInput("loanRate", parseFloat(v) || 0), label: "LOAN INTEREST", suffix: "%" },
+              { value: Number(inputs.years), onChange: (v) => updateInput("years", parseFloat(v) || 1), label: "LOAN TENURE", suffix: "yr" },
+            ]}
+            className="mb-5"
+          />
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Investment Details
+          </p>
+          <InputRow
+            fields={[{
+              value: Number(inputs.investRate),
+              onChange: (v) => updateInput("investRate", parseFloat(v) || 0),
+              label: "EXPECTED RETURN",
+              suffix: "%",
+            }]}
+            className="mb-5"
+          />
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Investment Mode
+          </p>
+          <ToggleGroup
+            options={[
+              { value: "lump", label: "LUMP SUM" },
+              { value: "sip", label: "MONTHLY SIP" },
+            ]}
+            value={String(inputs.mode || "lump")}
+            onChange={(v) => updateInput("mode", v)}
+          />
+
+          <ActionButtonRow onClear={resetInputs} />
+        </>
+      }
+      right={
+        <>
+          {!r ? (
+            <ResultHero value="" subtitle="" showEmptyState />
+          ) : (
+            <>
+              {r && (
+                <WinnerBanner
+                  winner={investingWins ? "invest" : "repay"}
+                  amount={formatINRFull(Math.abs(diff))}
+                />
+              )}
+
+              <SegmentedResult
+                segments={[
+                  { value: "compare", label: "COMPARE" },
+                  { value: "repay", label: "REPAY" },
+                  { value: "invest", label: "INVEST" },
+                ]}
+                value={segment}
+                onChange={setSegment}
+                className="mt-5"
+              />
+
+              <div className="mt-1">
+                <MetricRow label="Interest Saved (Repay)" value={formatINRFull(r?.totalInterest ?? 0)} variant="positive" index={0} />
+                <MetricRow label="Final Corpus (Invest)" value={formatINRFull(r?.finalInvestValue ?? 0)} variant="accent" index={1} />
+                <MetricRow label="Net Advantage" value={formatINRFull(Math.abs(diff))} variant={investingWins ? "accent" : "positive"} index={2} />
               </div>
-            </div>
-          </Card>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Card className="p-4 text-center space-y-1">
-              <p className="text-[11px] text-muted-foreground">If you REPAY</p>
-              <p className="text-base font-semibold text-calc-negative">{formatINRFull(r.totalInterest)}</p>
-              <p className="text-[11px] text-muted-foreground">saved in interest</p>
-            </Card>
-            <Card className="p-4 text-center space-y-1">
-              <p className="text-[11px] text-muted-foreground">If you INVEST</p>
-              <p className="text-base font-semibold text-calc-positive">{formatINRFull(r.finalInvestValue)}</p>
-              <p className="text-[11px] text-muted-foreground">earned in returns</p>
-            </Card>
-          </div>
+              {insights.length > 0 && (
+                <InsightBanner title={insights[0].title} body={insights[0].description} />
+              )}
 
-          <InsightCard insights={insights} />
-
-          {chartConfig && (
-            <div className="p-4 rounded-xl border bg-card">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">NET WORTH COMPARISON</h3>
-              <CalcChart config={chartConfig} />
-            </div>
+              {chartConfig && (
+                <div className="mt-6">
+                  <ResultChart config={chartConfig} height={240} />
+                </div>
+              )}
+            </>
           )}
         </>
-      )}
-    </div>
+      }
+    />
   );
 }

@@ -1,18 +1,19 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useCalculator } from "@/hooks/useCalculator";
-import { formatINRFull, formatINR } from "@/lib/formatter";
+import { formatINR, formatINRFull } from "@/lib/formatter";
 import { fdMaturity, rdMaturity } from "@/lib/math";
 import { generateInsights } from "@/lib/insights";
-import { InputSlider } from "@/components/calculator/InputSlider";
-import { ResultCard } from "@/components/calculator/ResultCard";
-import { InsightCard } from "@/components/calculator/InsightCard";
-import { CalcChart } from "@/components/calculator/CalcChart";
-import { ResetCopyBar } from "@/components/calculator/ResetCopyBar";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalcIcon } from "@/components/shared/CalcIcon";
+import { SplitShell } from "@/components/layout/SplitShell";
+import { InputRow } from "@/components/ui-custom/InputRow";
+import { ToggleGroup } from "@/components/ui-custom/ToggleGroup";
+import { ActionButtonRow } from "@/components/ui-custom/ActionButtonRow";
+import { ResultHero } from "@/components/ui-custom/ResultHero";
+import { MetricRow } from "@/components/ui-custom/MetricRow";
+import { InsightBanner } from "@/components/ui-custom/InsightBanner";
+import { SegmentedResult } from "@/components/ui-custom/SegmentedResult";
+import { ResultChart } from "@/components/ui-custom/ResultChart";
 
 const defaultInputs = { amount: 100000, rate: 7, years: 3, compounding: "quarterly", isRD: false };
 
@@ -29,120 +30,162 @@ function calcFn(inputs: Record<string, unknown>) {
     maturity = fdMaturity(amount, rate, years, compounding);
   }
   const returns = Math.max(0, maturity - amount);
-  return { maturity: Math.round(maturity), invested: Math.round(isRD ? amount * years * 12 : amount), returns: Math.round(returns), amount: Math.round(amount) };
+  const effectiveReturn = amount > 0 ? ((returns / amount) * 100) : 0;
+  return {
+    maturity: Math.round(maturity),
+    invested: Math.round(isRD ? amount * years * 12 : amount),
+    returns: Math.round(returns),
+    amount: Math.round(amount),
+    effectiveReturn,
+  };
 }
+
+const compoundingOpts = [
+  { value: "monthly", label: "MONTHLY" },
+  { value: "quarterly", label: "QUARTERLY" },
+  { value: "half-yearly", label: "HALF-YEARLY" },
+  { value: "yearly", label: "YEARLY" },
+];
+
+const simpleOpts = [
+  { value: "compound", label: "COMPOUND" },
+  { value: "simple", label: "SIMPLE" },
+];
+
+const depositOpts = [
+  { value: "false", label: "FIXED DEPOSIT" },
+  { value: "true", label: "RECURRING DEPOSIT" },
+];
 
 export default function FDPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("fd", defaultInputs, calcFn);
-
+  const [segment, setSegment] = useState("my");
   const r = result as ReturnType<typeof calcFn> | null;
   const isRD = Boolean(inputs.isRD);
 
-  const chartConfig = r ? {
+  const chartConfig = useMemo(() => r ? {
     type: "doughnut" as const,
     data: {
       labels: ["Principal", "Interest Earned"],
       datasets: [{
         label: "Breakdown",
         data: [r.invested, r.returns],
-        backgroundColor: ["#6b7280", "#4ade80"],
-        borderColor: ["#6b7280", "#4ade80"],
+        backgroundColor: ["#FF6B00", "#1A1A1A"],
+        borderColor: ["#FF6B00", "#1A1A1A"],
       }]
+    },
+    options: {
+      cutout: "65%",
+      plugins: { legend: { position: "bottom" as const } }
     }
-  } : null;
+  } : null, [r]);
 
   const insights = r ? generateInsights("fd", r, inputs) : [];
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold flex items-center gap-2"><CalcIcon name="🏛️" className="w-5 h-5" /> FD &amp; RD Calculator</h2>
-        <p className="text-sm text-muted-foreground">Safe and steady growth — calculate your deposit returns</p>
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Fixed Deposit</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Recurring Deposit</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Safe Investment</span>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-3 p-3 rounded-xl border bg-card">
-        <Switch id="fd-rd-toggle" checked={isRD} onCheckedChange={(v) => updateInput("isRD", v)} />
-        <Label htmlFor="fd-rd-toggle" className="text-sm font-medium cursor-pointer flex items-center gap-1.5">
-          <CalcIcon name="🔁" className="w-4 h-4" />
-          {isRD ? "RD Mode — Monthly Deposits" : "FD Mode — Lump Sum Deposit"}
-        </Label>
-      </div>
-
-      <div className="space-y-5">
-        <InputSlider
-          id="fd-amount"
-          label={isRD ? "Monthly Deposit" : "Deposit Amount"}
-          icon="💰"
-          value={Number(inputs.amount)}
-          min={isRD ? 500 : 1000}
-          max={isRD ? 50000 : 10000000}
-          step={isRD ? 500 : 1000}
-          unit="₹"
-          unitPosition="prefix"
-          formatValue={(v) => formatINR(v)}
-          helperText={isRD ? "Amount you'll deposit every month" : "One-time amount you'll deposit in the bank"}
-          helpContent={isRD ? "This is how much you'll put in the RD every month. Regular savings add up!" : "The lump sum amount you'll deposit in a Fixed Deposit."}
-          onChange={(v) => updateInput("amount", v)}
-        />
-
-        <InputSlider id="fd-rate" label="Interest Rate" icon="📊" value={Number(inputs.rate)} min={0.1} max={15} step={0.25} unit="%" unitPosition="suffix" formatValue={(v) => `${v}%`} helperText="Check your bank's current FD/RD rates" helpContent="Banks offer 6-8% for FDs. Small finance banks may offer slightly higher rates." onChange={(v) => updateInput("rate", v)} />
-
-        <InputSlider id="fd-years" label="Duration" icon="📅" value={Number(inputs.years)} min={1} max={10} step={1} unit="yr" unitPosition="suffix" formatValue={(v) => `${v} years`} helperText="How long will you keep the deposit?" helpContent="Longer tenure usually gets you higher interest rates. Most FDs range from 1-5 years." onChange={(v) => updateInput("years", v)} />
-
-        {!isRD && (
-          <div className="space-y-1.5">
-            <Label className="text-sm font-medium flex items-center gap-1.5">
-              <CalcIcon name="🔄" className="w-4 h-4" />
-              Compounding Frequency
-            </Label>
-            <Select value={String(inputs.compounding)} onValueChange={(v) => updateInput("compounding", v)}>
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="quarterly">Quarterly (Most Common)</SelectItem>
-                <SelectItem value="half-yearly">Half-Yearly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-                <SelectItem value="simple">Simple Interest</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground/80">Quarterly compounding is most common in Indian banks</p>
-          </div>
-        )}
-      </div>
-
-      <ResetCopyBar onReset={resetInputs} summaryObj={r ? { Calculator: isRD ? "RD" : "FD", Amount: formatINR(Number(inputs.amount)), Rate: `${inputs.rate}%`, Duration: `${inputs.years} years`, Maturity: formatINRFull(r.maturity), "Interest Earned": formatINRFull(r.returns) } : undefined} />
-
-      {r && (
+    <SplitShell
+      left={
         <>
-          <ResultCard
-            heroLabel={isRD ? "Your RD Matures To" : "Your FD Matures To"}
-            heroValue={formatINRFull(r.maturity)}
-            heroVariant="positive"
-            metrics={[
-              { label: "Deposited", value: formatINRFull(r.invested) },
-              { label: "Interest Earned", value: formatINRFull(r.returns), variant: "positive" },
-              { label: "Growth %", value: r.invested > 0 ? `${((r.returns / r.invested) * 100).toFixed(1)}%` : "0%" },
-            ]}
-            summary={`Your ${isRD ? "RD" : "FD"} of ${formatINRFull(r.invested)} grows to ${formatINRFull(r.maturity)} over ${inputs.years} years — earning ${formatINRFull(r.returns)} in interest.`}
+          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
+            FinCalc Pro <span className="text-white/30">›</span>{" "}
+            <span className="text-white/90 font-bold">FD &amp; RD Calculator</span>
+          </p>
+          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
+            FD &amp; RD Calculator
+          </p>
+          <p className="text-[12px] font-medium text-white/70 mb-5">
+            Safe and guaranteed returns
+          </p>
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Deposit Type
+          </p>
+          <ToggleGroup
+            options={depositOpts}
+            value={String(Boolean(inputs.isRD))}
+            onChange={(v) => updateInput("isRD", v === "true")}
+            className="mb-5"
           />
 
-          <InsightCard insights={insights} />
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            {isRD ? "Monthly Deposit" : "Deposit Amount"}
+          </p>
+          <InputRow
+            fields={[
+              { value: Number(inputs.amount), onChange: (v) => updateInput("amount", parseFloat(v.replace(/[₹,\s]/g, "")) || 0), label: isRD ? "MONTHLY" : "AMOUNT" },
+              { value: Number(inputs.rate), onChange: (v) => updateInput("rate", parseFloat(v) || 0), label: "RATE", suffix: "%" },
+              { value: Number(inputs.years), onChange: (v) => updateInput("years", parseFloat(v) || 1), label: "YEARS", suffix: "yr" },
+            ]}
+            className="mb-5"
+          />
 
-          {chartConfig && (
-            <div className="p-4 rounded-xl border bg-card">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">MATURITY BREAKDOWN</h3>
-              <CalcChart config={chartConfig} />
-            </div>
+          {!isRD && (
+            <>
+              <div className="section-divider" />
+              <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+                Compounding
+              </p>
+              <ToggleGroup
+                options={compoundingOpts}
+                value={String(inputs.compounding || "quarterly")}
+                onChange={(v) => updateInput("compounding", v)}
+                className="mb-3"
+              />
+              <ToggleGroup
+                options={simpleOpts}
+                value={inputs.compounding === "simple" ? "simple" : "compound"}
+                onChange={(v) => updateInput("compounding", v === "simple" ? "simple" : "quarterly")}
+              />
+            </>
+          )}
+
+          <ActionButtonRow onClear={resetInputs} />
+        </>
+      }
+      right={
+        <>
+          {!r ? (
+            <ResultHero value="" subtitle="" showEmptyState />
+          ) : (
+            <>
+              <ResultHero
+                value={formatINRFull(r?.maturity ?? 0)}
+                subtitle={`Maturity value of your ${isRD ? "RD" : "FD"}`}
+              />
+
+              <SegmentedResult
+                segments={[
+                  { value: "my", label: "MY FD" },
+                  { value: "inflation", label: "INFLATION ADJ" },
+                  { value: "best", label: "BEST RATES" },
+                ]}
+                value={segment}
+                onChange={setSegment}
+                className="mt-5"
+              />
+
+              <div className="mt-1">
+                <MetricRow label="Principal Deposited" value={formatINRFull(r?.invested ?? 0)} index={0} />
+                <MetricRow label="Interest Earned" value={formatINRFull(r?.returns ?? 0)} variant="positive" index={1} />
+                <MetricRow label="Effective Return" value={`${(r?.effectiveReturn ?? 0).toFixed(2)}%`} index={2} />
+                <MetricRow label="Maturity Value" value={formatINRFull(r?.maturity ?? 0)} variant="accent" index={3} />
+              </div>
+
+              {insights.length > 0 && (
+                <InsightBanner title={insights[0].title} body={insights[0].description} />
+              )}
+
+              {chartConfig && (
+                <div className="mt-6">
+                  <ResultChart config={chartConfig} height={240} />
+                </div>
+              )}
+            </>
           )}
         </>
-      )}
-    </div>
+      }
+    />
   );
 }

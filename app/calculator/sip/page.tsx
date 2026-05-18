@@ -1,112 +1,229 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useCalculator } from "@/hooks/useCalculator";
-import { formatINRFull, formatINR } from "@/lib/formatter";
-import { sipFV, sipYearlyBreakdown, ruleOf72 } from "@/lib/math";
+import { formatINR, formatINRFull } from "@/lib/formatter";
+import { sipFV, ruleOf72 } from "@/lib/math";
 import { generateInsights } from "@/lib/insights";
-import { InputSlider } from "@/components/calculator/InputSlider";
-import { ResultCard } from "@/components/calculator/ResultCard";
-import { InsightCard } from "@/components/calculator/InsightCard";
-import { BreakdownTable } from "@/components/calculator/BreakdownTable";
-import { CalcChart } from "@/components/calculator/CalcChart";
-import { ResetCopyBar } from "@/components/calculator/ResetCopyBar";
-import { CalcIcon } from "@/components/shared/CalcIcon";
+import { SplitShell } from "@/components/layout/SplitShell";
+import { InputRow } from "@/components/ui-custom/InputRow";
+import { BrandSlider } from "@/components/ui-custom/BrandSlider";
+import { ToggleGroup } from "@/components/ui-custom/ToggleGroup";
+import { ActionButtonRow } from "@/components/ui-custom/ActionButtonRow";
+import { ResultHero } from "@/components/ui-custom/ResultHero";
+import { MetricRow } from "@/components/ui-custom/MetricRow";
+import { InsightBanner } from "@/components/ui-custom/InsightBanner";
+import { SegmentedResult } from "@/components/ui-custom/SegmentedResult";
+import { ResultChart } from "@/components/ui-custom/ResultChart";
 
-const defaultInputs = { amount: 5000, years: 10, rate: 12 };
+const defaultInputs = { amount: 5000, years: 10, rate: 12, stepUp: "0" };
 
 function calcFn(inputs: Record<string, unknown>) {
   const amount = Math.max(0, Number(inputs.amount) || 0);
   const years = Math.max(1, Number(inputs.years) || 1);
   const rate = Math.max(0, Number(inputs.rate) || 0);
+  const stepUp = Math.max(0, Number(inputs.stepUp) || 0) / 100;
   const months = years * 12;
-  const maturity = sipFV(amount, months, rate);
-  const invested = amount * months;
+
+  let maturity: number;
+  let invested: number;
+  if (stepUp === 0) {
+    maturity = sipFV(amount, months, rate);
+    invested = amount * months;
+  } else {
+    let totalFV = 0;
+    invested = 0;
+    let monthlyAmount = amount;
+    const r = rate / 12 / 100;
+    for (let y = 0; y < years; y++) {
+      const fvYearEnd = sipFV(monthlyAmount, 12, rate);
+      const monthsAfter = (years - y - 1) * 12;
+      totalFV += fvYearEnd * (r > 0 ? Math.pow(1 + r, monthsAfter) : 1);
+      invested += monthlyAmount * 12;
+      monthlyAmount *= (1 + stepUp);
+    }
+    maturity = Math.round(totalFV);
+  }
+
   const returns = Math.max(0, maturity - invested);
-  const breakdown = sipYearlyBreakdown(amount, years, rate);
   const doubleYears = rate > 0 ? Math.round(ruleOf72(rate)) : 0;
-  return { maturity: Math.round(maturity), invested: Math.round(invested), returns: Math.round(returns), doubleYears, breakdown };
+  return {
+    maturity: Math.round(maturity),
+    invested: Math.round(invested),
+    returns: Math.round(returns),
+    doubleYears,
+    growthPct: invested > 0 ? ((returns / invested) * 100) : 0,
+  };
 }
+
+const durationStops = [
+  { value: 1, label: "1yr" },
+  { value: 5, label: "5yr" },
+  { value: 10, label: "10yr" },
+  { value: 20, label: "20yr" },
+  { value: 30, label: "30yr" },
+  { value: 40, label: "40yr" },
+];
+
+const rateStops = [
+  { value: 6, label: "6%" },
+  { value: 8, label: "8%" },
+  { value: 10, label: "10%" },
+  { value: 12, label: "12%" },
+  { value: 15, label: "15%" },
+  { value: 20, label: "20%" },
+];
 
 export default function SIPPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("sip", defaultInputs, calcFn);
-
+  const [segment, setSegment] = useState("total");
   const r = result as ReturnType<typeof calcFn> | null;
-  const chartConfig = r ? {
+
+  const chartConfig = useMemo(() => r ? {
     type: "doughnut" as const,
     data: {
       labels: ["Principal Invested", "Est. Returns"],
       datasets: [{
         label: "Breakdown",
         data: [r.invested, r.returns],
-        backgroundColor: ["#6b7280", "#818cf8"],
-        borderColor: ["#6b7280", "#818cf8"],
+        backgroundColor: ["#FF6B00", "#1A1A1A"],
+        borderColor: ["#FF6B00", "#1A1A1A"],
       }]
+    },
+    options: {
+      cutout: "65%",
+      plugins: {
+        legend: { position: "bottom" as const },
+      }
     }
-  } : null;
-
-  const breakdownData = r ? {
-    headers: ["Year", "Invested", "Returns", "Corpus"],
-    rows: r.breakdown.map((row: { year: number; invested: number; returns: number; corpus: number }) => [
-      `Year ${row.year}`, formatINRFull(row.invested), formatINRFull(row.returns), formatINRFull(row.corpus)
-    ])
-  } : { headers: [], rows: [] };
+  } : null, [r]);
 
   const insights = r ? generateInsights("sip", r, inputs) : [];
 
+  const segmentValue = segment === "yearly" && r
+    ? formatINRFull(Math.round(r.maturity / r.invested * 100000))
+    : formatINRFull(r?.maturity ?? 0);
+
+  const segmentSub = segment === "total" ? "Estimated maturity value"
+    : segment === "yearly" ? "Average annual return"
+    : "Total investment amount";
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <CalcIcon name="💰" className="w-5 h-5" /> SIP Calculator
-        </h2>
-        <p className="text-sm text-muted-foreground">Find out how much your monthly savings will grow</p>
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Monthly Savings</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Long-term Growth</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Mutual Funds</span>
-        </div>
-      </div>
-
-      <div className="space-y-5">
-        <InputSlider id="sip-amount" label="Monthly Investment" icon="💵" value={Number(inputs.amount)} min={500} max={100000} step={500} unit="₹" unitPosition="prefix" formatValue={(v) => formatINR(v)} helperText="Start with at least ₹1,000/month" helpContent="This is how much you can save and invest each month. Even small amounts add up over time!" onChange={(v) => updateInput("amount", v)} />
-
-        <InputSlider id="sip-years" label="Investment Duration" icon="📅" value={Number(inputs.years)} min={1} max={40} step={1} unit="yr" unitPosition="suffix" formatValue={(v) => `${v} years`} helperText="Stay invested for at least 5-7 years for best results" helpContent="The longer you stay invested, the more your money compounds. 10+ years is ideal for equity investments." onChange={(v) => updateInput("years", v)} />
-
-        <InputSlider id="sip-rate" label="Expected Annual Return" icon="📈" value={Number(inputs.rate)} min={1} max={30} step={0.25} unit="%" unitPosition="suffix" formatValue={(v) => `${v}%`} helperText="Equity MFs avg 12%, FDs give ~7%. Be realistic!" helpContent="This is how much your investment grows each year. Equity mutual funds historically give 12-15%. FDs give around 6-7%." onChange={(v) => updateInput("rate", v)} />
-      </div>
-
-      <div className="flex gap-2">
-        <ResetCopyBar onReset={resetInputs} summaryObj={r ? { Calculator: "SIP", Amount: formatINR(Number(inputs.amount)), Duration: `${inputs.years} years`, "Expected Return": `${inputs.rate}%`, Maturity: formatINRFull(r.maturity), Invested: formatINRFull(r.invested), Returns: formatINRFull(r.returns) } : undefined} />
-      </div>
-
-      {r && (
+    <SplitShell
+      left={
         <>
-          <ResultCard
-            heroLabel="Your Maturity Amount"
-            heroValue={formatINRFull(r.maturity)}
-            heroVariant="accent"
-            metrics={[
-              { label: "Invested", value: formatINRFull(r.invested) },
-              { label: "Returns", value: formatINRFull(r.returns), variant: "positive" },
-              { label: "Growth", value: r.invested > 0 ? `${((r.returns / r.invested) * 100).toFixed(1)}%` : "0%", variant: "accent" },
-            ]}
-            summary={`You invest ${formatINRFull(r.invested)} and get back ${formatINRFull(r.maturity)} — your money grows by ${((r.returns / r.invested) * 100).toFixed(0)}%. ${r.doubleYears > 0 ? `Your money doubles every ~${r.doubleYears} years.` : ''}`}
+          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
+            FinCalc Pro <span className="text-white/30">›</span>{" "}
+            <span className="text-white/90 font-bold">SIP Calculator</span>
+          </p>
+          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
+            SIP Calculator
+          </p>
+          <p className="text-[12px] font-medium text-white/70 mb-5">
+            Calculate your mutual fund returns
+          </p>
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Monthly Investment
+          </p>
+          <InputRow
+            fields={[{
+              value: Number(inputs.amount),
+              onChange: (v) => updateInput("amount", parseFloat(v.replace(/[₹,\s]/g, "")) || 0),
+              label: "AMOUNT",
+            }]}
+            className="mb-5"
+          />
+          <p className="text-[11px] text-white/60 -mt-3 mb-5">Min ₹500 — Max ₹1,00,000</p>
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
+            Investment Duration
+          </p>
+          <BrandSlider
+            stops={durationStops}
+            value={Number(inputs.years)}
+            onChange={(v) => updateInput("years", v)}
+            className="mb-6"
           />
 
-          <InsightCard insights={insights} />
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
+            Expected Annual Return
+          </p>
+          <BrandSlider
+            stops={rateStops}
+            value={Number(inputs.rate)}
+            onChange={(v) => updateInput("rate", v)}
+            className="mb-6"
+          />
 
-          {chartConfig && (
-            <div className="p-4 rounded-xl border bg-card">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">PORTFOLIO BREAKDOWN</h3>
-              <CalcChart config={chartConfig} />
-            </div>
-          )}
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Step-up SIP Yearly
+          </p>
+          <ToggleGroup
+            options={[
+              { value: "0", label: "OFF" },
+              { value: "5", label: "5%" },
+              { value: "10", label: "10%" },
+              { value: "15", label: "15%" },
+              { value: "20", label: "20%" },
+            ]}
+            value={String(inputs.stepUp || "0")}
+            onChange={(v) => updateInput("stepUp", v)}
+          />
 
-          <div className="p-4 rounded-xl border bg-card">
-            <BreakdownTable data={breakdownData} />
-          </div>
+          <ActionButtonRow onClear={resetInputs} />
         </>
-      )}
-    </div>
+      }
+      right={
+        <>
+          {!r ? (
+            <ResultHero value="" subtitle="" showEmptyState />
+          ) : (
+            <>
+              <ResultHero
+                value={segmentValue}
+                subtitle={segmentSub}
+                variant="default"
+              />
+
+              <SegmentedResult
+                segments={[
+                  { value: "total", label: "TOTAL" },
+                  { value: "yearly", label: "YEARLY" },
+                  { value: "monthly", label: "MONTHLY" },
+                ]}
+                value={segment}
+                onChange={setSegment}
+                className="mt-5"
+              />
+
+              <div className="mt-1">
+                <MetricRow label="Invested Amount" value={formatINRFull(r?.invested ?? 0)} index={0} />
+                <MetricRow label="Estimated Returns" value={formatINRFull(r?.returns ?? 0)} variant="positive" index={1} />
+                <MetricRow label="Growth Rate" value={`${(r?.growthPct ?? 0).toFixed(1)}%`} index={2} />
+                <MetricRow label="Total Value" value={formatINRFull(r?.maturity ?? 0)} variant="accent" index={3} />
+              </div>
+
+              {insights.length > 0 && (
+                <InsightBanner
+                  title={insights[0].title}
+                  body={insights[0].description}
+                />
+              )}
+
+              {chartConfig && (
+                <div className="mt-6">
+                  <ResultChart config={chartConfig} height={240} />
+                </div>
+              )}
+            </>
+          )}
+        </>
+      }
+    />
   );
 }

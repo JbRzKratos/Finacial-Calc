@@ -1,8 +1,3 @@
-export function safeValue(v: unknown, fallback = 0): number {
-  const n = Number(v);
-  return isNaN(n) || !isFinite(n) ? fallback : n;
-}
-
 export function sipFV(monthly: number, months: number, ratePct: number): number {
   if (ratePct === 0) return monthly * months;
   const r = ratePct / 12 / 100;
@@ -167,9 +162,31 @@ export function taxOldRegime(income: number, deduction80C: number): { taxable: n
   return { taxable: Math.round(taxable), baseTax: Math.round(baseTax), cess, totalTax, effectiveRate };
 }
 
-export function loanVsInvest(amount: number, loanRate: number, investRate: number, years: number): { totalInterest: number; finalInvestValue: number; netDifference: number; rows: { year: number; investValue: number; totalPaid: number }[] } {
-  const monthlyLoanRate = loanRate / 12 / 100;
+export function loanVsInvest(amount: number, loanRate: number, investRate: number, years: number, mode: string = "lump"): { totalInterest: number; finalInvestValue: number; netDifference: number; rows: { year: number; investValue: number; totalPaid: number }[] } {
   const months = years * 12;
+
+  if (mode === "sip") {
+    const totalInvested = amount * months;
+    const fvInvest = sipFV(amount, months, investRate);
+    const fvRepay = sipFV(amount, months, loanRate);
+    const rows: { year: number; investValue: number; totalPaid: number }[] = [];
+    for (let y = 1; y <= years; y++) {
+      const m = y * 12;
+      rows.push({
+        year: y,
+        investValue: Math.round(sipFV(amount, m, investRate)),
+        totalPaid: Math.round(sipFV(amount, m, loanRate)),
+      });
+    }
+    return {
+      totalInterest: Math.round(Math.max(0, fvRepay - totalInvested)),
+      finalInvestValue: Math.round(fvInvest),
+      netDifference: Math.round(fvInvest - fvRepay),
+      rows,
+    };
+  }
+
+  const monthlyLoanRate = loanRate / 12 / 100;
   let emiAmt: number;
   if (loanRate === 0) {
     emiAmt = amount / months;

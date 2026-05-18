@@ -1,18 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useCalculator } from "@/hooks/useCalculator";
-import { formatINRFull, formatINR } from "@/lib/formatter";
+import { formatINR, formatINRFull } from "@/lib/formatter";
 import { retirementCorpus } from "@/lib/math";
 import { generateInsights } from "@/lib/insights";
-import { InputSlider } from "@/components/calculator/InputSlider";
-import { ResultCard } from "@/components/calculator/ResultCard";
-import { InsightCard } from "@/components/calculator/InsightCard";
-import { CalcChart } from "@/components/calculator/CalcChart";
-import { ResetCopyBar } from "@/components/calculator/ResetCopyBar";
-import { Button } from "@/components/ui/button";
-import { CalcIcon } from "@/components/shared/CalcIcon";
-import { cn } from "@/lib/utils";
+import { SplitShell } from "@/components/layout/SplitShell";
+import { InputRow } from "@/components/ui-custom/InputRow";
+import { BrandSlider } from "@/components/ui-custom/BrandSlider";
+import { ToggleGroup } from "@/components/ui-custom/ToggleGroup";
+import { ActionButtonRow } from "@/components/ui-custom/ActionButtonRow";
+import { ResultHero } from "@/components/ui-custom/ResultHero";
+import { MetricRow } from "@/components/ui-custom/MetricRow";
+import { InsightBanner } from "@/components/ui-custom/InsightBanner";
+import { SegmentedResult } from "@/components/ui-custom/SegmentedResult";
+import { ResultChart } from "@/components/ui-custom/ResultChart";
+import { TimelineBar } from "@/components/ui-custom/TimelineBar";
 
 const defaultInputs = { currentAge: 30, retirementAge: 60, lifeExpectancy: 85, monthlyExpense: 50000, inflation: 6, investReturn: 10 };
 
@@ -26,114 +29,154 @@ function calcFn(inputs: Record<string, unknown>) {
   return retirementCorpus(monthlyExpense, inflation, currentAge, retirementAge, lifeExpectancy, investReturn);
 }
 
+const inflationStops = [
+  { value: 4, label: "LOW (4%)" },
+  { value: 6, label: "MODERATE (6%)" },
+  { value: 8, label: "HIGH (8%)" },
+];
+
+const strategyOpts = [
+  { value: "8", label: "CONSERVATIVE" },
+  { value: "10", label: "BALANCED" },
+  { value: "12", label: "AGGRESSIVE" },
+];
+
 export default function RetirementPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("retirement", defaultInputs, calcFn);
-  const [step, setStep] = useState(1);
-
+  const [segment, setSegment] = useState("corpus");
   const r = result as ReturnType<typeof calcFn> | null;
 
-  const chartConfig = r ? {
+  const chartConfig = useMemo(() => r ? {
     type: "line" as const,
     data: {
       labels: ["Now", `Age ${inputs.retirementAge as number} (Retire)`, `Age ${inputs.lifeExpectancy as number}`],
       datasets: [{
         label: "Corpus Needed",
         data: [0, r.corpus, 0],
-        borderColor: "#818cf8",
-        backgroundColor: "rgba(129,140,248,0.1)",
+        borderColor: "#FF6B00",
+        backgroundColor: "rgba(255,107,0,0.08)",
         fill: true,
       }]
+    },
+    options: {
+      plugins: { legend: { position: "bottom" as const } },
     }
-  } : null;
+  } : null, [r, inputs.retirementAge, inputs.lifeExpectancy]);
 
   const insights = r ? generateInsights("retirement", r, inputs) : [];
 
-  const stepLabels = ["About You", "Your Lifestyle", "Investment Plan"];
-
-  const nextStep = () => setStep(s => Math.min(3, s + 1));
-  const prevStep = () => setStep(s => Math.max(1, s - 1));
-
-  const corpusCr = r ? (r.corpus / 10000000).toFixed(2) : "0";
-
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold flex items-center gap-2"><CalcIcon name="🎯" className="w-5 h-5" /> Retirement Planner</h2>
-        <p className="text-sm text-muted-foreground">Your future, sorted — plan your retirement corpus</p>
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Future Planning</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Retirement Corpus</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Monthly Savings</span>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <p className="text-xs text-muted-foreground font-medium">Step {step} of 3: {stepLabels[step - 1]}</p>
-        <div className="flex gap-1">
-          {[1, 2, 3].map((s) => (
-            <div key={s} className={cn("flex-1 h-1.5 rounded-full transition-colors", s <= step ? "bg-calc-accent" : "bg-muted")} />
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-5">
-        {step === 1 && (
-          <>
-            <InputSlider id="ret-currentAge" label="Current Age" icon="👤" value={Number(inputs.currentAge)} min={18} max={55} step={1} unit="yr" unitPosition="suffix" formatValue={(v) => `${v} yrs`} helperText="How old are you today?" onChange={(v) => { updateInput("currentAge", v); if (v >= Number(inputs.retirementAge)) updateInput("retirementAge", Math.min(v + 1, 80)); }} />
-
-            <InputSlider id="ret-retirementAge" label="Retirement Age" icon="🎯" value={Number(inputs.retirementAge)} min={Math.max(Number(inputs.currentAge) + 1, 40)} max={80} step={1} unit="yr" unitPosition="suffix" formatValue={(v) => `${v} yrs`} helperText="At what age do you plan to retire?" onChange={(v) => { updateInput("retirementAge", v); if (v <= Number(inputs.currentAge)) updateInput("currentAge", Math.max(18, v - 1)); }} />
-
-            <InputSlider id="ret-lifeExpectancy" label="Life Expectancy" icon="❤️" value={Number(inputs.lifeExpectancy)} min={Math.max(Number(inputs.retirementAge) + 1, 60)} max={100} step={1} unit="yr" unitPosition="suffix" formatValue={(v) => `${v} yrs`} helperText="We'll plan your money to last this long" onChange={(v) => updateInput("lifeExpectancy", v)} />
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <InputSlider id="ret-monthlyExpense" label="Monthly Expenses Today" icon="💳" value={Number(inputs.monthlyExpense)} min={5000} max={500000} step={5000} unit="₹" unitPosition="prefix" formatValue={(v) => formatINR(v)} helperText="Include rent, food, bills — everything" onChange={(v) => updateInput("monthlyExpense", v)} />
-          </>
-        )}
-
-        {step === 3 && (
-          <>
-            <InputSlider id="ret-inflation" label="Expected Inflation" icon="📈" value={Number(inputs.inflation)} min={0} max={20} step={0.5} unit="%" unitPosition="suffix" formatValue={(v) => `${v}%`} helperText="Prices rise ~6% per year in India" onChange={(v) => updateInput("inflation", v)} />
-
-            <InputSlider id="ret-investReturn" label="Expected Return on Investment" icon="📊" value={Number(inputs.investReturn)} min={1} max={20} step={0.5} unit="%" unitPosition="suffix" formatValue={(v) => `${v}%`} helperText="Conservative 8%, Balanced 10%, Aggressive 12%" onChange={(v) => updateInput("investReturn", v)} />
-          </>
-        )}
-      </div>
-
-      <div className="flex gap-2">
-        {step > 1 && <Button variant="outline" onClick={prevStep}>← Back</Button>}
-        {step < 3 && <Button onClick={nextStep}>Next →</Button>}
-        {step === 3 && (
-          <ResetCopyBar onReset={() => { resetInputs(); setStep(1); }} summaryObj={r ? { Calculator: "Retirement", "Monthly Expense": formatINR(Number(inputs.monthlyExpense)), "Retirement Age": `${inputs.retirementAge}`, "Corpus Needed": `₹${corpusCr} Cr`, "Monthly SIP": formatINRFull(r.monthlySip) } : undefined} />
-        )}
-      </div>
-
-      {r && step === 3 && (
+    <SplitShell
+      left={
         <>
-          <ResultCard
-            heroLabel={`You need ₹${corpusCr} Crores to retire comfortably`}
-            heroValue={formatINRFull(r.corpus)}
-            heroVariant="accent"
-            metrics={[
-              { label: "Monthly SIP Needed", value: formatINRFull(r.monthlySip), variant: "accent" },
-              { label: "Monthly Expense at Retire", value: formatINRFull(r.fme) },
-              { label: "Years to Retire", value: `${r.yearsToRetire} yrs` },
+          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
+            FinCalc Pro <span className="text-white/30">›</span>{" "}
+            <span className="text-white/90 font-bold">Retirement Planner</span>
+          </p>
+          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
+            Retirement Planner
+          </p>
+          <p className="text-[12px] font-medium text-white/70 mb-5">
+            Your future, planned today
+          </p>
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Your Profile
+          </p>
+          <InputRow
+            fields={[
+              { value: Number(inputs.currentAge), onChange: (v) => updateInput("currentAge", Math.max(18, Math.min(55, parseInt(v) || 18))), label: "CURRENT AGE" },
+              { value: Number(inputs.retirementAge), onChange: (v) => updateInput("retirementAge", Math.max(Number(inputs.currentAge) + 1, parseInt(v) || 60)), label: "RETIRE AT" },
+              { value: Number(inputs.lifeExpectancy), onChange: (v) => updateInput("lifeExpectancy", Math.max(Number(inputs.retirementAge) + 1, parseInt(v) || 85)), label: "LIVE UNTIL" },
             ]}
-            summary={`Start saving ${formatINRFull(r.monthlySip)}/month today. At age ${inputs.retirementAge as number}, your monthly expense will be ${formatINRFull(r.fme)}. Your corpus of ${formatINRFull(r.corpus)} will last until age ${inputs.lifeExpectancy as number}.`}
+            className="mb-5"
           />
 
-          <InsightCard insights={insights} />
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Monthly Lifestyle
+          </p>
+          <InputRow
+            fields={[{
+              value: Number(inputs.monthlyExpense),
+              onChange: (v) => updateInput("monthlyExpense", parseFloat(v.replace(/[₹,\s]/g, "")) || 0),
+              label: "CURRENT MONTHLY EXPENSES",
+            }]}
+            className="mb-5"
+          />
 
-          {chartConfig && (
-            <div className="p-4 rounded-xl border bg-card">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">RETIREMENT TIMELINE</h3>
-              <CalcChart config={chartConfig} />
-            </div>
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
+            Inflation Outlook
+          </p>
+          <BrandSlider
+            stops={inflationStops}
+            value={Number(inputs.inflation)}
+            onChange={(v) => updateInput("inflation", v)}
+            className="mb-6"
+          />
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Investment Strategy
+          </p>
+          <ToggleGroup
+            options={strategyOpts}
+            value={String(inputs.investReturn || "10")}
+            onChange={(v) => updateInput("investReturn", parseInt(v))}
+          />
+
+          <ActionButtonRow onClear={resetInputs} />
+        </>
+      }
+      right={
+        <>
+          {!r ? (
+            <ResultHero value="" subtitle="" showEmptyState />
+          ) : (
+            <>
+              <ResultHero
+                value={formatINRFull(r?.corpus ?? 0)}
+                subtitle="Corpus needed to retire comfortably"
+              />
+
+              <SegmentedResult
+                segments={[
+                  { value: "corpus", label: "CORPUS" },
+                  { value: "sip", label: "SIP NEEDED" },
+                  { value: "timeline", label: "TIMELINE" },
+                ]}
+                value={segment}
+                onChange={setSegment}
+                className="mt-5"
+              />
+
+              <div className="mt-1">
+                <MetricRow label="Monthly Expense at Retire" value={formatINRFull(r?.fme ?? 0)} index={0} />
+                <MetricRow label="Years in Retirement" value={r ? `${r.yearsToRetire}yr` : "-"} index={1} />
+                <MetricRow label="Monthly SIP Needed" value={formatINRFull(r?.monthlySip ?? 0)} variant="accent" index={2} />
+              </div>
+
+              {insights.length > 0 && (
+                <InsightBanner title={insights[0].title} body={insights[0].description} />
+              )}
+
+              {chartConfig && (
+                <div className="mt-6">
+                  <ResultChart config={chartConfig} height={240} />
+                </div>
+              )}
+
+              <TimelineBar
+                currentAge={Number(inputs.currentAge)}
+                retirementAge={Number(inputs.retirementAge)}
+                lifeExpectancy={Number(inputs.lifeExpectancy)}
+              />
+            </>
           )}
         </>
-      )}
-    </div>
+      }
+    />
   );
 }

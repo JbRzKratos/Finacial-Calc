@@ -1,27 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useCalculator } from "@/hooks/useCalculator";
-import { formatINRFull, formatINR } from "@/lib/formatter";
+import { formatINR, formatINRFull } from "@/lib/formatter";
 import { emi, emiBreakdown } from "@/lib/math";
 import { generateInsights } from "@/lib/insights";
-import { InputSlider } from "@/components/calculator/InputSlider";
-import { ResultCard } from "@/components/calculator/ResultCard";
-import { InsightCard } from "@/components/calculator/InsightCard";
-import { BreakdownTable } from "@/components/calculator/BreakdownTable";
-import { CalcChart } from "@/components/calculator/CalcChart";
-import { ResetCopyBar } from "@/components/calculator/ResetCopyBar";
-import { CalcIcon } from "@/components/shared/CalcIcon";
-import { cn } from "@/lib/utils";
+import { SplitShell } from "@/components/layout/SplitShell";
+import { InputRow } from "@/components/ui-custom/InputRow";
+import { ToggleGroup } from "@/components/ui-custom/ToggleGroup";
+import { BrandSlider } from "@/components/ui-custom/BrandSlider";
+import { ActionButtonRow } from "@/components/ui-custom/ActionButtonRow";
+import { ResultHero } from "@/components/ui-custom/ResultHero";
+import { MetricRow } from "@/components/ui-custom/MetricRow";
+import { InsightBanner } from "@/components/ui-custom/InsightBanner";
+import { SegmentedResult } from "@/components/ui-custom/SegmentedResult";
+import { ResultChart } from "@/components/ui-custom/ResultChart";
 
 const loanPresets = [
-  { id: "home", label: "Home Loan", amount: 5000000, rate: 8.5, years: 20 },
-  { id: "car", label: "Car Loan", amount: 800000, rate: 9, years: 5 },
-  { id: "edu", label: "Edu Loan", amount: 1000000, rate: 8, years: 10 },
-  { id: "other", label: "Other", amount: 500000, rate: 12, years: 3 },
+  { value: "home", label: "HOME" },
+  { value: "car", label: "CAR" },
+  { value: "edu", label: "EDUCATION" },
+  { value: "other", label: "PERSONAL" },
 ];
 
-const defaultInputs = { amount: 5000000, rate: 8.5, years: 20 };
+const presetMap: Record<string, { amount: number; rate: number; years: number }> = {
+  home: { amount: 5000000, rate: 8.5, years: 20 },
+  car: { amount: 800000, rate: 9, years: 5 },
+  edu: { amount: 1000000, rate: 8, years: 10 },
+  other: { amount: 500000, rate: 12, years: 3 },
+};
+
+const defaultInputs = { amount: 5000000, rate: 8.5, years: 20, preset: "home" };
 
 function calcFn(inputs: Record<string, unknown>) {
   const amount = Math.max(0, Number(inputs.amount) || 0);
@@ -32,106 +41,169 @@ function calcFn(inputs: Record<string, unknown>) {
   const totalPayment = emiAmt * months;
   const totalInterest = totalPayment - amount;
   const breakdown = emiBreakdown(amount, rate, months);
-  return { emi: Math.round(emiAmt), totalPayment: Math.round(totalPayment), totalInterest: Math.round(totalInterest), amount: Math.round(amount), months, breakdown };
+  return {
+    emi: Math.round(emiAmt),
+    totalPayment: Math.round(totalPayment),
+    totalInterest: Math.round(totalInterest),
+    amount: Math.round(amount),
+    months,
+    breakdown,
+    interestRatio: totalPayment > 0 ? (totalInterest / totalPayment) * 100 : 0,
+  };
 }
+
+const speedStops = [
+  { value: 1, label: "MINIMUM" },
+  { value: 0.75, label: "STANDARD" },
+  { value: 0.5, label: "FAST" },
+  { value: 0.25, label: "VERY FAST" },
+];
 
 export default function EMIPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("emi", defaultInputs, calcFn);
-  const [showPresets, setShowPresets] = useState(true);
-
+  const [segment, setSegment] = useState("month");
   const r = result as ReturnType<typeof calcFn> | null;
-  const chartConfig = r ? {
+
+  const chartConfig = useMemo(() => r ? {
     type: "bar" as const,
     data: {
       labels: r.breakdown.map((b: { year: number }) => `Y${b.year}`),
       datasets: [
-        { label: "Principal Paid", data: r.breakdown.map((b: { principalPaid: number }) => b.principalPaid), backgroundColor: "#818cf8" },
-        { label: "Interest Paid", data: r.breakdown.map((b: { interestPaid: number }) => b.interestPaid), backgroundColor: "#f87171" },
+        { label: "Principal Paid", data: r.breakdown.map((b: { principalPaid: number }) => b.principalPaid), backgroundColor: "#FF6B00" },
+        { label: "Interest Paid", data: r.breakdown.map((b: { interestPaid: number }) => b.interestPaid), backgroundColor: "#1A1A1A" },
       ]
+    },
+    options: {
+      plugins: {
+        legend: { position: "bottom" as const },
+      },
+      scales: {
+        y: { stacked: true, grid: { color: "rgba(0,0,0,0.06)", borderDash: [4, 4] as [number, number] }, border: { display: false } },
+        x: { stacked: true, grid: { display: false }, border: { display: false } },
+      }
     }
-  } : null;
-
-  const breakdownData = r ? {
-    headers: ["Year", "EMI Paid", "Principal", "Interest", "Balance"],
-    rows: r.breakdown.map((b: { year: number; emi: number; principalPaid: number; interestPaid: number; balance: number }) => [
-      `Year ${b.year}`, formatINRFull(b.emi), formatINRFull(b.principalPaid), formatINRFull(b.interestPaid), formatINRFull(b.balance)
-    ])
-  } : { headers: [], rows: [] };
+  } : null, [r]);
 
   const insights = r ? generateInsights("emi", r, inputs) : [];
 
-  const applyPreset = (preset: typeof loanPresets[0]) => {
-    setShowPresets(false);
-    updateInput("amount", preset.amount);
-    updateInput("rate", preset.rate);
-    updateInput("years", preset.years);
+  const heroValue = segment === "month" ? formatINRFull(r?.emi ?? 0)
+    : segment === "year" ? formatINRFull(r ? Math.round(r.emi * 12) : 0)
+    : formatINRFull(r?.totalPayment ?? 0);
+
+  const heroSub = segment === "month" ? "Monthly EMI payment"
+    : segment === "year" ? "Yearly payment amount"
+    : "Total payment over loan term";
+
+  const applyPreset = (preset: string) => {
+    const p = presetMap[preset];
+    if (p) {
+      updateInput("amount", p.amount);
+      updateInput("rate", p.rate);
+      updateInput("years", p.years);
+      updateInput("preset", preset);
+    }
   };
 
+  const basePreset = presetMap[String(inputs.preset || "home")] || defaultInputs;
+  const currentSpeed = basePreset.years > 0 ? Number(inputs.years) / basePreset.years : 1;
+  const closestSpeed = speedStops.reduce((prev, curr) =>
+    Math.abs(curr.value - currentSpeed) < Math.abs(prev.value - currentSpeed) ? curr : prev
+  );
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold flex items-center gap-2"><CalcIcon name="🏦" className="w-5 h-5" /> EMI Calculator</h2>
-        <p className="text-sm text-muted-foreground">Know your exact monthly payment before taking a loan</p>
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Home Loan</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Car Loan</span>
-          <span className="text-xs bg-muted px-2 py-1 rounded-full inline-flex items-center gap-1"><CalcIcon name="🏷️" className="w-3 h-3" />Personal Loan</span>
-        </div>
-      </div>
-
-      {showPresets && (
-        <div className="space-y-2">
-          <p className="text-xs text-muted-foreground font-medium">QUICK SELECT — pick a loan type</p>
-          <div className="grid grid-cols-2 gap-2">
-            {loanPresets.map((preset) => (
-              <button key={preset.id} onClick={() => applyPreset(preset)} className="p-3 rounded-xl border bg-card hover:bg-muted/50 transition-colors text-left space-y-1">
-                <span className="text-lg block">{preset.label}</span>
-                <span className="text-[11px] text-muted-foreground block">Auto-fills typical values</span>
-              </button>
-            ))}
-          </div>
-          <button onClick={() => setShowPresets(false)} className="text-xs text-muted-foreground hover:text-foreground">Skip, enter manually →</button>
-        </div>
-      )}
-
-      <div className="space-y-5">
-        <InputSlider id="emi-amount" label="Loan Amount" icon="💰" value={Number(inputs.amount)} min={10000} max={10000000} step={10000} unit="₹" unitPosition="prefix" formatValue={(v) => formatINR(v)} helperText="Total amount you want to borrow" helpContent="This is the total loan amount you plan to take from the bank or lender." onChange={(v) => updateInput("amount", v)} />
-
-        <InputSlider id="emi-rate" label="Annual Interest Rate" icon="📊" value={Number(inputs.rate)} min={0.1} max={36} step={0.25} unit="%" unitPosition="suffix" formatValue={(v) => `${v}%`} helperText="Home loans: 8-9%, Personal: 10-15%" helpContent="Check your bank's current interest rate. Home loans are usually 8-9%, personal loans 10-15%, and credit cards can be 30%+." onChange={(v) => updateInput("rate", v)} />
-
-        <InputSlider id="emi-years" label="Loan Tenure" icon="📅" value={Number(inputs.years)} min={1} max={30} step={1} unit="yr" unitPosition="suffix" formatValue={(v) => `${v} years`} helperText="How many years to repay the loan" helpContent="Longer tenure means lower EMI but more total interest. Shorter tenure = higher EMI but less interest overall." onChange={(v) => updateInput("years", v)} />
-      </div>
-
-      <ResetCopyBar onReset={resetInputs} summaryObj={r ? { Calculator: "EMI", "Loan Amount": formatINR(Number(inputs.amount)), "Interest Rate": `${inputs.rate}%`, Tenure: `${inputs.years} years`, EMI: formatINRFull(r.emi), "Total Payment": formatINRFull(r.totalPayment), "Total Interest": formatINRFull(r.totalInterest) } : undefined} />
-
-      {r && (
+    <SplitShell
+      left={
         <>
-          <ResultCard
-            heroLabel="Your Monthly EMI"
-            heroValue={formatINRFull(r.emi)}
-            heroVariant="accent"
-            metrics={[
-              { label: "Total Amount", value: formatINRFull(r.totalPayment) },
-              { label: "Total Interest", value: formatINRFull(r.totalInterest), variant: "negative" },
-              { label: "Interest %", value: r.totalPayment > 0 ? `${((r.totalInterest / r.totalPayment) * 100).toFixed(1)}%` : "0%", variant: "negative" },
-            ]}
-            summary={`You pay ${formatINRFull(r.emi)} every month for ${inputs.years} years. Total interest is ${formatINRFull(r.totalInterest)} — ${((r.totalInterest / r.amount) * 100).toFixed(0)}% of your loan amount.`}
+          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
+            FinCalc Pro <span className="text-white/30">›</span>{" "}
+            <span className="text-white/90 font-bold">EMI Calculator</span>
+          </p>
+          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
+            EMI Calculator
+          </p>
+          <p className="text-[12px] font-medium text-white/70 mb-5">
+            Plan your loan repayment
+          </p>
+
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Loan Type
+          </p>
+          <ToggleGroup
+            options={loanPresets}
+            value={String(inputs.preset || "home")}
+            onChange={applyPreset}
+            className="mb-5"
           />
 
-          <InsightCard insights={insights} />
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
+            Loan Details
+          </p>
+          <InputRow
+            fields={[
+              { value: Number(inputs.amount), onChange: (v) => { updateInput("amount", parseFloat(v.replace(/[₹,\s]/g, "")) || 0); updateInput("preset", "other"); }, label: "AMOUNT" },
+              { value: Number(inputs.rate), onChange: (v) => { updateInput("rate", parseFloat(v) || 0); updateInput("preset", "other"); }, label: "INTEREST", suffix: "%" },
+              { value: Number(inputs.years), onChange: (v) => { updateInput("years", parseFloat(v) || 1); updateInput("preset", "other"); }, label: "TENURE", suffix: "yr" },
+            ]}
+            className="mb-5"
+          />
 
-          {chartConfig && (
-            <div className="p-4 rounded-xl border bg-card">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">YEARLY BREAKDOWN</h3>
-              <CalcChart config={chartConfig} />
-            </div>
-          )}
+          <div className="section-divider" />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
+            Repayment Speed
+          </p>
+          <BrandSlider
+            stops={speedStops}
+            value={closestSpeed.value}
+            onChange={(v) => {
+              const base = presetMap[String(inputs.preset || "home")] || defaultInputs;
+              updateInput("years", Math.max(1, Math.round(base.years * v)));
+            }}
+          />
 
-          <div className="p-4 rounded-xl border bg-card">
-            <BreakdownTable data={breakdownData} />
-          </div>
+          <ActionButtonRow onClear={resetInputs} />
         </>
-      )}
-    </div>
+      }
+      right={
+        <>
+          {!r ? (
+            <ResultHero value="" subtitle="" showEmptyState />
+          ) : (
+            <>
+              <ResultHero value={heroValue} subtitle={heroSub} />
+
+              <SegmentedResult
+                segments={[
+                  { value: "month", label: "PER MONTH" },
+                  { value: "year", label: "PER YEAR" },
+                  { value: "total", label: "TOTAL" },
+                ]}
+                value={segment}
+                onChange={setSegment}
+                className="mt-5"
+              />
+
+              <div className="mt-1">
+                <MetricRow label="Principal Amount" value={formatINRFull(r?.amount ?? 0)} index={0} />
+                <MetricRow label="Total Interest" value={formatINRFull(r?.totalInterest ?? 0)} variant="negative" index={1} />
+                <MetricRow label="Total Payment" value={formatINRFull(r?.totalPayment ?? 0)} index={2} />
+                <MetricRow label="Interest to Loan Ratio" value={`${(r?.interestRatio ?? 0).toFixed(1)}%`} variant="negative" index={3} />
+              </div>
+
+              {insights.length > 0 && (
+                <InsightBanner title={insights[0].title} body={insights[0].description} />
+              )}
+
+              {chartConfig && (
+                <div className="mt-6">
+                  <ResultChart config={chartConfig} height={240} />
+                </div>
+              )}
+            </>
+          )}
+        </>
+      }
+    />
   );
 }

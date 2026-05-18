@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CalculatorInputs, CalculatorResult } from "@/types/calculator";
 import { saveState, loadState } from "@/lib/storage";
 
@@ -9,7 +9,6 @@ interface CalculatorHookReturn {
   result: CalculatorResult | null;
   updateInput: (key: string, value: number | string | boolean) => void;
   resetInputs: () => void;
-  calculate: () => void;
 }
 
 export function useCalculator(
@@ -17,18 +16,18 @@ export function useCalculator(
   defaultInputs: CalculatorInputs,
   calcFn: (inputs: CalculatorInputs) => CalculatorResult
 ): CalculatorHookReturn {
-  const [state, setState] = useState<{ inputs: CalculatorInputs; result: CalculatorResult }>(() => {
-    const saved = loadState(calcId);
-    const inputs = saved ? { ...defaultInputs, ...saved } : { ...defaultInputs };
-    return { inputs, result: calcFn(inputs) };
-  });
+  const [state, setState] = useState<{ inputs: CalculatorInputs; result: CalculatorResult }>(() => ({
+    inputs: { ...defaultInputs },
+    result: calcFn(defaultInputs),
+  }));
 
-  const calculate = useCallback(() => {
-    setState(prev => {
-      const r = calcFn(prev.inputs);
-      return prev.result !== r ? { ...prev, result: r } : prev;
-    });
-  }, [calcFn]);
+  useEffect(() => {
+    const saved = loadState(calcId);
+    if (saved) {
+      const merged = { ...defaultInputs, ...saved };
+      setState({ inputs: merged, result: calcFn(merged) });
+    }
+  }, [calcId]);
 
   const updateInput = useCallback((key: string, value: number | string | boolean) => {
     setState(prev => {
@@ -44,5 +43,5 @@ export function useCalculator(
     setState({ inputs, result: calcFn(inputs) });
   }, [calcId, defaultInputs, calcFn]);
 
-  return { inputs: state.inputs, result: state.result, updateInput, resetInputs, calculate };
+  return { inputs: state.inputs, result: state.result, updateInput, resetInputs };
 }
