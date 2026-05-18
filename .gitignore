@@ -7,10 +7,26 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+.pnp
+.pnp.js
+
+# Next.js build output
+.next
+out
+
+# Build output
 dist
 dist-ssr
-*.local
+
+# Environment files
+.env
+.env*.local
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +38,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.agents
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
