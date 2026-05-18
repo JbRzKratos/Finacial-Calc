@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1242" height="2208" viewBox="0 0 1242 2208">
+  <rect width="1242" height="2208" fill="#0D0D14"/>
+  <g transform="translate(621, 900)">
+    <rect x="-120" y="-120" width="240" height="240" rx="48" fill="none" stroke="#6C63FF" stroke-width="2" opacity="0.3"/>
+    <text x="0" y="60" font-family="Inter, sans-serif" font-size="160" font-weight="700" fill="#6C63FF" text-anchor="middle">₹</text>
+  </g>
+  <text x="621" y="1140" font-family="Inter, sans-serif" font-size="48" font-weight="600" fill="#8B83FF" text-anchor="middle" opacity="0.8">FinCalc Pro</text>
+  <text x="621" y="1200" font-family="Inter, sans-serif" font-size="24" font-weight="400" fill="#6C63FF" text-anchor="middle" opacity="0.5">Financial Calculator Suite</text>
+</svg>

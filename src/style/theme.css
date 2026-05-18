@@ -1,0 +1,63 @@
+[data-theme="dark"] {
+  --bg-base: oklch(0.145 0 0);
+  --bg-surface: oklch(0.205 0 0);
+  --bg-glass: oklch(0.205 0 0 / 0.6);
+  --bg-glass-hover: oklch(0.269 0 0 / 0.6);
+  --border: oklch(1 0 0 / 10%);
+  --border-hover: oklch(1 0 0 / 18%);
+  --accent: oklch(0.922 0 0);
+  --accent-light: oklch(0.922 0 0 / 10%);
+  --accent-glow: oklch(0.922 0 0 / 15%);
+  --positive: oklch(0.87 0 0);
+  --positive-dim: oklch(0.87 0 0 / 12%);
+  --negative: oklch(0.704 0.191 22.216);
+  --negative-dim: oklch(0.704 0.191 22.216 / 12%);
+  --text-primary: oklch(0.985 0 0);
+  --text-secondary: oklch(0.87 0 0);
+  --text-muted: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar-width: 240px;
+  --radius-card: 0.75rem;
+  --radius-pill: 50px;
+  --radius-input: 0.625rem;
+  --shadow-glass: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-elevated: 0 16px 48px rgba(0,0,0,0.7);
+  --shadow-glow: 0 0 30px rgba(0,0,0,0.3);
+  --transition-theme: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+[data-theme="light"] {
+  --bg-base: oklch(1 0 0);
+  --bg-surface: oklch(0.985 0 0);
+  --bg-glass: oklch(1 0 0 / 0.7);
+  --bg-glass-hover: oklch(1 0 0 / 0.85);
+  --border: oklch(0.922 0 0);
+  --border-hover: oklch(0.87 0 0);
+  --accent: oklch(0.205 0 0);
+  --accent-light: oklch(0.205 0 0 / 8%);
+  --accent-glow: oklch(0.205 0 0 / 15%);
+  --positive: oklch(0.371 0 0);
+  --positive-dim: oklch(0.371 0 0 / 12%);
+  --negative: oklch(0.577 0.245 27.325);
+  --negative-dim: oklch(0.577 0.245 27.325 / 12%);
+  --text-primary: oklch(0.145 0 0);
+  --text-secondary: oklch(0.371 0 0);
+  --text-muted: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar-width: 240px;
+  --radius-card: 0.75rem;
+  --radius-pill: 50px;
+  --radius-input: 0.625rem;
+  --shadow-glass: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-elevated: 0 16px 48px rgba(0,0,0,0.12);
+  --shadow-glow: 0 0 30px rgba(0,0,0,0.05);
+  --transition-theme: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}

@@ -1,0 +1,118 @@
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes countUp {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ringFill {
+  0% {
+    stroke-dashoffset: var(--ring-circumference);
+  }
+}
+
+.fade-enter {
+  animation: fadeSlideUp 0.35s ease forwards;
+}
+
+.fade-exit {
+  animation: fadeSlideUp 0.25s ease reverse forwards;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.float-anim {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Table row stagger animation */
+.table-row-enter {
+  animation: slideDown 0.3s ease forwards;
+  opacity: 0;
+}
+
+.table-row-enter:nth-child(1) { animation-delay: 0s; }
+.table-row-enter:nth-child(2) { animation-delay: 0.04s; }
+.table-row-enter:nth-child(3) { animation-delay: 0.08s; }
+.table-row-enter:nth-child(4) { animation-delay: 0.12s; }
+.table-row-enter:nth-child(5) { animation-delay: 0.16s; }
+.table-row-enter:nth-child(6) { animation-delay: 0.20s; }
+.table-row-enter:nth-child(7) { animation-delay: 0.24s; }
+.table-row-enter:nth-child(8) { animation-delay: 0.28s; }
+.table-row-enter:nth-child(9) { animation-delay: 0.32s; }
+.table-row-enter:nth-child(10) { animation-delay: 0.36s; }
+
+/* Tab switch animation for calculator sections */
+.calculator-section {
+  display: none;
+}
+
+.calculator-section.active {
+  display: block;
+}
+
+/* Particle canvas */
+#particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
