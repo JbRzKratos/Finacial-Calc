@@ -1,10 +1,23 @@
 "use client";
 
-import { Chart as ChartJS, ArcElement, Tooltip as ChartTooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Filler, DoughnutController } from "chart.js";
+import {
+  Chart as ChartJS,
+  ArcElement, Tooltip as ChartTooltip, Legend,
+  CategoryScale, LinearScale,
+  PointElement, LineElement, LineController,
+  BarElement, BarController,
+  Filler, DoughnutController,
+} from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { ChartConfig } from "@/types/calculator";
 
-ChartJS.register(ArcElement, ChartTooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Filler, DoughnutController);
+ChartJS.register(
+  ArcElement, ChartTooltip, Legend,
+  CategoryScale, LinearScale,
+  PointElement, LineElement, LineController,
+  BarElement, BarController,
+  Filler, DoughnutController,
+);
 
 interface CalcChartProps {
   config: ChartConfig;
