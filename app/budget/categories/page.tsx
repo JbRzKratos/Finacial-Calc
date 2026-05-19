@@ -7,6 +7,7 @@ import { BudgetBottomNav } from "@/components/budget/BudgetBottomNav";
 import { AddTransactionSheet } from "@/components/budget/AddTransactionSheet";
 import { AddBudgetSheet } from "@/components/budget/AddBudgetSheet";
 import { BudgetEmptyState } from "@/components/budget/BudgetEmptyState";
+import { CategoryIcon } from "@/components/budget/CategoryIcon";
 import { formatINR } from "@/lib/budget/budgetCalc";
 import { ArrowLeft } from "lucide-react";
 
@@ -58,7 +59,7 @@ export default function CategoriesPage() {
               return (
                 <div key={cat.id} className="glass-card p-4 cursor-pointer active:scale-[0.99] transition-transform" onClick={() => navigate(`/budget/transactions?category=${cat.id}`)}>
                   <div className="flex items-center gap-3.5">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: `${cat.color}20` }}>{cat.icon}</div>
+                    <CategoryIcon icon={cat.icon} color={cat.color} />
                     <div className="flex-1 min-w-0">
                       <p className="text-[15px] font-semibold text-[#F5F5F5]">{cat.name}</p>
                       <p className="text-xs text-[#8A8A90] mt-0.5">{formatINR(spent)} / {formatINR(cat.monthlyLimit)}</p>

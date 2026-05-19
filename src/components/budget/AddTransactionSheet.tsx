@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { BudgetCategory } from "@/lib/budget/budgetTypes";
 import { getTodayISO } from "@/lib/budget/budgetCalc";
 import { X } from "lucide-react";
+import { CategoryIcon } from "@/components/budget/CategoryIcon";
 
 interface AddTransactionSheetProps {
   categories: BudgetCategory[];
@@ -65,7 +66,7 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
             <div className="flex rounded-xl bg-[#141416] p-1 border border-[rgba(255,255,255,0.06)] mb-5">
               {(["expense", "income"] as const).map((t) => (
                 <button key={t} type="button" onClick={() => { setType(t); setCategoryId(""); }} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all ${type === t ? "bg-[#FF6B00] text-white shadow-md" : "text-[#8A8A90] hover:text-white"}`}>
-                  {t === "expense" ? "💸 Expense" : "💰 Income"}
+                  <span className="flex items-center gap-1.5">{t === "expense" ? <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="text-white"><path d="M12 5v14M5 12h14"/></svg> Expense</> : <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="text-white"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Income</>}</span>
                 </button>
               ))}
             </div>
@@ -94,7 +95,7 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
                   const active = categoryId === cat.id;
                   return (
                     <button key={cat.id} type="button" onClick={() => setCategoryId(cat.id)} className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-all shrink-0 whitespace-nowrap ${active ? "bg-[#FF6B00] text-white" : "bg-[#141416] text-[#8A8A90] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)]"}`}>
-                      <span className="text-base">{cat.icon}</span>
+                      <CategoryIcon icon={cat.icon} color={cat.color} size={22} />
                       {cat.name}
                     </button>
                   );

@@ -2,8 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { X } from "lucide-react";
-
-const EMOJIS = ["🍔", "🛒", "🚗", "✈️", "🎬", "🏥", "💊", "🎓", "📱", "💻", "👔", "🏠", "💡", "🐶", "💰", "🎁", "🏋️", "☕", "🍕", "🎮"];
+import { getIcon, ICON_NAMES } from "@/lib/budget/iconMap";
 const COLORS = ["#FF6B00", "#14B8A6", "#8B5CF6", "#3B82F6", "#EF4444", "#22C55E", "#F59E0B", "#EC4899"];
 
 interface AddBudgetSheetProps {
@@ -15,11 +14,11 @@ interface AddBudgetSheetProps {
 export function AddBudgetSheet({ open, onClose, onSave }: AddBudgetSheetProps) {
   const [name, setName] = useState("");
   const [monthlyLimit, setMonthlyLimit] = useState("");
-  const [icon, setIcon] = useState("🍔");
+  const [icon, setIcon] = useState("fork-knife");
   const [color, setColor] = useState("#FF6B00");
   const [closing, setClosing] = useState(false);
 
-  useEffect(() => { if (open) { setName(""); setMonthlyLimit(""); setIcon("🍔"); setColor("#FF6B00"); setClosing(false); } }, [open]);
+  useEffect(() => { if (open) { setName(""); setMonthlyLimit(""); setIcon("fork-knife"); setColor("#FF6B00"); setClosing(false); } }, [open]);
 
   const handleClose = useCallback(() => { setClosing(true); setTimeout(onClose, 250); }, [onClose]);
   const handleBackdrop = useCallback((e: React.MouseEvent) => { if (e.target === e.currentTarget) handleClose(); }, [handleClose]);
@@ -61,11 +60,14 @@ export function AddBudgetSheet({ open, onClose, onSave }: AddBudgetSheetProps) {
             <div className="mb-5">
               <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-3 block">Icon</label>
               <div className="flex flex-wrap gap-2">
-                {EMOJIS.map((e) => (
-                  <button key={e} type="button" onClick={() => setIcon(e)} className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all ${icon === e ? "bg-[#FF6B00] scale-110 shadow-md" : "bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)]"}`}>
-                    {e}
-                  </button>
-                ))}
+                {ICON_NAMES.map((name) => {
+                  const I = getIcon(name);
+                  return (
+                    <button key={name} type="button" onClick={() => setIcon(name)} className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${icon === name ? "bg-[#FF6B00] scale-110 shadow-md" : "bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)]"}`}>
+                      {I ? <I size={20} className={icon === name ? "text-white" : "text-white/70"} /> : null}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

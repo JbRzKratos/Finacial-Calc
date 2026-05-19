@@ -13,7 +13,7 @@ interface BudgetEmptyStateProps {
 export function BudgetEmptyState({ title = "Nothing here yet", subtitle = "Start by adding your first budget category", onAction, actionLabel = "Add Category", onClose }: BudgetEmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] flex items-center justify-center mb-4 text-2xl">📭</div>
+      <div className="w-14 h-14 rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] flex items-center justify-center mb-4"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-white/30"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 8h18M7 12h3"/></svg></div>
       <p className="text-[#F5F5F5] font-semibold text-base mb-1">{title}</p>
       <p className="text-[#8A8A90] text-sm mb-6 max-w-xs">{subtitle}</p>
       {onAction && (

@@ -30,7 +30,7 @@ export function InputRow({ fields, className }: InputRowProps) {
               value={f.value}
               onChange={(e) => f.onChange?.(e.target.value)}
               placeholder={f.placeholder}
-              className={cn( "w-full h-12 rounded-[6px] bg-black/20 border-2 border-white/20 text-white text-[16px] font-semibold tabular-nums min-h-[48px] transition-all duration-200", "focus:border-white/90 focus:bg-black/30 focus:outline-none",
+              className={cn( "w-full h-12 rounded-[6px] bg-black/20 border border-white/[0.08] text-white/90 text-[16px] font-semibold tabular-nums min-h-[48px] transition-all duration-200", "focus:border-white/60 focus:bg-black/30 focus:outline-none",
                 f.suffix ? "pr-8 text-right" : "px-3 text-center"
               )}
               style={{ WebkitTapHighlightColor: "transparent" }}

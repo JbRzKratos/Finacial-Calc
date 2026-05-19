@@ -6,10 +6,10 @@ import { getCategories, saveCategories, getTransactions, saveTransactions, addTr
 import { computeBudgetSummary, generateId } from "@/lib/budget/budgetCalc";
 
 const SEED_CATS: BudgetCategory[] = [
-  { id: "cat_food", name: "Food", icon: "🍔", iconBg: "#FF6B00", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01" },
-  { id: "cat_groceries", name: "Groceries", icon: "🛒", iconBg: "#14B8A6", monthlyLimit: 5000, color: "#14B8A6", createdAt: "2025-01-01" },
-  { id: "cat_subs", name: "Subscriptions", icon: "🔄", iconBg: "#8B5CF6", monthlyLimit: 2000, color: "#8B5CF6", createdAt: "2025-01-01" },
-  { id: "cat_transport", name: "Transport", icon: "🚗", iconBg: "#3B82F6", monthlyLimit: 3000, color: "#3B82F6", createdAt: "2025-01-01" },
+  { id: "cat_food", name: "Food", icon: "fork-knife", iconBg: "#FF6B00", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01" },
+  { id: "cat_groceries", name: "Groceries", icon: "shopping-cart", iconBg: "#14B8A6", monthlyLimit: 5000, color: "#14B8A6", createdAt: "2025-01-01" },
+  { id: "cat_subs", name: "Subscriptions", icon: "repeat", iconBg: "#8B5CF6", monthlyLimit: 2000, color: "#8B5CF6", createdAt: "2025-01-01" },
+  { id: "cat_transport", name: "Transport", icon: "car", iconBg: "#3B82F6", monthlyLimit: 3000, color: "#3B82F6", createdAt: "2025-01-01" },
 ];
 
 function seedTxns(month: number, year: number): Transaction[] {

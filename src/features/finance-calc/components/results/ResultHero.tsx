@@ -47,7 +47,7 @@ export function ResultHero({ value, subtitle, variant = "default", className, sh
   if (showEmptyState) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">??</div>
+        <div className="empty-state-icon">📊</div>
         <div className="empty-state-title">Enter your details and hit Calculate</div>
         <div className="empty-state-sub">Your results will appear here</div>
       </div>
@@ -55,14 +55,16 @@ export function ResultHero({ value, subtitle, variant = "default", className, sh
   }
 
   return (
-    <div className={cn("animate-result-pop", className)}>
-      <p className={cn( "text-[clamp(30px,9vw,44px)] sm:text-[clamp(36px,6vw,64px)] font-extrabold leading-none tabular-nums tracking-[-0.03em] sm:tracking-[-0.03em]",
-        variant === "positive" ? "text-brand-positive" :
-        variant === "negative" ? "text-brand-negative" : "text-brand-black "
-      )}>
-        <AnimatedHero value={value} />
-      </p>
-      <p className="text-[13px] text-brand-gray-text mt-1.5 font-normal">{subtitle}</p>
+    <div className={cn("relative rounded-2xl bg-white p-6 border border-[rgba(255,107,0,0.06)] shadow-[0_2px_24px_rgba(255,107,0,0.04)]", className)}>
+      <div className="animate-result-pop">
+        <p className={cn("text-[clamp(30px,9vw,44px)] sm:text-[clamp(36px,6vw,64px)] font-extrabold leading-none tabular-nums tracking-[-0.03em]",
+          variant === "positive" ? "text-brand-positive" :
+          variant === "negative" ? "text-brand-negative" : "text-brand-black"
+        )}>
+          <AnimatedHero value={value} />
+        </p>
+        <p className="text-[13px] text-brand-gray-text mt-2 font-normal">{subtitle}</p>
+      </div>
     </div>
   );
 }

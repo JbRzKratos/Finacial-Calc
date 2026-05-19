@@ -2,6 +2,7 @@
 
 import { memo, useRef, useCallback } from "react";
 import type { CategoryBreakdown } from "@/lib/budget/budgetTypes";
+import { CategoryIcon } from "@/components/budget/CategoryIcon";
 import { formatINR } from "@/lib/budget/budgetCalc";
 
 interface BudgetCardProps {
@@ -43,10 +44,7 @@ export const BudgetCard = memo(function BudgetCard({ breakdown, daysLeft, onClic
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Icon */}
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: `${category.color}20` }}>
-          {category.icon}
-        </div>
+        <CategoryIcon icon={category.icon} color={category.color} />
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">

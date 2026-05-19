@@ -25,9 +25,10 @@ function SplitShellContent({ left, right }: SplitShellProps) {
       >
         <section
           data-input-panel
-          className="bg-[#0A0A0C] overflow-y-auto"
+          className="bg-[#0A0A0C] overflow-y-auto relative"
           style={{ height: "100dvh", position: "sticky", top: 0 }}
         >
+          <div className="absolute inset-0 bg-noise pointer-events-none opacity-[0.025]" />
           <header className="calc-header">
             <button type="button" onClick={() => navigate("/")} className="calc-back-btn" aria-label="Back to home">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -45,10 +46,11 @@ function SplitShellContent({ left, right }: SplitShellProps) {
         </section>
         <section
           id="results"
-          className="bg-brand-white overflow-y-auto scroll-fade-bottom max-md:hidden"
+          className="bg-[#FAFAF9] overflow-y-auto scroll-fade-bottom max-md:hidden relative"
           style={{ height: "100dvh" }}
         >
-          <div className="max-w-[560px] mx-auto px-5 py-6 md:px-9 md:py-8 animate-page-enter">
+          <div className="absolute inset-0 bg-noise pointer-events-none opacity-[0.015]" />
+          <div className="max-w-[560px] mx-auto px-5 py-6 md:px-9 md:py-8 animate-page-enter relative z-[1]">
             {right}
           </div>
         </section>
@@ -56,7 +58,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
 
       {showMobileResults && (
         <div
-          className="md:hidden fixed inset-0 z-[60] bg-brand-white overflow-hidden animate-slide-up"
+          className="md:hidden fixed inset-0 z-[60] bg-[#FAFAF9] overflow-y-auto animate-slide-up"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
           <div className="px-5 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))]">

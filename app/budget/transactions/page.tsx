@@ -6,6 +6,7 @@ import { useBudget } from "@/hooks/useBudget";
 import { BudgetBottomNav } from "@/components/budget/BudgetBottomNav";
 import { AddTransactionSheet } from "@/components/budget/AddTransactionSheet";
 import { BudgetEmptyState } from "@/components/budget/BudgetEmptyState";
+import { CategoryIcon } from "@/components/budget/CategoryIcon";
 import { formatINRShort } from "@/lib/budget/budgetCalc";
 import { ArrowLeft } from "lucide-react";
 
@@ -63,8 +64,8 @@ function TransactionsContent() {
             return (
               <div key={txn.id} className={isDeleting ? "animate-slide-out" : ""}>
                 <div className={`rounded-2xl border ${confirmId === txn.id ? "border-[#EF4444]/30 bg-[rgba(239,68,68,0.06)]" : "glass-card"} p-3.5 flex items-center gap-3 relative`}>
-                  {c && <div className="w-9 h-9 rounded-xl flex items-center justify-center text-base shrink-0" style={{ background: `${c.color}20` }}>{c.icon}</div>}
-                  {!c && <div className="w-9 h-9 rounded-xl bg-[#1C1C1F] flex items-center justify-center text-base shrink-0">💳</div>}
+                  {c && <CategoryIcon icon={c.icon} color={c.color} size={36} />}
+                  {!c && <div className="w-9 h-9 rounded-xl bg-[#1C1C1F] flex items-center justify-center shrink-0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-white/50"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/></svg></div>}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[#F5F5F5]">{txn.note || c?.name || txn.categoryId}</p>
                     <div className="flex items-center gap-1.5 text-xs text-[#8A8A90] mt-0.5">

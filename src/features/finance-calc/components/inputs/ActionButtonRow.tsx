@@ -31,7 +31,7 @@ export function ActionButtonRow({ onClear, calculateLabel = "CALCULATE" }: Actio
       <button
         type="button"
         onClick={onClear}
-        className="btn-clear ripple-btn h-12 px-6 border-2 border-white/60 bg-transparent text-white text-[13px] font-bold tracking-[0.08em] uppercase cursor-pointer whitespace-nowrap min-w-[90px] min-h-[48px]"
+        className="btn-clear ripple-btn h-12 px-6 border border-white/[0.12] bg-white/[0.04] text-white/70 text-[13px] font-bold tracking-[0.08em] uppercase cursor-pointer whitespace-nowrap min-w-[90px] min-h-[48px]"
       >
         CLEAR
       </button>

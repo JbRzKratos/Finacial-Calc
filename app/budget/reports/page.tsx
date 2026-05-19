@@ -7,6 +7,7 @@ import { BudgetBottomNav } from "@/components/budget/BudgetBottomNav";
 import { AddTransactionSheet } from "@/components/budget/AddTransactionSheet";
 import { SpendingChart } from "@/components/budget/SpendingChart";
 import { BudgetEmptyState } from "@/components/budget/BudgetEmptyState";
+import { CategoryIcon } from "@/components/budget/CategoryIcon";
 import { formatINR, formatINRShort } from "@/lib/budget/budgetCalc";
 import { ArrowLeft } from "lucide-react";
 import { MonthSelector } from "@/components/budget/MonthSelector";
@@ -28,7 +29,7 @@ export default function ReportsPage() {
     transactions.filter((t) => t.type === "expense").forEach((t) => byDay.set(t.date, (byDay.get(t.date) || 0) + t.amount));
     return Array.from(byDay.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([date, amount]) => {
       const cat = categories.find((c) => c.id === transactions.find((t) => t.date === date && t.type === "expense")?.categoryId);
-      return { date, amount, icon: cat?.icon || "💳" };
+      return { date, amount, icon: cat?.icon || "credit-card" };
     });
   }, [transactions, categories]);
 
@@ -71,7 +72,7 @@ export default function ReportsPage() {
                 <div key={bd.category.id} className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm" style={{ background: `${bd.category.color}20` }}>{bd.category.icon}</div>
+                      <CategoryIcon icon={bd.category.icon} color={bd.category.color} size={32} />
                       <span className="text-sm font-medium text-[#F5F5F5]">{bd.category.name}</span>
                     </div>
                     <div className="text-right">
@@ -97,11 +98,11 @@ export default function ReportsPage() {
               {topDays.map((day, i) => (
                 <div key={day.date} className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className={`text-lg ${i === 0 ? "" : i === 1 ? "opacity-70" : "opacity-50"}`}>
-                      {i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}
+                    <span className={`flex items-center justify-center w-7 h-7 rounded-full text-[10px] font-bold ${i === 0 ? "bg-[#FF6B00] text-white" : i === 1 ? "bg-white/10 text-white/60" : "bg-white/[0.06] text-white/40"}`}>
+                      #{i + 1}
                     </span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xl">{day.icon}</span>
+                      <CategoryIcon icon={day.icon} color="#3B82F6" size={24} />
                       <div>
                         <p className="text-sm font-medium text-[#F5F5F5]">{new Date(day.date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</p>
                         <p className="text-xs text-[#8A8A90]">#{i + 1} highest</p>
