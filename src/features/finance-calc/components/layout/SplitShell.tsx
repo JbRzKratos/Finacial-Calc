@@ -1,9 +1,10 @@
 ﻿"use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { BottomNav } from "./BottomNav";
+import { AppBottomNav } from "@/components/layout/AppBottomNav";
+import { MoreSheet } from "@/components/layout/MoreSheet";
 import { MobileResultsProvider, useMobileResults } from "@/features/finance-calc/contexts/MobileResultsContext";
 
 interface SplitShellProps {
@@ -15,6 +16,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
   const pathname = useLocation().pathname;
   const navigate = useNavigate();
   const { showMobileResults, setShowMobileResults } = useMobileResults();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   return (
     <>
@@ -50,7 +52,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
           style={{ height: "100dvh" }}
         >
           <div className="absolute inset-0 bg-noise pointer-events-none opacity-[0.015]" />
-          <div className="max-w-[560px] mx-auto px-5 py-6 md:px-9 md:py-8 animate-page-enter relative z-[1]">
+          <div className="max-w-[560px] mx-auto px-5 pt-6 md:px-9 md:pt-8 pb-24 animate-page-enter relative z-[1]">
             {right}
           </div>
         </section>
@@ -61,7 +63,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
           className="md:hidden fixed inset-0 z-[60] bg-[#FAFAF9] overflow-y-auto animate-slide-up"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
-          <div className="px-5 pt-4 pb-[calc(24px+env(safe-area-inset-bottom))]">
+          <div className="px-5 pt-4" style={{ paddingBottom: "calc(96px + env(safe-area-inset-bottom))" }}>
             <button
               type="button"
               onClick={() => setShowMobileResults(false)}
@@ -74,6 +76,9 @@ function SplitShellContent({ left, right }: SplitShellProps) {
           </div>
         </div>
       )}
+
+      <AppBottomNav onMoreOpen={() => setMoreOpen(true)} />
+      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
     </>
   );
 }
@@ -82,7 +87,6 @@ export function SplitShell({ left, right }: SplitShellProps) {
   return (
     <MobileResultsProvider>
       <SplitShellContent left={left} right={right} />
-      <BottomNav />
     </MobileResultsProvider>
   );
 }

@@ -3,13 +3,12 @@
 import { useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBudget } from "@/hooks/useBudget";
-import { BudgetBottomNav } from "@/components/budget/BudgetBottomNav";
 import { AddTransactionSheet } from "@/components/budget/AddTransactionSheet";
 import { SpendingChart } from "@/components/budget/SpendingChart";
 import { BudgetEmptyState } from "@/components/budget/BudgetEmptyState";
 import { CategoryIcon } from "@/components/budget/CategoryIcon";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { formatINR, formatINRShort } from "@/lib/budget/budgetCalc";
-import { ArrowLeft } from "lucide-react";
 import { MonthSelector } from "@/components/budget/MonthSelector";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -36,18 +35,9 @@ export default function ReportsPage() {
   const sortedCats = useMemo(() => summary.categoryBreakdown.sort((a, b) => b.spent - a.spent), [summary.categoryBreakdown]);
 
   return (
-    <div className="min-h-dvh bg-[#0A0A0C] bg-noise page-scroll-container">
-      <div className="glass-header sticky top-0 px-5 pt-4 pb-3 flex items-center gap-2">
-        <button type="button" onClick={() => navigate("/")} className="touch-target w-9 h-9 rounded-xl bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:bg-[#1C1C1F] transition-all" aria-label="Home">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/70">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-          </svg>
-        </button>
-        <button type="button" onClick={() => navigate("/budget")} className="touch-target w-9 h-9 rounded-xl bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:bg-[#1C1C1F] transition-all" aria-label="Back">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/70">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-        </button>
+    <PageLayout>
+      <div className="page-scroll-container">
+        <div className="glass-header sticky top-0 px-5 pt-4 pb-3 flex items-center gap-2">
         <h1 className="flex-1 text-[20px] font-bold text-[#F5F5F5] tracking-[-0.02em]">Analytics</h1>
         <button type="button" onClick={() => setShowMonth(true)} className="flex items-center gap-1 text-sm text-[#8A8A90] font-medium hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-[#141416] border border-[rgba(255,255,255,0.06)]">
           <span className="hidden sm:inline text-xs">{MONTHS[month]} {year}</span>
@@ -138,10 +128,10 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
+      </div>
 
       <AddTransactionSheet categories={categories} open={showAdd} onClose={() => setShowAdd(false)} onSave={handleAddTxn} />
       {showMonth && <MonthSelector month={month} year={year} onChange={changeMonth} onClose={() => setShowMonth(false)} />}
-      <BudgetBottomNav onFabClick={() => setShowAdd(true)} />
-    </div>
+    </PageLayout>
   );
 }

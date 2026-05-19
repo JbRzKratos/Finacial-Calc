@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { PageLayout } from "@/components/layout/PageLayout";
 
 export default function Home() {
   return (
-    <div className="min-h-dvh bg-[#0A0A0C] flex flex-col items-center justify-center p-5 relative overflow-hidden">
+    <PageLayout>
+    <div className="flex flex-col items-center justify-center p-5 relative overflow-hidden min-h-dvh" style={{ paddingBottom: "calc(96px + env(safe-area-inset-bottom))" }}>
       {/* Wordmark */}
       <div className="w-full max-w-lg mb-10 md:mb-14">
         <Link to="/" className="inline-flex items-center gap-2.5 no-underline group">
@@ -111,5 +113,6 @@ export default function Home() {
         </Link>
       </div>
     </div>
+    </PageLayout>
   );
 }

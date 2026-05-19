@@ -3,12 +3,11 @@
 import { Suspense, useState, useCallback, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useBudget } from "@/hooks/useBudget";
-import { BudgetBottomNav } from "@/components/budget/BudgetBottomNav";
 import { AddTransactionSheet } from "@/components/budget/AddTransactionSheet";
 import { BudgetEmptyState } from "@/components/budget/BudgetEmptyState";
 import { CategoryIcon } from "@/components/budget/CategoryIcon";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { formatINRShort } from "@/lib/budget/budgetCalc";
-import { ArrowLeft } from "lucide-react";
 
 function TransactionsContent() {
   const navigate = useNavigate();
@@ -34,22 +33,15 @@ function TransactionsContent() {
 
   return (
     <>
-      <div className="glass-header sticky top-0 px-5 pt-4 pb-3 flex items-center gap-2">
-        <button type="button" onClick={() => navigate("/")} className="touch-target w-9 h-9 rounded-xl bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:bg-[#1C1C1F] transition-all" aria-label="Home">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/70">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
+      <div className="category-header">
+        <button type="button" onClick={() => navigate("/budget")} className="category-back-btn" aria-label="Back to overview">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
           </svg>
+          <span>Back</span>
         </button>
-        <button type="button" onClick={() => navigate(-1)} className="touch-target w-9 h-9 rounded-xl bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:bg-[#1C1C1F] transition-all" aria-label="Back">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/70">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-        </button>
-        <div className="flex-1">
-          <h1 className="text-[20px] font-bold text-[#F5F5F5] tracking-[-0.02em]">{cat?.name || "All Transactions"}</h1>
-          {cat && <div className="flex gap-3 text-xs text-[#8A8A90] mt-0.5 flex-wrap"><span className="text-[#22C55E]">+{formatINRShort(totalInc)}</span><span className="text-[#EF4444]">-{formatINRShort(totalExp)}</span></div>}
-        </div>
-        <button type="button" onClick={() => setShowAdd(true)} className="bg-[#FF6B00] text-white text-sm font-semibold px-4 py-2 rounded-xl shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 active:scale-[0.96] transition-all">
+        <span className="category-header-title">{cat?.name || "All Transactions"}</span>
+        <button type="button" onClick={() => setShowAdd(true)} className="category-add-btn">
           + Add
         </button>
       </div>
@@ -97,17 +89,18 @@ function TransactionsContent() {
       </div>
 
       <AddTransactionSheet categories={categories} open={showAdd} defaultType="expense" onClose={() => setShowAdd(false)} onSave={handleAddTxn} />
-      <BudgetBottomNav onFabClick={() => setShowAdd(true)} />
     </>
   );
 }
 
 export default function TransactionsPage() {
   return (
-    <div className="min-h-dvh bg-[#0A0A0C] bg-noise page-scroll-container">
-      <Suspense fallback={<div className="px-5 pt-20 text-center text-[#8A8A90]">Loading...</div>}>
-        <TransactionsContent />
-      </Suspense>
-    </div>
+    <PageLayout>
+      <div className="page-scroll-container">
+        <Suspense fallback={<div className="px-5 pt-20 text-center text-[#8A8A90]">Loading...</div>}>
+          <TransactionsContent />
+        </Suspense>
+      </div>
+    </PageLayout>
   );
 }
