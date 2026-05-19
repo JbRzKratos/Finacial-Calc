@@ -54,7 +54,7 @@ export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLim
           {fmt(totalRemaining)}
         </text>
         <text x="100" y="116" textAnchor="middle" fill="#8A8A90" fontFamily="DM Sans, sans-serif" fontSize="11">
-          left this month
+          left this period
         </text>
       </svg>
       <div className="flex gap-3 mt-3 flex-wrap justify-center">

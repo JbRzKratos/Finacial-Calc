@@ -12,31 +12,31 @@ export default defineConfig({
     },
   },
   build: {
-    target: 'es2020',
+    target: 'es2015',
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.warn']
-      }
+        pure_funcs: ['console.log', 'console.warn', 'console.info'],
+      },
     },
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('chart.js')) return 'chartjs';
+          if (id.includes('node_modules/react')) return 'vendor';
         },
-        assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js'
-      }
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
     },
-    cssCodeSplit: true,
-    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 600,
     sourcemap: false,
-    reportCompressedSize: true
+    cssCodeSplit: true,
   },
   optimizeDeps: {
-    include: ['chart.js']
-  }
+    include: ['react', 'react-dom', 'chart.js'],
+  },
 })

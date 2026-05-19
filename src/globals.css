@@ -1640,3 +1640,157 @@ input.custom-slider {
 .custom-scrollbar::-webkit-scrollbar { width: 3px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+/* ─── Mobile Performance Optimizations ─── */
+@media (max-width: 768px) {
+  /* Reduce blur intensity on mobile for better performance */
+  .glass-card {
+    --gc-blur: blur(8px);
+  }
+  .app-header {
+    --h-blur: blur(12px);
+  }
+  .app-bottom-nav-inner {
+    --nb-blur: blur(16px);
+  }
+  /* Disable hover effects on touch devices */
+  .glass-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .glass-card:hover::after {
+    opacity: 0;
+  }
+  .glass-card:active {
+    transform: scale(0.99);
+  }
+  /* Reduce animation complexity */
+  .card-stagger-1,
+  .card-stagger-2,
+  .card-stagger-3,
+  .card-stagger-4 {
+    animation-duration: 0.3s;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Hardware acceleration for smooth scrolling */
+.page-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+}
+
+/* Optimize glass cards for GPU rendering */
+.glass-card,
+.app-header,
+.app-bottom-nav-inner {
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Make date input calendar icon visible on dark backgrounds */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════
+   PERFORMANCE OPTIMIZATIONS
+   ═══════════════════════════════════════════ */
+
+/* GPU-accelerated scroll on all scroll containers */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Contain layout for list items — prevents full page reflow */
+.category-card,
+.transaction-item,
+.slider-wrapper {
+  contain: layout style;
+}
+
+/* Use content-visibility for off-screen content */
+.transaction-list {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
+/* Scrollbar hiding — cross-browser */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Desktop layout — center the app */
+.app-root {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  position: relative;
+  background: #0A0A0C;
+}
+
+@media (min-width: 768px) {
+  body {
+    background: #050507;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .app-root {
+    max-width: 430px;
+    min-height: 100vh;
+    box-shadow: 0 0 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06);
+  }
+
+  .page-scroll-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  .page-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .page-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(255,107,0,0.3);
+    border-radius: 2px;
+  }
+}
+
+/* Reduced motion — prevent expensive animations */
+@media (prefers-reduced-motion: reduce) {
+  .card-stagger-1,
+  .card-stagger-2,
+  .card-stagger-3,
+  .card-stagger-4 {
+    animation: none;
+    opacity: 1;
+  }
+  .home-card:hover .home-card-arrow svg {
+    transform: none;
+  }
+  .home-card:hover {
+    transform: none;
+  }
+}
+

@@ -8,20 +8,22 @@ import { SpendingChart } from "@/components/budget/SpendingChart";
 import { BudgetEmptyState } from "@/components/budget/BudgetEmptyState";
 import { CategoryIcon } from "@/components/budget/CategoryIcon";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { formatINR, formatINRShort } from "@/lib/budget/budgetCalc";
-import { MonthSelector } from "@/components/budget/MonthSelector";
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+import { formatINR, formatINRShort, formatDateRange } from "@/lib/budget/budgetCalc";
+import { DateRangePicker } from "@/components/budget/DateRangePicker";
 
 export default function ReportsPage() {
   const navigate = useNavigate();
-  const { month, year, categories, transactions, summary, addTransaction, changeMonth } = useBudget();
+  const { dateRange, categories, transactions, summary, addTransaction, changeDateRange } = useBudget();
   const [showAdd, setShowAdd] = useState(false);
-  const [showMonth, setShowMonth] = useState(false);
+  const [showRange, setShowRange] = useState(false);
 
   const handleAddTxn = useCallback((d: Parameters<typeof addTransaction>[0]) => addTransaction(d), [addTransaction]);
 
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInRange = useMemo(() => {
+    const s = new Date(dateRange.startDate + "T00:00:00");
+    const e = new Date(dateRange.endDate + "T00:00:00");
+    return Math.ceil((e.getTime() - s.getTime()) / 86400000) + 1;
+  }, [dateRange]);
 
   const topDays = useMemo(() => {
     const byDay = new Map<string, number>();
@@ -41,9 +43,9 @@ export default function ReportsPage() {
           <div className="app-header-left" />
           <span className="app-header-title">Analytics</span>
           <div className="app-header-right">
-            <button type="button" onClick={() => setShowMonth(true)} className="app-header-month">
-              <span className="hidden sm:inline">{MONTHS[month]} {year}</span>
-              <span className="sm:hidden">{MONTHS[month].slice(0,3)}"{String(year).slice(2)}</span>
+            <button type="button" onClick={() => setShowRange(true)} className="app-header-month">
+              <span className="hidden sm:inline">{formatDateRange(dateRange)}</span>
+              <span className="sm:hidden">{formatDateRange(dateRange)}</span>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 9l6 6 6-6"/></svg>
             </button>
           </div>
@@ -52,7 +54,7 @@ export default function ReportsPage() {
       <div className="page-container pt-4 space-y-6">
         <div>
           <p className="text-xs font-semibold text-[#8A8A90] uppercase tracking-wider mb-3">Daily Spending</p>
-          <SpendingChart transactions={transactions} daysInMonth={daysInMonth} />
+          <SpendingChart transactions={transactions} daysInRange={daysInRange} dateRange={dateRange} />
         </div>
 
         <div>
@@ -107,7 +109,7 @@ export default function ReportsPage() {
         </div>
 
         <div className="pb-4">
-          <p className="text-xs font-semibold text-[#8A8A90] uppercase tracking-wider mb-3">Monthly Summary</p>
+          <p className="text-xs font-semibold text-[#8A8A90] uppercase tracking-wider mb-3">Period Summary</p>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4">
               <p className="text-[10px] text-[#8A8A90] uppercase tracking-wider mb-1">Total Spent</p>
@@ -123,7 +125,7 @@ export default function ReportsPage() {
             </div>
             <div className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4">
               <p className="text-[10px] text-[#8A8A90] uppercase tracking-wider mb-1">Days Left</p>
-              <p className="text-xl font-extrabold font-mono text-[#F5F5F5]">{summary.daysLeftInMonth}d</p>
+              <p className="text-xl font-extrabold font-mono text-[#F5F5F5]">{summary.daysLeft}d</p>
             </div>
           </div>
         </div>
@@ -131,7 +133,7 @@ export default function ReportsPage() {
       </div>
 
       <AddTransactionSheet categories={categories} open={showAdd} onClose={() => setShowAdd(false)} onSave={handleAddTxn} />
-      {showMonth && <MonthSelector month={month} year={year} onChange={changeMonth} onClose={() => setShowMonth(false)} />}
+      {showRange && <DateRangePicker range={dateRange} onChange={changeDateRange} onClose={() => setShowRange(false)} />}
     </PageLayout>
   );
 }

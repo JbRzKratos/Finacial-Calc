@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { BudgetCategory, Transaction, BudgetSummary } from "@/lib/budget/budgetTypes";
-import { getCategories, saveCategories, getTransactions, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions, getTotalBudgetOverride, setTotalBudgetOverride, updateCategoryLimit as storeUpdateLimit } from "@/lib/budget/budgetStore";
-import { computeBudgetSummary, generateId } from "@/lib/budget/budgetCalc";
+import type { BudgetCategory, Transaction, BudgetSummary, DateRange } from "@/lib/budget/budgetTypes";
+import { getCategories, saveCategories, getTransactionsForRange, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions as storeDeleteCatTxns, getTotalBudgetOverride, setTotalBudgetOverride, updateCategoryLimit as storeUpdateLimit } from "@/lib/budget/budgetStore";
+import { computeBudgetSummary, generateId, getMonthDateRange } from "@/lib/budget/budgetCalc";
 
 const SEED_CATS: BudgetCategory[] = [
   { id: "cat_food", name: "Food", icon: "fork-knife", iconBg: "#FF6B00", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01" },
@@ -24,9 +24,10 @@ function seedTxns(month: number, year: number): Transaction[] {
   ];
 }
 
-const now = new Date();
-const CM = now.getMonth();
-const CY = now.getFullYear();
+function dateToMonthKey(date: string): { month: number; year: number } {
+  const parts = date.split("-");
+  return { year: parseInt(parts[0]), month: parseInt(parts[1]) - 1 };
+}
 
 /** Scale all categories proportionally to hit a target total budget */
 function scaleCategoriesToBudget(cats: BudgetCategory[], targetTotal: number): BudgetCategory[] {
@@ -36,40 +37,60 @@ function scaleCategoriesToBudget(cats: BudgetCategory[], targetTotal: number): B
   return cats.map((c) => ({ ...c, monthlyLimit: Math.round(c.monthlyLimit * ratio) }));
 }
 
+const now = new Date();
+const CM = now.getMonth();
+const CY = now.getFullYear();
+const DEFAULT_RANGE = getMonthDateRange(CM, CY);
+
 export function useBudget() {
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [month, setMonth] = useState(CM);
-  const [year, setYear] = useState(CY);
+  const [dateRange, setDateRange] = useState<DateRange>(DEFAULT_RANGE);
   const [loaded, setLoaded] = useState(false);
   const [totalBudgetOverride, setTotalBudgetOverrideState] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     let cats = getCategories();
     if (cats.length === 0) { cats = SEED_CATS; saveCategories(cats); }
-    let txns = getTransactions(month, year);
-    if (txns.length === 0 && month === CM && year === CY) { txns = seedTxns(month, year); saveTransactions(month, year, txns); }
+    // Load transactions across all months that overlap the range
+    const from = dateToMonthKey(dateRange.startDate);
+    const to = dateToMonthKey(dateRange.endDate);
+    let txns = getTransactionsForRange(from.month, from.year, to.month, to.year);
+    // Seed current month if empty
+    if (txns.length === 0 && dateRange.startDate === DEFAULT_RANGE.startDate && dateRange.endDate === DEFAULT_RANGE.endDate) {
+      txns = seedTxns(CM, CY);
+      const mk = dateToMonthKey(txns[0].date);
+      saveTransactions(mk.month, mk.year, txns);
+    }
     setCategories(cats);
     setTransactions(txns);
     setTotalBudgetOverrideState(getTotalBudgetOverride());
     setLoaded(true);
-  }, [month, year]);
+  }, [dateRange]);
 
   const addTransaction = useCallback(
     (t: Omit<Transaction, "id">) => {
       const txn: Transaction = { ...t, id: generateId() };
-      storeAddTxn(month, year, txn);
+      const mk = dateToMonthKey(t.date);
+      storeAddTxn(mk.month, mk.year, txn);
       setTransactions((prev) => [...prev, txn]);
     },
-    [month, year]
+    []
   );
 
   const deleteTransaction = useCallback(
     (txnId: string) => {
-      storeDeleteTxn(month, year, txnId);
-      setTransactions((prev) => prev.filter((t) => t.id !== txnId));
+      // Find the transaction to get its date
+      setTransactions((prev) => {
+        const txn = prev.find((t) => t.id === txnId);
+        if (txn) {
+          const mk = dateToMonthKey(txn.date);
+          storeDeleteTxn(mk.month, mk.year, txnId);
+        }
+        return prev.filter((t) => t.id !== txnId);
+      });
     },
-    [month, year]
+    []
   );
 
   const addCategory = useCallback((cat: Omit<BudgetCategory, "id" | "createdAt">) => {
@@ -86,13 +107,24 @@ export function useBudget() {
       const cats = getCategories().filter((c) => c.id !== catId);
       saveCategories(cats);
       setCategories(cats);
-      deleteCategoryTransactions(month, year, catId);
+      // Delete from all months in the current range
+      const from = dateToMonthKey(dateRange.startDate);
+      const to = dateToMonthKey(dateRange.endDate);
+      let m = from.month, y = from.year;
+      while (true) {
+        storeDeleteCatTxns(m, y, catId);
+        if (m === to.month && y === to.year) break;
+        m++;
+        if (m > 11) { m = 0; y++; }
+      }
       setTransactions((prev) => prev.filter((t) => t.categoryId !== catId));
     },
-    [month, year]
+    [dateRange]
   );
 
-  const changeMonth = useCallback((m: number, y: number) => { setMonth(m); setYear(y); }, []);
+  const changeDateRange = useCallback((range: DateRange) => {
+    setDateRange(range);
+  }, []);
 
   const updateTotalBudget = useCallback((value: number | undefined) => {
     setTotalBudgetOverride(value);
@@ -108,8 +140,8 @@ export function useBudget() {
     const cats = totalBudgetOverride && totalBudgetOverride > 0
       ? scaleCategoriesToBudget(categories, totalBudgetOverride)
       : categories;
-    return computeBudgetSummary(cats, transactions);
-  }, [categories, transactions, totalBudgetOverride]);
+    return computeBudgetSummary(cats, transactions, dateRange);
+  }, [categories, transactions, totalBudgetOverride, dateRange]);
 
-  return { loaded, month, year, categories, transactions, summary, totalBudgetOverride, addTransaction, deleteTransaction, addCategory, deleteCategory, changeMonth, updateTotalBudget, updateCategoryLimit };
+  return { loaded, dateRange, categories, transactions, summary, totalBudgetOverride, addTransaction, deleteTransaction, addCategory, deleteCategory, changeDateRange, updateTotalBudget, updateCategoryLimit };
 }

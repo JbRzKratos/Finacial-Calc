@@ -25,11 +25,17 @@ export interface CategoryBreakdown {
   status: "safe" | "warning" | "over";
 }
 
+export interface DateRange {
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+}
+
 export interface BudgetSummary {
   totalLimit: number;
   totalSpent: number;
   totalRemaining: number;
   percentSpent: number;
-  daysLeftInMonth: number;
+  daysLeft: number;
+  dateRange: DateRange;
   categoryBreakdown: CategoryBreakdown[];
 }

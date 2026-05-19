@@ -1,29 +1,38 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Transaction } from "@/lib/budget/budgetTypes";
+import type { Transaction, DateRange } from "@/lib/budget/budgetTypes";
 
 interface SpendingChartProps {
   transactions: Transaction[];
-  daysInMonth: number;
+  daysInRange: number;
+  dateRange?: DateRange;
 }
 
-export function SpendingChart({ transactions, daysInMonth }: SpendingChartProps) {
+export function SpendingChart({ transactions, daysInRange, dateRange }: SpendingChartProps) {
   const dayData = useMemo(() => {
-    const days = Math.min(daysInMonth, 31);
+    const days = Math.min(daysInRange, 60);
+    const startDate = dateRange ? new Date(dateRange.startDate + "T00:00:00") : new Date();
     const result: { day: number; amount: number }[] = [];
-    for (let d = 1; d <= days; d++) {
-      const ds = String(d).padStart(2, "0");
-      const today = new Date();
-      const prefix = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${ds}`;
-      const total = transactions.filter((t) => t.date === prefix && t.type === "expense").reduce((s, t) => s + t.amount, 0);
-      result.push({ day: d, amount: total });
+    for (let d = 0; d < days; d++) {
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + d);
+      const ds = date.toISOString().slice(0, 10);
+      const total = transactions.filter((t) => t.date === ds && t.type === "expense").reduce((s, t) => s + t.amount, 0);
+      result.push({ day: d + 1, amount: total });
     }
     return result;
-  }, [transactions, daysInMonth]);
+  }, [transactions, daysInRange, dateRange]);
 
   const maxAmount = Math.max(...dayData.map((d) => d.amount), 1);
-  const today = new Date().getDate();
+  const today = new Date().toISOString().slice(0, 10);
+  const todayIndex = dateRange
+    ? dayData.findIndex((_, i) => {
+        const d = new Date(dateRange.startDate + "T00:00:00");
+        d.setDate(d.getDate() + i);
+        return d.toISOString().slice(0, 10) === today;
+      })
+    : -1;
 
   const w = 320, h = 120, pad = 0;
   const chartW = w - pad * 2;
@@ -49,10 +58,10 @@ export function SpendingChart({ transactions, daysInMonth }: SpendingChartProps)
         {/* Line */}
         <polyline points={points.join(" ")} fill="none" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         {/* Today dot */}
-        {dayData[today - 1] && (
+        {todayIndex >= 0 && todayIndex < dayData.length && (
           <circle
-            cx={pad + ((today - 1) / Math.max(dayData.length - 1, 1)) * chartW}
-            cy={pad + chartH - (dayData[today - 1].amount / maxAmount) * chartH}
+            cx={pad + (todayIndex / Math.max(dayData.length - 1, 1)) * chartW}
+            cy={pad + chartH - (dayData[todayIndex].amount / maxAmount) * chartH}
             r="3"
             fill="#FF6B00"
             stroke="#0A0A0C"

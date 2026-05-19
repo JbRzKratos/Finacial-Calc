@@ -5,23 +5,45 @@ const STORAGE_KEY = "fincalc_budget_data";
 interface StoredData {
   categories: BudgetCategory[];
   transactions: Record<string, Transaction[]>; // key: "YYYY-MM"
-  totalBudgetOverride?: number; // optional total budget cap, categories scale proportionally
+  totalBudgetOverride?: number;
 }
 
-function getFromStorage(): StoredData {
-  if (typeof window === "undefined") return { categories: [], transactions: {} };
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as StoredData;
-  } catch {}
+function getDefaultData(): StoredData {
   return { categories: [], transactions: {} };
 }
 
-function setToStorage(data: StoredData): void {
-  if (typeof window === "undefined") return;
+// In-memory cache — read once at init
+let appData: StoredData | null = null;
+
+function ensureLoaded(): StoredData {
+  if (appData) return appData;
+  if (typeof window === "undefined") {
+    appData = getDefaultData();
+    return appData;
+  }
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch { console.warn("Storage failed"); }
+    const raw = localStorage.getItem(STORAGE_KEY);
+    appData = raw ? (JSON.parse(raw) as StoredData) : getDefaultData();
+  } catch {
+    appData = getDefaultData();
+  }
+  return appData;
+}
+
+// Debounced write to localStorage
+let writeTimer: ReturnType<typeof setTimeout> | null = null;
+function scheduleWrite(): void {
+  if (writeTimer) clearTimeout(writeTimer);
+  writeTimer = setTimeout(() => {
+    if (appData && typeof window !== "undefined") {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch {
+        // Storage quota exceeded — fail silently
+      }
+    }
+    writeTimer = null;
+  }, 300);
 }
 
 function monthKey(month: number, year: number): string {
@@ -29,66 +51,80 @@ function monthKey(month: number, year: number): string {
 }
 
 export function getCategories(): BudgetCategory[] {
-  return getFromStorage().categories;
+  return ensureLoaded().categories;
 }
 
 export function saveCategories(cats: BudgetCategory[]): void {
-  const data = getFromStorage();
+  const data = ensureLoaded();
   data.categories = cats;
-  setToStorage(data);
+  scheduleWrite();
 }
 
 export function getTransactions(month: number, year: number): Transaction[] {
-  return getFromStorage().transactions[monthKey(month, year)] || [];
+  return ensureLoaded().transactions[monthKey(month, year)] || [];
+}
+
+export function getTransactionsForRange(fromMonth: number, fromYear: number, toMonth: number, toYear: number): Transaction[] {
+  const all: Transaction[] = [];
+  const data = ensureLoaded();
+  let m = fromMonth, y = fromYear;
+  while (true) {
+    const key = monthKey(m, y);
+    if (data.transactions[key]) all.push(...data.transactions[key]);
+    if (m === toMonth && y === toYear) break;
+    m++;
+    if (m > 11) { m = 0; y++; }
+  }
+  return all;
 }
 
 export function saveTransactions(month: number, year: number, txns: Transaction[]): void {
-  const data = getFromStorage();
+  const data = ensureLoaded();
   data.transactions[monthKey(month, year)] = txns;
-  setToStorage(data);
+  scheduleWrite();
 }
 
 export function addTransaction(month: number, year: number, txn: Transaction): void {
   const key = monthKey(month, year);
-  const data = getFromStorage();
+  const data = ensureLoaded();
   if (!data.transactions[key]) data.transactions[key] = [];
   data.transactions[key].push(txn);
-  setToStorage(data);
+  scheduleWrite();
 }
 
 export function deleteTransaction(month: number, year: number, txnId: string): void {
   const key = monthKey(month, year);
-  const data = getFromStorage();
+  const data = ensureLoaded();
   if (data.transactions[key]) {
     data.transactions[key] = data.transactions[key].filter((t) => t.id !== txnId);
-    setToStorage(data);
+    scheduleWrite();
   }
 }
 
 export function deleteCategoryTransactions(month: number, year: number, categoryId: string): void {
   const key = monthKey(month, year);
-  const data = getFromStorage();
+  const data = ensureLoaded();
   if (data.transactions[key]) {
     data.transactions[key] = data.transactions[key].filter((t) => t.categoryId !== categoryId);
-    setToStorage(data);
+    scheduleWrite();
   }
 }
 
 export function getTotalBudgetOverride(): number | undefined {
-  return getFromStorage().totalBudgetOverride;
+  return ensureLoaded().totalBudgetOverride;
 }
 
 export function setTotalBudgetOverride(value: number | undefined): void {
-  const data = getFromStorage();
+  const data = ensureLoaded();
   data.totalBudgetOverride = value;
-  setToStorage(data);
+  scheduleWrite();
 }
 
 export function updateCategoryLimit(categoryId: string, newLimit: number): void {
-  const data = getFromStorage();
+  const data = ensureLoaded();
   const idx = data.categories.findIndex((c) => c.id === categoryId);
   if (idx !== -1) {
     data.categories[idx] = { ...data.categories[idx], monthlyLimit: newLimit };
-    setToStorage(data);
+    scheduleWrite();
   }
 }
