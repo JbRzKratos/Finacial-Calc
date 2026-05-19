@@ -3,18 +3,15 @@ import { Link } from "react-router-dom";
 export default function Home() {
   return (
     <div className="min-h-dvh bg-[#0A0A0C] flex flex-col items-center justify-center p-5 relative overflow-hidden">
-      {/* Subtle background glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-[#FF6B00] opacity-[0.03] blur-[100px] pointer-events-none" />
-
       {/* Wordmark */}
       <div className="w-full max-w-lg mb-10 md:mb-14">
         <Link to="/" className="inline-flex items-center gap-2.5 no-underline group">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-            <rect x="2" y="2" width="24" height="24" rx="6" fill="#FF6B00" fillOpacity="0.12"/>
-            <path d="M7 18L11 10L15 14L21 7" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <circle cx="21" cy="7" r="2" fill="#FF6B00"/>
+            <rect x="2" y="2" width="24" height="24" rx="6" fill="rgba(255,255,255,0.06)"/>
+            <path d="M7 18L11 10L15 14L21 7" stroke="rgba(255,255,255,0.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="21" cy="7" r="2" fill="rgba(255,255,255,0.5)"/>
           </svg>
-          <span className="text-sm font-bold text-[#FF6B00] tracking-wider uppercase">FinCalc Pro</span>
+          <span className="text-sm font-bold text-white/50 tracking-wider uppercase">FinCalc Pro</span>
         </Link>
       </div>
 
@@ -37,13 +34,13 @@ export default function Home() {
         >
           {/* Top section */}
           <div className="flex items-start justify-between mb-5">
-            <div className="home-card-icon-ring home-card-icon-ring-calc">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <div className="home-card-icon-ring">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="4" y="4" width="16" height="16" rx="2"/>
                 <path d="M9 8v8M12 8v8M15 8v8M18 8v8"/>
               </svg>
             </div>
-            <span className="home-card-badge home-card-badge-calc">7 tools</span>
+            <span className="home-card-badge">7 tools</span>
           </div>
 
           {/* Text */}
@@ -64,7 +61,7 @@ export default function Home() {
           </div>
 
           {/* Arrow */}
-          <div className="home-card-arrow home-card-arrow-calc mt-auto">
+          <div className="home-card-arrow mt-auto">
             Open Calculators
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -79,13 +76,13 @@ export default function Home() {
         >
           {/* Top section */}
           <div className="flex items-start justify-between mb-5">
-            <div className="home-card-icon-ring home-card-icon-ring-budget">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <div className="home-card-icon-ring">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2v20M2 12h20"/>
-                <circle cx="12" cy="12" r="2" fill="#22C55E" fillOpacity="0.4"/>
+                <circle cx="12" cy="12" r="2" fill="rgba(255,255,255,0.4)"/>
               </svg>
             </div>
-            <span className="home-card-badge home-card-badge-budget">New</span>
+            <span className="home-card-badge">New</span>
           </div>
 
           {/* Text */}
@@ -105,7 +102,7 @@ export default function Home() {
           </div>
 
           {/* Arrow */}
-          <div className="home-card-arrow home-card-arrow-budget mt-auto">
+          <div className="home-card-arrow mt-auto">
             Open Budget
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7"/>

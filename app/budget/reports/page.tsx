@@ -72,7 +72,7 @@ export default function ReportsPage() {
                 <div key={bd.category.id} className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2.5">
-                      <CategoryIcon icon={bd.category.icon} color={bd.category.color} size={32} />
+                      <CategoryIcon icon={bd.category.icon} size={32} />
                       <span className="text-sm font-medium text-[#F5F5F5]">{bd.category.name}</span>
                     </div>
                     <div className="text-right">
@@ -81,7 +81,7 @@ export default function ReportsPage() {
                     </div>
                   </div>
                   <div className="h-2 rounded-full bg-[#1C1C1F] overflow-hidden">
-                    <div className="h-full rounded-full animate-progress" style={{ width: `${Math.min(100, bd.percentSpent)}%`, background: bd.category.color, "--pct": `${Math.min(100, bd.percentSpent)}%` } as React.CSSProperties} />
+                    <div className="h-full rounded-full animate-progress" style={{ width: `${Math.min(100, bd.percentSpent)}%`, background: "rgba(255,255,255,0.15)", "--pct": `${Math.min(100, bd.percentSpent)}%` } as React.CSSProperties} />
                   </div>
                 </div>
               ))}
@@ -102,7 +102,7 @@ export default function ReportsPage() {
                       #{i + 1}
                     </span>
                     <div className="flex items-center gap-2">
-                      <CategoryIcon icon={day.icon} color="#3B82F6" size={24} />
+                      <CategoryIcon icon={day.icon} size={24} />
                       <div>
                         <p className="text-sm font-medium text-[#F5F5F5]">{new Date(day.date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</p>
                         <p className="text-xs text-[#8A8A90]">#{i + 1} highest</p>

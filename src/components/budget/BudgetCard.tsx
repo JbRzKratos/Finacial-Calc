@@ -44,7 +44,7 @@ export const BudgetCard = memo(function BudgetCard({ breakdown, daysLeft, onClic
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <CategoryIcon icon={category.icon} color={category.color} />
+        <CategoryIcon icon={category.icon} />
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
@@ -60,7 +60,7 @@ export const BudgetCard = memo(function BudgetCard({ breakdown, daysLeft, onClic
       <div className="h-1 rounded-full bg-[#1C1C1F] mx-4 mb-3 overflow-hidden" style={{ marginTop: -8 }}>
         <div
           className="h-full rounded-full animate-progress"
-          style={{ width: `${Math.min(100, percentSpent)}%`, background: color, "--pct": `${Math.min(100, percentSpent)}%` } as React.CSSProperties}
+          style={{ width: `${Math.min(100, percentSpent)}%`, background: "rgba(255,255,255,0.15)", "--pct": `${Math.min(100, percentSpent)}%` } as React.CSSProperties}
         />
       </div>
       {/* Delete */}

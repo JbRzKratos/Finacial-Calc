@@ -16,7 +16,7 @@ export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLim
   const pct = Math.min(100, percentSpent);
   const offset = circumference * (1 - pct / 100);
 
-  const color = pct >= 100 ? "#EF4444" : pct >= 75 ? "#FF6B00" : "#22C55E";
+  const color = "rgba(255,255,255,0.15)";
 
   useEffect(() => {
     if (circRef.current) {
@@ -57,12 +57,12 @@ export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLim
         </text>
       </svg>
       <div className="flex gap-3 mt-3 flex-wrap justify-center">
-        <div className="rounded-full bg-[rgba(239,68,68,0.12)] px-3.5 py-1.5 text-xs font-medium touch-target">
-          <span className="font-mono text-[#EF4444]">{fmt(totalSpent)}</span>
+        <div className="rounded-full bg-[#1C1C1F] px-3.5 py-1.5 text-xs font-medium touch-target">
+          <span className="font-mono text-[#F5F5F5]">{fmt(totalSpent)}</span>
           <span className="text-[#8A8A90] ml-1">spent</span>
         </div>
-        <div className="rounded-full bg-[rgba(34,197,94,0.12)] px-3.5 py-1.5 text-xs font-medium touch-target">
-          <span className="font-mono text-[#22C55E]">{fmt(totalLimit)}</span>
+        <div className="rounded-full bg-[#1C1C1F] px-3.5 py-1.5 text-xs font-medium touch-target">
+          <span className="font-mono text-[#F5F5F5]">{fmt(totalLimit)}</span>
           <span className="text-[#8A8A90] ml-1">budget</span>
         </div>
       </div>

@@ -95,7 +95,7 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
                   const active = categoryId === cat.id;
                   return (
                     <button key={cat.id} type="button" onClick={() => setCategoryId(cat.id)} className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-all shrink-0 whitespace-nowrap ${active ? "bg-[#FF6B00] text-white" : "bg-[#141416] text-[#8A8A90] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)]"}`}>
-                      <CategoryIcon icon={cat.icon} color={cat.color} size={22} />
+                      <CategoryIcon icon={cat.icon} size={22} />
                       {cat.name}
                     </button>
                   );

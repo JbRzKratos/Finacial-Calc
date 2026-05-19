@@ -614,29 +614,28 @@
   transform: translateY(0) scale(0.98);
 }
 
-/* Calculator card */
+/* Card backgrounds - neutral */
 .home-card-calc {
-  background: linear-gradient(145deg, #1A0E06 0%, #141416 100%);
-  box-shadow: 0 8px 32px rgba(255, 107, 0, 0.08), 0 1px 0 rgba(255, 107, 0, 0.12) inset;
+  background: linear-gradient(145deg, #141416 0%, #0F0F11 100%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 .home-card-calc::after {
-  background: radial-gradient(130% 80% at 20% 10%, rgba(255, 107, 0, 0.06), transparent 70%);
+  background: radial-gradient(130% 80% at 20% 10%, rgba(255, 255, 255, 0.03), transparent 70%);
 }
 .home-card-calc:hover {
-  box-shadow: 0 16px 48px rgba(255, 107, 0, 0.15), 0 1px 0 rgba(255, 107, 0, 0.18) inset;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 .home-card-calc:hover::after { opacity: 1; }
 
-/* Budget card */
 .home-card-budget {
-  background: linear-gradient(145deg, #0A1410 0%, #141416 100%);
-  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.06), 0 1px 0 rgba(34, 197, 94, 0.10) inset;
+  background: linear-gradient(145deg, #141416 0%, #0F0F11 100%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
 }
 .home-card-budget::after {
-  background: radial-gradient(130% 80% at 20% 10%, rgba(34, 197, 94, 0.05), transparent 70%);
+  background: radial-gradient(130% 80% at 20% 10%, rgba(255, 255, 255, 0.03), transparent 70%);
 }
 .home-card-budget:hover {
-  box-shadow: 0 16px 48px rgba(34, 197, 94, 0.12), 0 1px 0 rgba(34, 197, 94, 0.16) inset;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 .home-card-budget:hover::after { opacity: 1; }
 
@@ -651,14 +650,8 @@
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
-}
-.home-card-icon-ring-calc {
-  background: linear-gradient(135deg, rgba(255, 107, 0, 0.18), rgba(255, 107, 0, 0.06));
-  box-shadow: 0 0 0 1px rgba(255, 107, 0, 0.2) inset;
-}
-.home-card-icon-ring-budget {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.06));
-  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2) inset;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
 }
 
 /* Card stat badge */
@@ -669,16 +662,9 @@
   padding: 3px 10px;
   border-radius: 100px;
   letter-spacing: 0.02em;
-}
-.home-card-badge-calc {
-  background: rgba(255, 107, 0, 0.12);
-  color: #FF6B00;
-  border: 1px solid rgba(255, 107, 0, 0.2);
-}
-.home-card-badge-budget {
-  background: rgba(34, 197, 94, 0.12);
-  color: #22C55E;
-  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Feature tag chips */
@@ -704,9 +690,8 @@
   font-size: 13px;
   font-weight: 600;
   transition: gap 0.25s ease;
+  color: rgba(255, 255, 255, 0.6);
 }
-.home-card-arrow-calc { color: #FF6B00; }
-.home-card-arrow-budget { color: #22C55E; }
 .home-card-arrow svg {
   transition: transform 0.25s ease;
 }

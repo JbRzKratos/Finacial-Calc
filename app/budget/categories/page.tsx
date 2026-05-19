@@ -59,7 +59,7 @@ export default function CategoriesPage() {
               return (
                 <div key={cat.id} className="glass-card p-4 cursor-pointer active:scale-[0.99] transition-transform" onClick={() => navigate(`/budget/transactions?category=${cat.id}`)}>
                   <div className="flex items-center gap-3.5">
-                    <CategoryIcon icon={cat.icon} color={cat.color} />
+                    <CategoryIcon icon={cat.icon} />
                     <div className="flex-1 min-w-0">
                       <p className="text-[15px] font-semibold text-[#F5F5F5]">{cat.name}</p>
                       <p className="text-xs text-[#8A8A90] mt-0.5">{formatINR(spent)} / {formatINR(cat.monthlyLimit)}</p>
@@ -70,7 +70,7 @@ export default function CategoriesPage() {
                     </div>
                   </div>
                   <div className="h-1 rounded-full bg-[#1C1C1F] mt-3 overflow-hidden">
-                    <div className="h-full rounded-full animate-progress" style={{ width: `${Math.min(100, pct)}%`, background: cat.color, "--pct": `${Math.min(100, pct)}%` } as React.CSSProperties} />
+                    <div className="h-full rounded-full animate-progress" style={{ width: `${Math.min(100, pct)}%`, background: "rgba(255,255,255,0.15)", "--pct": `${Math.min(100, pct)}%` } as React.CSSProperties} />
                   </div>
                 </div>
               );
