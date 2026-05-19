@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { CalculatorInputs, CalculatorResult } from "@/features/finance-calc/types/calculator";
 import { useCalcStore } from "@/features/finance-calc/stores/calculatorStore";
 
@@ -24,24 +24,19 @@ export function useCalculator(
     return { inputs: merged, result: calcFn(merged) };
   });
 
-  useEffect(() => {
-    const saved = storedInputs[calcId];
-    if (saved) {
-      const merged = { ...defaultInputs, ...saved };
-      setState({ inputs: merged, result: calcFn(merged) });
-    }
-  }, [calcId]);
+  const inputsRef = useRef(state.inputs);
+  inputsRef.current = state.inputs;
 
   const updateInput = useCallback((key: string, value: number | string | boolean) => {
-    setState(prev => {
-      const nextInputs = { ...prev.inputs, [key]: value };
-      setInputs(calcId, nextInputs);
-      return { inputs: nextInputs, result: calcFn(nextInputs) };
-    });
+    const nextInputs = { ...inputsRef.current, [key]: value };
+    inputsRef.current = nextInputs;
+    setInputs(calcId, nextInputs);
+    setState({ inputs: nextInputs, result: calcFn(nextInputs) });
   }, [calcId, calcFn, setInputs]);
 
   const resetInputs = useCallback(() => {
     const inputs = { ...defaultInputs };
+    inputsRef.current = inputs;
     clearInputs(calcId);
     setState({ inputs, result: calcFn(inputs) });
   }, [calcId, defaultInputs, calcFn, clearInputs]);

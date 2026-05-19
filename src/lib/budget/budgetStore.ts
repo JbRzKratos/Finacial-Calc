@@ -1,59 +1,74 @@
 import type { BudgetCategory, Transaction } from "./budgetTypes";
 
-function getFromStorage<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
+const STORAGE_KEY = "fincalc_budget_data";
+
+interface StoredData {
+  categories: BudgetCategory[];
+  transactions: Record<string, Transaction[]>; // key: "YYYY-MM"
 }
 
-function setToStorage(key: string, value: unknown): void {
+function getFromStorage(): StoredData {
+  if (typeof window === "undefined") return { categories: [], transactions: {} };
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw) as StoredData;
+  } catch {}
+  return { categories: [], transactions: {} };
+}
+
+function setToStorage(data: StoredData): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    console.warn("Storage failed:", key);
-  }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch { console.warn("Storage failed"); }
 }
 
-const CATEGORIES_KEY = "fincalc_budget_categories";
-const TRANSACTIONS_PREFIX = "fincalc_budget_transactions_";
+function monthKey(month: number, year: number): string {
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
+}
 
 export function getCategories(): BudgetCategory[] {
-  return getFromStorage<BudgetCategory[]>(CATEGORIES_KEY, []);
+  return getFromStorage().categories;
 }
 
 export function saveCategories(cats: BudgetCategory[]): void {
-  setToStorage(CATEGORIES_KEY, cats);
-}
-
-function transactionsKey(month: number, year: number): string {
-  return `${TRANSACTIONS_PREFIX}${year}_${String(month + 1).padStart(2, "0")}`;
+  const data = getFromStorage();
+  data.categories = cats;
+  setToStorage(data);
 }
 
 export function getTransactions(month: number, year: number): Transaction[] {
-  return getFromStorage<Transaction[]>(transactionsKey(month, year), []);
+  return getFromStorage().transactions[monthKey(month, year)] || [];
 }
 
 export function saveTransactions(month: number, year: number, txns: Transaction[]): void {
-  setToStorage(transactionsKey(month, year), txns);
+  const data = getFromStorage();
+  data.transactions[monthKey(month, year)] = txns;
+  setToStorage(data);
 }
 
 export function addTransaction(month: number, year: number, txn: Transaction): void {
-  const txns = getTransactions(month, year);
-  txns.push(txn);
-  saveTransactions(month, year, txns);
+  const key = monthKey(month, year);
+  const data = getFromStorage();
+  if (!data.transactions[key]) data.transactions[key] = [];
+  data.transactions[key].push(txn);
+  setToStorage(data);
 }
 
 export function deleteTransaction(month: number, year: number, txnId: string): void {
-  const txns = getTransactions(month, year);
-  saveTransactions(month, year, txns.filter((t) => t.id !== txnId));
+  const key = monthKey(month, year);
+  const data = getFromStorage();
+  if (data.transactions[key]) {
+    data.transactions[key] = data.transactions[key].filter((t) => t.id !== txnId);
+    setToStorage(data);
+  }
 }
 
 export function deleteCategoryTransactions(month: number, year: number, categoryId: string): void {
-  const txns = getTransactions(month, year);
-  saveTransactions(month, year, txns.filter((t) => t.categoryId !== categoryId));
+  const key = monthKey(month, year);
+  const data = getFromStorage();
+  if (data.transactions[key]) {
+    data.transactions[key] = data.transactions[key].filter((t) => t.categoryId !== categoryId);
+    setToStorage(data);
+  }
 }

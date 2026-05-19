@@ -2,16 +2,13 @@
 
 interface CategoryIconProps {
   icon: string;
-  bgColor: string;
+  color: string;
   size?: number;
 }
 
-export function CategoryIcon({ icon, bgColor, size = 48 }: CategoryIconProps) {
+export function CategoryIcon({ icon, color, size = 40 }: CategoryIconProps) {
   return (
-    <div
-      className="flex items-center justify-center rounded-xl shrink-0"
-      style={{ width: size, height: size, background: bgColor, fontSize: size * 0.5 }}
-    >
+    <div className="flex items-center justify-center rounded-xl shrink-0" style={{ width: size, height: size, background: `${color}20`, fontSize: size * 0.45 }}>
       {icon}
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
 import { FinanceProvider } from "../contexts/FinanceContext";
 import { BottomNav } from "../components/BottomNav";
 import { Dashboard } from "../components/Dashboard";
@@ -10,13 +10,13 @@ import { TransactionList } from "../components/TransactionList";
 import { Reports } from "../components/Reports";
 import { SettingsView } from "../components/SettingsView";
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import type { TabId } from "../types/budget";
 
 function BudgetContent() {
   const [tab, setTab] = useState<TabId>("dashboard");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
@@ -37,7 +37,7 @@ function BudgetContent() {
       {/* Desktop top bar */}
       <div className="hidden md:flex items-center justify-between px-6 py-4 border-b border-white/5 shrink-0">
         <div className="flex items-center gap-4">
-          <Link href="/calculator/sip" className="flex items-center gap-2 text-white/40 hover:text-white/70 transition-colors text-sm font-medium">
+          <Link to="/calculator/sip" className="flex items-center gap-2 text-white/40 hover:text-white/70 transition-colors text-sm font-medium">
             <ArrowLeft size={16} />
             Calculators
           </Link>

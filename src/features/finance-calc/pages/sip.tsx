@@ -7,7 +7,7 @@ import { sipFV, ruleOf72 } from "@/features/finance-calc/utils/math";
 import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
-import { BrandSlider } from "@/features/finance-calc/components/inputs/BrandSlider";
+import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
 import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
@@ -110,17 +110,6 @@ export default function SIPPage() {
     <SplitShell
       left={
         <>
-          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
-            FinCalc Pro <span className="text-white/30">&gt;</span>{" "}
-            <span className="text-white/90 font-bold">SIP Calculator</span>
-          </p>
-          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
-            SIP Calculator
-          </p>
-          <p className="text-[12px] font-medium text-white/70 mb-5">
-            Calculate your mutual fund returns
-          </p>
-
           <div className="section-divider" />
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Monthly Investment
@@ -135,26 +124,26 @@ export default function SIPPage() {
           />
           <p className="text-[11px] text-white/60 -mt-3 mb-5">Min 500 -- Max 1,00,000</p>
 
-          <div className="section-divider" />
-          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
-            Investment Duration
-          </p>
-          <BrandSlider
-            stops={durationStops}
+          <NeonSlider
+            label="INVESTMENT DURATION"
             value={Number(inputs.years)}
             onChange={(v) => updateInput("years", v)}
-            className="mb-6"
+            min={1}
+            max={40}
+            step={1}
+            unit="YRS"
+            tickLabels={["1 YR", "10 YR", "20 YR", "30 YR", "40 YR"]}
           />
 
-          <div className="section-divider" />
-          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
-            Expected Annual Return
-          </p>
-          <BrandSlider
-            stops={rateStops}
+          <NeonSlider
+            label="EXPECTED ANNUAL RETURN"
             value={Number(inputs.rate)}
             onChange={(v) => updateInput("rate", v)}
-            className="mb-6"
+            min={1}
+            max={30}
+            step={0.5}
+            unit="% P.A."
+            tickLabels={["1%", "8%", "15%", "22%", "30%"]}
           />
 
           <div className="section-divider" />

@@ -1,50 +1,81 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="min-h-dvh bg-[#1A1A1A] flex items-center justify-center p-5">
-      <div className="w-full max-w-lg space-y-5">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-white tracking-[-0.02em]">FinCalc Pro</h1>
-          <p className="text-sm text-[#888888] mt-1">Your complete financial toolkit</p>
-        </div>
+    <div className="min-h-dvh bg-[#0A0A0C] bg-noise bg-dot-grid bg-glow-orange flex flex-col items-center justify-center p-5">
+      {/* Wordmark */}
+      <div className="w-full max-w-lg mb-12 md:mb-16">
+        <Link to="/" className="inline-flex items-center gap-2.5 no-underline group">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+            <rect x="2" y="2" width="24" height="24" rx="6" fill="#FF6B00" fillOpacity="0.12"/>
+            <path d="M7 18L11 10L15 14L21 7" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="21" cy="7" r="2" fill="#FF6B00"/>
+          </svg>
+          <span className="text-sm font-bold text-[#FF6B00] tracking-wider uppercase">FinCalc Pro</span>
+        </Link>
+      </div>
 
+      {/* Hero */}
+      <div className="w-full max-w-lg text-center mb-10">
+        <h1 className="text-[32px] md:text-[40px] font-bold text-[#6B6B70] tracking-[-0.02em] leading-tight">
+          Your complete financial toolkit
+        </h1>
+        <p className="text-sm text-[#8A8A90] mt-2 max-w-sm mx-auto">
+          Calculators and budget tracker in one place.
+        </p>
+      </div>
+
+      {/* Feature Cards */}
+      <div className="w-full max-w-lg flex flex-col md:flex-row gap-4">
         <Link
-          href="/calculator/sip"
-          className="block rounded-3xl bg-[#242424] border border-[#2E2E2E] p-8 hover:border-[#FF6B00]/50 hover:shadow-[0_0_30px_rgba(255,107,0,0.15)] transition-all group"
+          to="/calculator/sip"
+          className="flex-1 glass-card p-6 no-underline group"
+          style={{ animation: "cardSlideUp 0.4s cubic-bezier(0.22,1,0.36,1) 0ms both" }}
         >
-          <div className="flex items-start gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-[#FF6B00]/10 flex items-center justify-center text-3xl shrink-0 group-hover:scale-110 transition-transform">
-              🧮
+          <div className="flex items-start gap-4">
+            <div className="w-[28px] h-[28px] rounded-lg bg-[#FF6B00]/15 flex items-center justify-center shrink-0 mt-0.5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF6B00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                <path d="M9 8v8M12 8v8M15 8v8M18 8v8"/>
+              </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white mb-1">Financial Calculators</h2>
-              <p className="text-sm text-[#888888] leading-relaxed">
-                SIP, EMI, FD, CAGR, Retirement Planning, Tax Savings, and Loan vs Invest calculators.
+              <h2 className="text-[18px] font-semibold text-[#F5F5F5] tracking-[-0.02em]">Financial Calculators</h2>
+              <p className="text-[13px] text-[#8A8A90] mt-1 leading-relaxed line-clamp-2">
+                SIP, EMI, FD, CAGR, retirement, tax, and loan vs invest — all in one place.
               </p>
-              <span className="inline-block mt-3 text-sm font-semibold text-[#FF6B00] group-hover:translate-x-1 transition-transform">
-                Open Calculators →
-              </span>
+              <div className="inline-flex items-center gap-1 mt-3 text-[13px] font-semibold text-[#FF6B00] group-hover:gap-2 transition-all">
+                Open
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-[2px]">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </div>
             </div>
           </div>
         </Link>
 
         <Link
-          href="/budget"
-          className="block rounded-3xl bg-[#242424] border border-[#2E2E2E] p-8 hover:border-[#FF6B00]/50 hover:shadow-[0_0_30px_rgba(255,107,0,0.15)] transition-all group"
+          to="/budget"
+          className="flex-1 glass-card p-6 no-underline group"
+          style={{ animation: "cardSlideUp 0.4s cubic-bezier(0.22,1,0.36,1) 120ms both" }}
         >
-          <div className="flex items-start gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-[#FF6B00]/10 flex items-center justify-center text-3xl shrink-0 group-hover:scale-110 transition-transform">
-              💰
+          <div className="flex items-start gap-4">
+            <div className="w-[28px] h-[28px] rounded-lg bg-[rgba(34,197,94,0.15)] flex items-center justify-center shrink-0 mt-0.5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2v20M2 12h20"/>
+              </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white mb-1">Budget Tracker</h2>
-              <p className="text-sm text-[#888888] leading-relaxed">
-                Track monthly spending, set category budgets, view analytics and reports.
+              <h2 className="text-[18px] font-semibold text-[#F5F5F5] tracking-[-0.02em]">Budget Tracker</h2>
+              <p className="text-[13px] text-[#8A8A90] mt-1 leading-relaxed line-clamp-2">
+                Track monthly spending, set budgets per category, and view spending analytics.
               </p>
-              <span className="inline-block mt-3 text-sm font-semibold text-[#FF6B00] group-hover:translate-x-1 transition-transform">
-                Open Budget Tracker →
-              </span>
+              <div className="inline-flex items-center gap-1 mt-3 text-[13px] font-semibold text-[#FF6B00] group-hover:gap-2 transition-all">
+                Open
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-[2px]">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </div>
             </div>
           </div>
         </Link>

@@ -7,6 +7,7 @@ import { taxNewRegime, taxOldRegime } from "@/features/finance-calc/utils/math";
 import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
+import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
 import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
@@ -56,17 +57,6 @@ export default function TaxPage() {
     <SplitShell
       left={
         <>
-          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
-            FinCalc Pro <span className="text-white/30">&gt;</span>{" "}
-            <span className="text-white/90 font-bold">Tax Calculator</span>
-          </p>
-          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
-            Tax Calculator
-          </p>
-          <p className="text-[12px] font-medium text-white/70 mb-5">
-            FY 2025-26 -- Budget 2025
-          </p>
-
           <div className="section-divider" />
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Tax Regime
@@ -94,6 +84,18 @@ export default function TaxPage() {
               label: "ANNUAL GROSS INCOME (CTC)",
             }]}
             className="mb-5"
+          />
+
+          <NeonSlider
+            label="ANNUAL INCOME"
+            value={Number(inputs.income)}
+            onChange={(v) => updateInput("income", v)}
+            min={0}
+            max={5000000}
+            step={50000}
+            unit="₹"
+            editable
+            tickLabels={["0", "1.25M", "2.5M", "3.75M", "5M"]}
           />
 
           {!isNewRegime && (

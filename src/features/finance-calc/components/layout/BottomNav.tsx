@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   PiggyBank,
@@ -27,7 +26,7 @@ const tabs = [
 ];
 
 export function BottomNav() {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,7 +53,7 @@ export function BottomNav() {
             return (
               <Link
                 key={tab.href}
-                href={tab.href}
+                to={tab.href}
                 className={cn( "flex flex-col items-center justify-center gap-0.5 snap-center shrink-0 no-underline transition-all duration-300 rounded-xl min-w-[64px] px-2.5 py-2",
                   active
                     ? "bg-brand-primary text-white shadow-[0_4px_16px_rgba(255,107,0,0.45)] scale-105"

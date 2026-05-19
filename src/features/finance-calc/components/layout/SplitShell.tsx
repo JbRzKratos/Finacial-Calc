@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { BottomNav } from "./BottomNav";
 import { MobileResultsProvider, useMobileResults } from "@/features/finance-calc/contexts/MobileResultsContext";
@@ -12,7 +12,8 @@ interface SplitShellProps {
 }
 
 function SplitShellContent({ left, right }: SplitShellProps) {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
+  const navigate = useNavigate();
   const { showMobileResults, setShowMobileResults } = useMobileResults();
 
   return (
@@ -24,10 +25,21 @@ function SplitShellContent({ left, right }: SplitShellProps) {
       >
         <section
           data-input-panel
-          className="panel-orange overflow-y-auto"
+          className="bg-[#0A0A0C] overflow-y-auto"
           style={{ height: "100dvh", position: "sticky", top: 0 }}
         >
-          <div className="max-w-[420px] mx-auto px-5 pt-6 pb-24 md:px-7 md:py-8 animate-panel-enter">
+          <header className="calc-header">
+            <button type="button" onClick={() => navigate("/")} className="calc-back-btn" aria-label="Back to home">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              <span>Home</span>
+            </button>
+            <span className="calc-header-title">Calculator</span>
+            <div className="calc-header-spacer"></div>
+          </header>
+
+          <div className="max-w-[420px] mx-auto px-5 pb-24 md:px-7 md:py-4 animate-panel-enter">
             {left}
           </div>
         </section>

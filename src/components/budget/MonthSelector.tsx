@@ -1,88 +1,51 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 
 interface MonthSelectorProps {
   month: number;
   year: number;
-  onChange: (month: number, year: number) => void;
+  onChange: (m: number, y: number) => void;
   onClose: () => void;
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function MonthSelector({ month, year, onChange, onClose }: MonthSelectorProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  const handleBackdrop = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
-  }, [onClose]);
-
+  const handleBackdrop = useCallback((e: React.MouseEvent) => { if (e.target === e.currentTarget) onClose(); }, [onClose]);
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    const h = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
   }, [onClose]);
-
-  const goPrev = () => {
-    if (month === 0) onChange(11, year - 1);
-    else onChange(month - 1, year);
-  };
-
-  const goNext = () => {
-    if (month === 11) onChange(0, year + 1);
-    else onChange(month + 1, year);
-  };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60" onClick={handleBackdrop}>
-      <div
-        ref={modalRef}
-        className="w-full max-w-md bg-[#1A1A1A] rounded-t-3xl border-t border-[#2E2E2E] px-6 pt-4 pb-8 animate-slide-up"
-      >
-        <div className="w-10 h-1 rounded-full bg-[#3E3E3E] mx-auto mb-5" />
-        <p className="text-sm font-semibold text-[#888888] uppercase tracking-wider mb-4">Select Month</p>
-
-        <div className="flex items-center justify-between mb-6">
-          <button type="button" onClick={goPrev} className="w-10 h-10 rounded-xl bg-[#242424] flex items-center justify-center hover:bg-[#2E2E2E] transition-colors text-white">
-            ←
-          </button>
-          <p className="text-lg font-bold text-white">{MONTHS[month]} {year}</p>
-          <button type="button" onClick={goNext} className="w-10 h-10 rounded-xl bg-[#242424] flex items-center justify-center hover:bg-[#2E2E2E] transition-colors text-white">
-            →
-          </button>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-          {MONTHS.map((name, i) => {
-            const active = i === month;
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={() => { onChange(i, year); onClose(); }}
-                className={`py-3 rounded-xl text-sm font-semibold transition-all ${
-                  active ? "bg-[#FF6B00] text-white shadow-lg shadow-orange-500/20" : "bg-[#242424] text-[#888888] hover:bg-[#2E2E2E] hover:text-white"
-                }`}
-              >
+    <div className="modal-backdrop" onClick={handleBackdrop}>
+      <div className="modal-panel" style={{ maxHeight: "70vh" }} onClick={(e) => e.stopPropagation()}>
+        <div className="w-9 h-1 rounded-full bg-[#333] mx-auto mt-3 mb-5" />
+        <div className="px-6 pb-8">
+          <p className="text-xs font-semibold text-[#8A8A90] uppercase tracking-wider mb-4">Select Month</p>
+          <div className="flex items-center justify-between mb-5">
+            <button type="button" onClick={() => onChange(month === 0 ? 11 : month - 1, month === 0 ? year - 1 : year)} className="w-10 h-10 rounded-xl bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" strokeWidth="2" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <p className="text-base font-semibold text-[#F5F5F5]">{MONTHS[month]} {year}</p>
+            <button type="button" onClick={() => onChange(month === 11 ? 0 : month + 1, month === 11 ? year + 1 : year)} className="w-10 h-10 rounded-xl bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {MONTHS.map((name, i) => (
+              <button key={i} type="button" onClick={() => { onChange(i, year); onClose(); }} className={`py-3 rounded-xl text-sm font-medium transition-all ${i === month ? "bg-[#FF6B00] text-white" : "bg-[#1C1C1F] text-[#8A8A90] hover:bg-[#222226] hover:text-white"}`}>
                 {name}
               </button>
-            );
-          })}
-        </div>
-
-        <div className="flex justify-center mt-5">
-          <button
-            type="button"
-            onClick={() => {
-              const d = new Date();
-              onChange(d.getMonth(), d.getFullYear());
-              onClose();
-            }}
-            className="text-sm text-[#FF6B00] font-semibold hover:underline"
-          >
-            Jump to Today
-          </button>
+            ))}
+          </div>
+          <div className="flex justify-center mt-4">
+            <button type="button" onClick={() => { const d = new Date(); onChange(d.getMonth(), d.getFullYear()); onClose(); }} className="text-xs font-semibold text-[#FF6B00] hover:underline">
+              Jump to Today
+            </button>
+          </div>
         </div>
       </div>
     </div>

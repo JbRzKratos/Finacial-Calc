@@ -14,87 +14,68 @@ interface BudgetCardProps {
 
 export const BudgetCard = memo(function BudgetCard({ breakdown, daysLeft, onClick, onDelete, index }: BudgetCardProps) {
   const { category, spent, percentSpent, status } = breakdown;
-  const touchStartX = useRef(0);
-  const touchCurrentX = useRef(0);
   const cardRef = useRef<HTMLDivElement>(null);
-  const deleteRef = useRef<HTMLButtonElement>(null);
+  const deleteBtnRef = useRef<HTMLButtonElement>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
-  const statusLabel = status === "over" ? "over budget!" : status === "warning" ? "at limit" : "under this month";
-  const statusColor = status === "over" ? "#dc2626" : status === "warning" ? "#d97706" : "#16a34a";
+  const isOver = status === "over";
+  const isWarning = status === "warning";
+  const color = isOver ? "#EF4444" : isWarning ? "#FF6B00" : "#22C55E";
+  const label = isOver ? "over budget" : isWarning ? "at limit" : "under this month";
+  const staggerClass = `card-stagger-${Math.min(index + 1, 4)}`;
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  }, []);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    touchCurrentX.current = e.touches[0].clientX;
-    const diff = touchStartX.current - touchCurrentX.current;
-    if (diff > 0 && cardRef.current) {
-      cardRef.current.style.transform = `translateX(-${Math.min(diff, 80)}px)`;
-    }
-  }, []);
-
+  const handleTouchStart = useCallback((e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; }, []);
   const handleTouchEnd = useCallback(() => {
-    const diff = touchStartX.current - touchCurrentX.current;
-    if (diff > 60 && deleteRef.current) {
-      deleteRef.current.style.opacity = "1";
-      deleteRef.current.style.pointerEvents = "auto";
-    }
-    if (cardRef.current) {
-      cardRef.current.style.transform = "";
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 50 && deleteBtnRef.current) {
+      deleteBtnRef.current.classList.remove("opacity-0", "pointer-events-none");
+      deleteBtnRef.current.classList.add("opacity-100");
     }
   }, []);
-
-  const animDelay = `${index * 80}ms`;
 
   return (
-    <div
-      className="relative mb-2.5"
-      style={{ animation: `cardSlideUp 0.4s cubic-bezier(0.22,1,0.36,1) ${animDelay} both` }}
-    >
+    <div className={`relative mb-2.5 ${staggerClass}`}>
       <div
         ref={cardRef}
-        className="relative overflow-hidden rounded-2xl bg-[#242424] border border-[#2E2E2E] active:scale-[0.98] transition-transform duration-150"
+        className="glass-card p-4 flex items-center gap-3.5 cursor-pointer active:scale-[0.99] transition-transform"
         onClick={onClick}
         onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="flex items-center gap-3.5 p-4">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
-            style={{ background: category.iconBg }}
-          >
-            {category.icon}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-base font-semibold text-white truncate">{category.name}</p>
-            <p className="text-xs text-[#888888] mt-0.5">
-              {daysLeft}d left &bull; {Math.round(percentSpent)}% spent
-            </p>
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-xl font-bold text-white" style={{ color: statusColor }}>
-              {formatINR(spent)}
-            </p>
-            <p className="text-[11px] text-[#888888]">{statusLabel}</p>
-          </div>
+        {/* Icon */}
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: `${category.color}20` }}>
+          {category.icon}
         </div>
-        <div className="h-[3px] bg-[#3E3E3E] mx-4 mb-3 rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-800"
-            style={{ width: `${Math.min(100, percentSpent)}%`, background: statusColor, transition: "width 0.8s cubic-bezier(0.22,1,0.36,1)" }}
-          />
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between">
+            <p className="text-[15px] font-semibold text-[#F5F5F5]">{category.name}</p>
+            <p className={`budget-mono text-sm font-bold`} style={{ color }}>{formatINR(spent)}</p>
+          </div>
+          <p className="text-xs text-[#8A8A90] mt-0.5">
+            {daysLeft}d left &bull; {Math.round(percentSpent)}% spent
+          </p>
         </div>
       </div>
+      {/* Progress bar */}
+      <div className="h-1 rounded-full bg-[#1C1C1F] mx-4 mb-3 overflow-hidden" style={{ marginTop: -8 }}>
+        <div
+          className="h-full rounded-full animate-progress"
+          style={{ width: `${Math.min(100, percentSpent)}%`, background: color, "--pct": `${Math.min(100, percentSpent)}%` } as React.CSSProperties}
+        />
+      </div>
+      {/* Delete */}
       <button
-        ref={deleteRef}
+        ref={deleteBtnRef}
         type="button"
         onClick={(e) => { e.stopPropagation(); onDelete(); }}
-        className="absolute right-0 top-0 bottom-0 w-20 rounded-2xl bg-[#dc2626] text-white text-xs font-bold uppercase tracking-wider opacity-0 pointer-events-none transition-opacity duration-200"
-        style={{ zIndex: 10 }}
+        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-[#EF4444]/20 flex items-center justify-center opacity-0 pointer-events-none hover:bg-[#EF4444]/30 transition-all"
+        aria-label="Delete category"
       >
-        Delete
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round">
+          <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/>
+        </svg>
       </button>
     </div>
   );

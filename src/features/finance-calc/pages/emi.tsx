@@ -8,7 +8,7 @@ import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
 import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
-import { BrandSlider } from "@/features/finance-calc/components/inputs/BrandSlider";
+import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
 import { MetricRow } from "@/features/finance-calc/components/results/MetricRow";
@@ -112,17 +112,6 @@ export default function EMIPage() {
     <SplitShell
       left={
         <>
-          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
-            FinCalc Pro <span className="text-white/30">&gt;</span>{" "}
-            <span className="text-white/90 font-bold">EMI Calculator</span>
-          </p>
-          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
-            EMI Calculator
-          </p>
-          <p className="text-[12px] font-medium text-white/70 mb-5">
-            Plan your loan repayment
-          </p>
-
           <div className="section-divider" />
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Loan Type
@@ -147,17 +136,38 @@ export default function EMIPage() {
             className="mb-5"
           />
 
-          <div className="section-divider" />
-          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
-            Repayment Speed
-          </p>
-          <BrandSlider
-            stops={speedStops}
-            value={closestSpeed.value}
-            onChange={(v) => {
-              const base = presetMap[String(inputs.preset || "home")] || defaultInputs;
-              updateInput("years", Math.max(1, Math.round(base.years * v)));
-            }}
+          <NeonSlider
+            label="LOAN AMOUNT"
+            value={Number(inputs.amount)}
+            onChange={(v) => { updateInput("amount", v); updateInput("preset", "other"); }}
+            min={10000}
+            max={10000000}
+            step={10000}
+            unit="₹"
+            editable
+            tickLabels={["10K", "2.5M", "5M", "7.5M", "10M"]}
+          />
+
+          <NeonSlider
+            label="INTEREST RATE"
+            value={Number(inputs.rate)}
+            onChange={(v) => { updateInput("rate", v); updateInput("preset", "other"); }}
+            min={1}
+            max={20}
+            step={0.1}
+            unit="% P.A."
+            tickLabels={["1%", "6%", "10%", "15%", "20%"]}
+          />
+
+          <NeonSlider
+            label="TENURE"
+            value={Number(inputs.years)}
+            onChange={(v) => { updateInput("years", v); updateInput("preset", "other"); }}
+            min={1}
+            max={30}
+            step={1}
+            unit="YRS"
+            tickLabels={["1 YR", "8 YR", "15 YR", "22 YR", "30 YR"]}
           />
 
           <ActionButtonRow onClear={resetInputs} />

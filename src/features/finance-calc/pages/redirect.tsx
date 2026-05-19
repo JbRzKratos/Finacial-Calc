@@ -1,10 +1,7 @@
 ﻿"use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 export default function RedirectPage() {
-  const router = useRouter();
-  useEffect(() => { router.replace("/calculator/sip"); }, [router]);
-  return null;
+  return <Navigate to="/calculator/sip" replace />;
 }

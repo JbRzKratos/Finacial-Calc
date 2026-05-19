@@ -7,7 +7,7 @@ import { loanVsInvest, sipFV } from "@/features/finance-calc/utils/math";
 import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
-import { BrandSlider } from "@/features/finance-calc/components/inputs/BrandSlider";
+import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
 import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
@@ -52,17 +52,6 @@ export default function LoanVsInvestPage() {
     <SplitShell
       left={
         <>
-          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
-            FinCalc Pro <span className="text-white/30">&gt;</span>{" "}
-            <span className="text-white/90 font-bold">Loan vs Invest</span>
-          </p>
-          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
-            Loan vs Invest
-          </p>
-          <p className="text-[12px] font-medium text-white/70 mb-5">
-            Should you prepay loan or invest?
-          </p>
-
           <div className="section-divider" />
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Investment Mode
@@ -100,34 +89,27 @@ export default function LoanVsInvestPage() {
             className="mb-5"
           />
 
-          <div className="section-divider" />
-          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-3">
-            Interest Rates
-          </p>
-          <div className="mb-3">
-            <p className="text-[12px] text-white/70 mb-2">Loan Interest Rate (p.a.)</p>
-            <BrandSlider
-              stops={[
-                { value: 7, label: "LOW (7%)" },
-                { value: 9, label: "AVERAGE (9%)" },
-                { value: 12, label: "HIGH (12%)" },
-              ]}
-              value={Number(inputs.loanRate)}
-              onChange={(v) => updateInput("loanRate", v)}
-            />
-          </div>
-          <div>
-            <p className="text-[12px] text-white/70 mb-2">Expected Investment Return (p.a.)</p>
-            <BrandSlider
-              stops={[
-                { value: 8, label: "FD-LIKE (8%)" },
-                { value: 12, label: "EQUITY (12%)" },
-                { value: 15, label: "HIGH (15%)" },
-              ]}
-              value={Number(inputs.investRate)}
-              onChange={(v) => updateInput("investRate", v)}
-            />
-          </div>
+          <NeonSlider
+            label="LOAN INTEREST RATE"
+            value={Number(inputs.loanRate)}
+            onChange={(v) => updateInput("loanRate", v)}
+            min={1}
+            max={20}
+            step={0.5}
+            unit="% P.A."
+            tickLabels={["1%", "6%", "10%", "15%", "20%"]}
+          />
+
+          <NeonSlider
+            label="EXPECTED INVESTMENT RETURN"
+            value={Number(inputs.investRate)}
+            onChange={(v) => updateInput("investRate", v)}
+            min={1}
+            max={20}
+            step={0.5}
+            unit="% P.A."
+            tickLabels={["1%", "6%", "10%", "15%", "20%"]}
+          />
 
           <ActionButtonRow onClear={resetInputs} />
         </>

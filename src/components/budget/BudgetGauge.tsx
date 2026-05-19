@@ -10,61 +10,61 @@ interface BudgetGaugeProps {
 }
 
 export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLimit }: BudgetGaugeProps) {
-  const radius = 120;
-  const circumference = Math.PI * radius;
-  const offset = circumference * (1 - Math.min(100, percentSpent) / 100);
-  const pathRef = useRef<SVGPathElement>(null);
-  const numRef = useRef<HTMLSpanElement>(null);
+  const circRef = useRef<SVGCircleElement>(null);
+  const radius = 80;
+  const circumference = 2 * Math.PI * radius;
+  const pct = Math.min(100, percentSpent);
+  const offset = circumference * (1 - pct / 100);
 
-  const gaugeColor =
-    percentSpent >= 100 ? "#dc2626" : percentSpent >= 75 ? "#d97706" : "#FF6B00";
+  const color = pct >= 100 ? "#EF4444" : pct >= 75 ? "#FF6B00" : "#22C55E";
 
   useEffect(() => {
-    if (pathRef.current) {
-      pathRef.current.style.transition = "stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1)";
-      pathRef.current.style.strokeDashoffset = String(offset);
+    if (circRef.current) {
+      circRef.current.style.transition = "stroke-dashoffset 0.8s ease-out";
+      circRef.current.style.strokeDashoffset = String(offset);
     }
   }, [offset]);
 
-  const formatINR = (n: number) =>
-    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+  const fmt = (n: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(n);
+
+  const svgSize = "clamp(160px, 50vw, 200px)";
 
   return (
-    <div className="flex flex-col items-center w-full max-w-[min(340px,90vw)] mx-auto">
-      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#888888] mb-1">
-        Overall Spent: {Math.round(percentSpent)}%
-      </p>
-      <svg viewBox="0 0 300 170" className="w-full h-auto" style={{ overflow: "visible" }}>
-        <g transform="rotate(180, 150, 150) translate(0, 0)">
-          <path
-            d={`M 30 150 A 120 120 0 0 1 270 150`}
-            fill="none"
-            stroke="#2E2E2E"
-            strokeWidth="24"
-            strokeLinecap="round"
-          />
-          <path
-            ref={pathRef}
-            d={`M 30 150 A 120 120 0 0 1 270 150`}
-            fill="none"
-            stroke={gaugeColor}
-            strokeWidth="24"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={circumference}
-            style={{ transition: "stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1)" }}
-          />
-        </g>
-        <text x="150" y="95" textAnchor="middle" fill="#FFFFFF" fontSize="28" fontWeight="800">
-          {formatINR(totalRemaining)}
+    <div className="flex flex-col items-center py-4">
+      <svg width={svgSize} height={svgSize} viewBox="0 0 200 200" style={{ maxWidth: "100%" }}>
+        {/* Track */}
+        <circle cx="100" cy="100" r={radius} fill="none" stroke="#1C1C1F" strokeWidth="16" />
+        {/* Progress */}
+        <circle
+          ref={circRef}
+          cx="100"
+          cy="100"
+          r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth="16"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference}
+          transform="rotate(-90, 100, 100)"
+        />
+        {/* Center text */}
+        <text x="100" y="92" textAnchor="middle" fill="#F5F5F5" fontFamily="DM Mono, monospace" fontSize="24" fontWeight="700">
+          {fmt(totalRemaining)}
         </text>
-        <text x="150" y="118" textAnchor="middle" fill="#888888" fontSize="13">
+        <text x="100" y="116" textAnchor="middle" fill="#8A8A90" fontFamily="DM Sans, sans-serif" fontSize="11">
           left this month
         </text>
       </svg>
-      <div className="flex justify-between w-full px-2 mt-1">
-        <span className="text-xs text-[#666666]">{formatINR(totalSpent)}</span>
-        <span className="text-xs text-[#666666]">{formatINR(totalLimit)}</span>
+      <div className="flex gap-3 mt-3 flex-wrap justify-center">
+        <div className="rounded-full bg-[rgba(239,68,68,0.12)] px-3.5 py-1.5 text-xs font-medium touch-target">
+          <span className="font-mono text-[#EF4444]">{fmt(totalSpent)}</span>
+          <span className="text-[#8A8A90] ml-1">spent</span>
+        </div>
+        <div className="rounded-full bg-[rgba(34,197,94,0.12)] px-3.5 py-1.5 text-xs font-medium touch-target">
+          <span className="font-mono text-[#22C55E]">{fmt(totalLimit)}</span>
+          <span className="text-[#8A8A90] ml-1">budget</span>
+        </div>
       </div>
     </div>
   );

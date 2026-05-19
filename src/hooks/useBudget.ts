@@ -3,64 +3,47 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { BudgetCategory, Transaction, BudgetSummary } from "@/lib/budget/budgetTypes";
 import { getCategories, saveCategories, getTransactions, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions } from "@/lib/budget/budgetStore";
-import { computeBudgetSummary, generateId, getTodayISO } from "@/lib/budget/budgetCalc";
+import { computeBudgetSummary, generateId } from "@/lib/budget/budgetCalc";
 
-const SEED_CATEGORIES: BudgetCategory[] = [
-  { id: "cat_food", name: "Food", icon: "🍔", iconBg: "#FFE8D6", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01" },
-  { id: "cat_groceries", name: "Groceries", icon: "🛒", iconBg: "#E8F4FF", monthlyLimit: 5000, color: "#3B82F6", createdAt: "2025-01-01" },
-  { id: "cat_subs", name: "Subscriptions", icon: "🔄", iconBg: "#F0E8FF", monthlyLimit: 2000, color: "#8B5CF6", createdAt: "2025-01-01" },
-  { id: "cat_transport", name: "Transport", icon: "🚗", iconBg: "#E8FFE8", monthlyLimit: 3000, color: "#16A34A", createdAt: "2025-01-01" },
+const SEED_CATS: BudgetCategory[] = [
+  { id: "cat_food", name: "Food", icon: "🍔", iconBg: "#FF6B00", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01" },
+  { id: "cat_groceries", name: "Groceries", icon: "🛒", iconBg: "#14B8A6", monthlyLimit: 5000, color: "#14B8A6", createdAt: "2025-01-01" },
+  { id: "cat_subs", name: "Subscriptions", icon: "🔄", iconBg: "#8B5CF6", monthlyLimit: 2000, color: "#8B5CF6", createdAt: "2025-01-01" },
+  { id: "cat_transport", name: "Transport", icon: "🚗", iconBg: "#3B82F6", monthlyLimit: 3000, color: "#3B82F6", createdAt: "2025-01-01" },
 ];
 
-function seedTransactions(): Transaction[] {
-  const today = new Date();
-  const d = (day: number) => `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+function seedTxns(month: number, year: number): Transaction[] {
+  const d = (day: number) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   return [
-    { id: "txn_seed_1", categoryId: "cat_food", amount: 450, note: "Lunch", date: d(3), type: "expense" },
-    { id: "txn_seed_2", categoryId: "cat_food", amount: 280, note: "Breakfast", date: d(5), type: "expense" },
-    { id: "txn_seed_3", categoryId: "cat_food", amount: 600, note: "Dinner out", date: d(8), type: "expense" },
-    { id: "txn_seed_4", categoryId: "cat_groceries", amount: 1800, note: "Weekly groceries", date: d(4), type: "expense" },
-    { id: "txn_seed_5", categoryId: "cat_subs", amount: 149, note: "Netflix", date: d(1), type: "expense" },
-    { id: "txn_seed_6", categoryId: "cat_transport", amount: 320, note: "Fuel", date: d(6), type: "expense" },
+    { id: "seed1", categoryId: "cat_food", amount: 450, note: "Lunch", date: d(3), type: "expense" },
+    { id: "seed2", categoryId: "cat_food", amount: 280, note: "Breakfast", date: d(5), type: "expense" },
+    { id: "seed3", categoryId: "cat_food", amount: 600, note: "Dinner out", date: d(8), type: "expense" },
+    { id: "seed4", categoryId: "cat_groceries", amount: 1800, note: "Weekly groceries", date: d(4), type: "expense" },
+    { id: "seed5", categoryId: "cat_subs", amount: 149, note: "Netflix", date: d(1), type: "expense" },
+    { id: "seed6", categoryId: "cat_transport", amount: 320, note: "Fuel", date: d(6), type: "expense" },
   ];
 }
 
 const now = new Date();
-const currentMonth = now.getMonth();
-const currentYear = now.getFullYear();
+const CM = now.getMonth();
+const CY = now.getFullYear();
 
 export function useBudget() {
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [month, setMonth] = useState(currentMonth);
-  const [year, setYear] = useState(currentYear);
+  const [month, setMonth] = useState(CM);
+  const [year, setYear] = useState(CY);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let cats = getCategories();
-    if (cats.length === 0) {
-      cats = SEED_CATEGORIES;
-      saveCategories(cats);
-    }
+    if (cats.length === 0) { cats = SEED_CATS; saveCategories(cats); }
     let txns = getTransactions(month, year);
-    if (txns.length === 0 && month === currentMonth && year === currentYear) {
-      txns = seedTransactions();
-      saveTransactions(month, year, txns);
-    }
+    if (txns.length === 0 && month === CM && year === CY) { txns = seedTxns(month, year); saveTransactions(month, year, txns); }
     setCategories(cats);
     setTransactions(txns);
     setLoaded(true);
   }, [month, year]);
-
-  const refreshTransactions = useCallback(() => {
-    const txns = getTransactions(month, year);
-    setTransactions(txns);
-  }, [month, year]);
-
-  const refreshCategories = useCallback(() => {
-    const cats = getCategories();
-    setCategories(cats);
-  }, []);
 
   const addTransaction = useCallback(
     (t: Omit<Transaction, "id">) => {
@@ -94,47 +77,14 @@ export function useBudget() {
       saveCategories(cats);
       setCategories(cats);
       deleteCategoryTransactions(month, year, catId);
-      refreshTransactions();
+      setTransactions((prev) => prev.filter((t) => t.categoryId !== catId));
     },
-    [month, year, refreshTransactions]
+    [month, year]
   );
 
-  const updateCategoryLimit = useCallback((catId: string, newLimit: number) => {
-    const cats = getCategories().map((c) => (c.id === catId ? { ...c, monthlyLimit: newLimit } : c));
-    saveCategories(cats);
-    setCategories(cats);
-  }, []);
+  const changeMonth = useCallback((m: number, y: number) => { setMonth(m); setYear(y); }, []);
 
-  const changeMonth = useCallback((m: number, y: number) => {
-    setMonth(m);
-    setYear(y);
-  }, []);
+  const summary = useMemo<BudgetSummary>(() => computeBudgetSummary(categories, transactions), [categories, transactions]);
 
-  const summary = useMemo<BudgetSummary>(
-    () => computeBudgetSummary(categories, transactions),
-    [categories, transactions]
-  );
-
-  const categoryTransactions = useCallback(
-    (catId: string) => transactions.filter((t) => t.categoryId === catId),
-    [transactions]
-  );
-
-  return {
-    loaded,
-    month,
-    year,
-    categories,
-    transactions,
-    summary,
-    addTransaction,
-    deleteTransaction,
-    addCategory,
-    deleteCategory,
-    updateCategoryLimit,
-    categoryTransactions,
-    changeMonth,
-    refreshTransactions,
-    refreshCategories,
-  };
+  return { loaded, month, year, categories, transactions, summary, addTransaction, deleteTransaction, addCategory, deleteCategory, changeMonth };
 }

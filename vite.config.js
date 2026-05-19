@@ -1,7 +1,16 @@
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
+  plugins: [react()],
   base: './',
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@app': path.resolve(__dirname, './app'),
+    },
+  },
   build: {
     target: 'es2020',
     minify: 'terser',
@@ -14,14 +23,8 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          chartjs: ['chart.js'],
-          capacitor: [
-            '@capacitor/core',
-            '@capacitor/haptics',
-            '@capacitor/status-bar',
-            '@capacitor/keyboard'
-          ]
+        manualChunks(id) {
+          if (id.includes('chart.js')) return 'chartjs';
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
@@ -34,6 +37,6 @@ export default defineConfig({
     reportCompressedSize: true
   },
   optimizeDeps: {
-    include: ['chart.js', '@capacitor/core']
+    include: ['chart.js']
   }
 })

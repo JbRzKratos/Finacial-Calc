@@ -17,14 +17,6 @@ export interface Transaction {
   type: "expense" | "income";
 }
 
-export interface MonthlyBudget {
-  month: number;
-  year: number;
-  totalLimit: number;
-  categories: BudgetCategory[];
-  transactions: Transaction[];
-}
-
 export interface CategoryBreakdown {
   category: BudgetCategory;
   spent: number;

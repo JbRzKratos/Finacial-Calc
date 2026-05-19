@@ -7,6 +7,7 @@ import { fdMaturity, rdMaturity } from "@/features/finance-calc/utils/math";
 import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
+import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
 import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
@@ -86,17 +87,6 @@ export default function FDPage() {
     <SplitShell
       left={
         <>
-          <p className="text-[11px] font-medium text-white/50 uppercase tracking-[0.08em] mb-3">
-            FinCalc Pro <span className="text-white/30">&gt;</span>{" "}
-            <span className="text-white/90 font-bold">FD &amp; RD Calculator</span>
-          </p>
-          <p className="text-[clamp(16px,2.5vw,20px)] font-bold text-white/95 tracking-[-0.01em] mb-1">
-            FD &amp; RD Calculator
-          </p>
-          <p className="text-[12px] font-medium text-white/70 mb-5">
-            Safe and guaranteed returns
-          </p>
-
           <div className="section-divider" />
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Deposit Type
@@ -119,6 +109,40 @@ export default function FDPage() {
               { value: Number(inputs.years), onChange: (v) => updateInput("years", parseFloat(v) || 1), label: "YEARS", suffix: "yr" },
             ]}
             className="mb-5"
+          />
+
+          <NeonSlider
+            label={isRD ? "MONTHLY DEPOSIT" : "PRINCIPAL AMOUNT"}
+            value={Number(inputs.amount)}
+            onChange={(v) => updateInput("amount", v)}
+            min={1000}
+            max={5000000}
+            step={1000}
+            unit="₹"
+            editable
+            tickLabels={["1K", "1.25M", "2.5M", "3.75M", "5M"]}
+          />
+
+          <NeonSlider
+            label="INTEREST RATE"
+            value={Number(inputs.rate)}
+            onChange={(v) => updateInput("rate", v)}
+            min={1}
+            max={15}
+            step={0.1}
+            unit="% P.A."
+            tickLabels={["1%", "4%", "7%", "11%", "15%"]}
+          />
+
+          <NeonSlider
+            label="DURATION"
+            value={Number(inputs.years)}
+            onChange={(v) => updateInput("years", v)}
+            min={1}
+            max={10}
+            step={1}
+            unit="YRS"
+            tickLabels={["1 YR", "3 YR", "5 YR", "7 YR", "10 YR"]}
           />
 
           {!isRD && (
