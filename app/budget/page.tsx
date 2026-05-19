@@ -18,7 +18,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 
 export default function BudgetDashboard() {
   const navigate = useNavigate();
-  const { loaded, month, year, categories, summary, totalBudgetOverride, addTransaction, addCategory, deleteCategory, changeMonth, updateTotalBudget } = useBudget();
+  const { loaded, month, year, categories, summary, totalBudgetOverride, addTransaction, addCategory, deleteCategory, changeMonth, updateTotalBudget, updateCategoryLimit } = useBudget();
   const [showMonth, setShowMonth] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showBudget, setShowBudget] = useState(false);
