@@ -201,75 +201,6 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  /* ─── Orange Panel Gradient ─── */
-  .panel-orange {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, #FF7A1A 0%, #FF6B00 50%, #E85D00 100%);
-  }
-  .panel-orange::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-  }
-  .panel-orange::after {
-    content: '';
-    position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .panel-orange > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ─── Nav Active Orange ─── */
-  .nav-active {
-    background: var(--brand-primary);
-    color: #FFFFFF;
-    border-radius: 8px;
-    padding: 6px 14px;
-    font-weight: 700;
-    box-shadow: 0 0 16px rgba(255,107,0,0.5), 0 4px 12px rgba(255,107,0,0.3);
-    position: relative;
-  }
-  .nav-active::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--brand-primary);
-    box-shadow: 0 0 8px rgba(255,107,0,0.8);
-    animation: navDotPulse 2s ease-in-out infinite;
-  }
-  @keyframes navDotPulse {
-    0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-    50%      { opacity: 0.6; transform: translateX(-50%) scale(1.4); }
-  }
-
-  .nav-inactive {
-    color: var(--brand-gray-dark);
-    padding: 6px 14px;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-  }
-  .nav-inactive:hover {
-    background: rgba(255,107,0,0.08);
-    color: var(--brand-primary);
-    border-radius: 8px;
-  }
-
   /* ─── Page Transition ─── */
   @keyframes pageEnter {
     from { opacity: 0; transform: translateY(16px); }
@@ -483,7 +414,6 @@
 /* ─── Mobile responsive ─── */
 @media (max-width: 767px) {
   body { overflow: auto; }
-  .panel-orange { padding: 20px 16px; }
   .toggle-group-4 {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -523,7 +453,6 @@
   --surface-elevated: #1C1C1F;
   --surface-hover: #222226;
   --accent-primary: #FF6B00;
-  --accent-glow: rgba(255, 107, 0, 0.15);
   --accent-muted: rgba(255, 107, 0, 0.08);
   --text-primary: #F5F5F5;
   --text-secondary: #8A8A90;
@@ -1038,21 +967,6 @@
   background-size: 20px 20px;
 }
 
-/* ─── Orange glow radial ─── */
-.bg-glow-orange {
-  background: radial-gradient(ellipse 60% 40% at 30% 60%, rgba(255,107,0,0.04) 0%, transparent 70%);
-}
-
-/* ─── FAB Pulse ─── */
-@keyframes fabPulse {
-  0% { box-shadow: 0 4px 20px rgba(255,107,0,0.4); }
-  50% { box-shadow: 0 4px 30px rgba(255,107,0,0.6); }
-  100% { box-shadow: 0 4px 20px rgba(255,107,0,0.4); }
-}
-.fab-pulse {
-  animation: fabPulse 3s ease-in-out infinite;
-}
-
 /* ─── Donut fill animation ─── */
 @keyframes donutFill {
   from { stroke-dashoffset: var(--donut-circ); }
@@ -1116,12 +1030,6 @@
 }
 .animate-page-out {
   animation: pageSlideOut 0.2s ease-in forwards;
-}
-
-/* ─── Orange dot glow ─── */
-@keyframes dotPulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.5); }
 }
 
 /* ─── Arrow slide for links ─── */

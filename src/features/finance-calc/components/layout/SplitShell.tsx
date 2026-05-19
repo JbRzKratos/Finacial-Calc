@@ -77,7 +77,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
         </div>
       )}
 
-      <AppBottomNav onMoreOpen={() => setMoreOpen(true)} />
+      <AppBottomNav onCalculatorOpen={() => setMoreOpen(true)} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
     </>
   );

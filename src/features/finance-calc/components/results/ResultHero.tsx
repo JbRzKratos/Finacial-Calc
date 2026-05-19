@@ -47,7 +47,7 @@ export function ResultHero({ value, subtitle, variant = "default", className, sh
   if (showEmptyState) {
     return (
       <div className="empty-state">
-        <div className="empty-state-icon">📊</div>
+        <div className="empty-state-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#55555C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/></svg></div>
         <div className="empty-state-title">Enter your details and hit Calculate</div>
         <div className="empty-state-sub">Your results will appear here</div>
       </div>
@@ -55,7 +55,7 @@ export function ResultHero({ value, subtitle, variant = "default", className, sh
   }
 
   return (
-    <div className={cn("relative rounded-2xl bg-white p-6 border border-[rgba(255,107,0,0.06)] shadow-[0_2px_24px_rgba(255,107,0,0.04)]", className)}>
+    <div className={cn("relative rounded-2xl bg-white p-6 border border-[rgba(0,0,0,0.06)]", className)}>
       <div className="animate-result-pop">
         <p className={cn("text-[clamp(30px,9vw,44px)] sm:text-[clamp(36px,6vw,64px)] font-extrabold leading-none tabular-nums tracking-[-0.03em]",
           variant === "positive" ? "text-brand-positive" :

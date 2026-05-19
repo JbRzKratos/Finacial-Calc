@@ -88,7 +88,7 @@ export default function ReportsPage() {
               {topDays.map((day, i) => (
                 <div key={day.date} className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className={`flex items-center justify-center w-7 h-7 rounded-full text-[10px] font-bold ${i === 0 ? "bg-[#FF6B00] text-white" : i === 1 ? "bg-white/10 text-white/60" : "bg-white/[0.06] text-white/40"}`}>
+                    <span className={`flex items-center justify-center w-7 h-7 rounded-full text-[10px] font-bold ${i === 0 ? "bg-white/15 text-[#F5F5F5]" : i === 1 ? "bg-white/10 text-white/60" : "bg-white/[0.06] text-white/40"}`}>
                       #{i + 1}
                     </span>
                     <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ export default function ReportsPage() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-base font-bold text-[#FF6B00] font-mono">{formatINRShort(day.amount)}</p>
+                  <p className="text-base font-bold text-[#F5F5F5] font-mono">{formatINRShort(day.amount)}</p>
                 </div>
               ))}
             </div>
@@ -111,7 +111,7 @@ export default function ReportsPage() {
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4">
               <p className="text-[10px] text-[#8A8A90] uppercase tracking-wider mb-1">Total Spent</p>
-              <p className="text-xl font-extrabold font-mono text-[#FF6B00]">{formatINR(summary.totalSpent)}</p>
+              <p className="text-xl font-extrabold font-mono text-[#F5F5F5]">{formatINR(summary.totalSpent)}</p>
             </div>
             <div className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4">
               <p className="text-[10px] text-[#8A8A90] uppercase tracking-wider mb-1">Budget</p>

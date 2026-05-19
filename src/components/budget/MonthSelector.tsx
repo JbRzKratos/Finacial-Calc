@@ -42,7 +42,7 @@ export function MonthSelector({ month, year, onChange, onClose }: MonthSelectorP
             ))}
           </div>
           <div className="flex justify-center mt-4">
-            <button type="button" onClick={() => { const d = new Date(); onChange(d.getMonth(), d.getFullYear()); onClose(); }} className="text-xs font-semibold text-[#FF6B00] hover:underline">
+            <button type="button" onClick={() => { const d = new Date(); onChange(d.getMonth(), d.getFullYear()); onClose(); }} className="text-xs font-semibold text-[#8A8A90] hover:text-[#F5F5F5] transition-colors">
               Jump to Today
             </button>
           </div>

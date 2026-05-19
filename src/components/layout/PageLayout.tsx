@@ -18,7 +18,7 @@ export function PageLayout({ children, noNav }: PageLayoutProps) {
 
       {!noNav && (
         <>
-          <AppBottomNav onMoreOpen={() => setMoreOpen(true)} />
+          <AppBottomNav onCalculatorOpen={() => setMoreOpen(true)} />
           <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
         </>
       )}
