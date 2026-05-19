@@ -5,8 +5,6 @@
 @import "@fontsource/inter/700.css";
 @import "@fontsource/inter/800.css";
 
-@custom-variant dark (&:is(.dark *));
-
 :root {
   --brand-primary: #FF6B00;
   --brand-primary-dark: #E05C00;
@@ -39,29 +37,8 @@
   --ring: #FF6B00;
 }
 
-.dark {
-  --brand-orange-bg: #E05C00;
-  --brand-white: #1A1A1A;
-  --brand-black: #FFFFFF;
-  --brand-gray-light: #2A2A2A;
-  --brand-gray-mid: #3A3A3A;
-  --brand-gray-text: #999999;
-  --brand-gray-dark: #CCCCCC;
-  --brand-positive: #4ade80;
-  --brand-positive-bg: rgba(74, 222, 128, 0.10);
-  --brand-negative: #f87171;
-  --brand-negative-bg: rgba(248, 113, 113, 0.10);
-  --brand-warning: #fbbf24;
-  --brand-warning-bg: rgba(251, 191, 36, 0.10);
-  --background: #1A1A1A;
-  --foreground: #FFFFFF;
-  --card: #2A2A2A;
-  --card-foreground: #FFFFFF;
-  --muted: #2A2A2A;
-  --muted-foreground: #999999;
-  --border: #3A3A3A;
-  --input: #3A3A3A;
-  --ring: #FF8C33;
+@theme {
+  --breakpoint-xs: 480px;
 }
 
 @theme inline {
@@ -357,15 +334,6 @@
     animation: trophyBounce 1s ease 0.5s 2;
   }
 
-  /* ─── Mobile Results Overlay ─── */
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
-  }
-  .animate-slide-up {
-    animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
-  }
-
   /* ─── Spinner ─── */
   @keyframes spin {
     from { transform: rotate(0deg); }
@@ -389,6 +357,19 @@
   }
   .animate-logo-accent {
     animation: logoFadeGlow 0.5s ease 0.2s both;
+  }
+
+  /* ─── Card Slide Up (budget tracker) ─── */
+  @keyframes cardSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .animate-slide-up {
+    animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
   }
 
   /* ─── Ripple ─── */
@@ -448,10 +429,6 @@
     background: linear-gradient(to bottom, transparent 70%, var(--brand-white) 100%);
     pointer-events: none;
   }
-  .dark .scroll-fade-bottom::after {
-    background: linear-gradient(to bottom, transparent 70%, #1A1A1A 100%);
-  }
-
   /* ─── Section divider ─── */
   .section-divider {
     border-bottom: 1px solid rgba(255,255,255,0.15);
