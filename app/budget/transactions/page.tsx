@@ -33,17 +33,21 @@ function TransactionsContent() {
 
   return (
     <>
-      <div className="category-header">
-        <button type="button" onClick={() => navigate("/budget")} className="category-back-btn" aria-label="Back to overview">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-          <span>Back</span>
-        </button>
-        <span className="category-header-title">{cat?.name || "All Transactions"}</span>
-        <button type="button" onClick={() => setShowAdd(true)} className="category-add-btn">
-          + Add
-        </button>
+      <div className="app-header">
+        <div className="app-header-left">
+          <button type="button" onClick={() => navigate("/budget")} className="app-header-btn" aria-label="Back to overview">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            <span>Back</span>
+          </button>
+        </div>
+        <span className="app-header-title">{cat?.name || "Transactions"}</span>
+        <div className="app-header-right">
+          <button type="button" onClick={() => setShowAdd(true)} className="app-header-action-primary">
+            + Add
+          </button>
+        </div>
       </div>
 
       <div className="page-container pt-4 space-y-1.5">

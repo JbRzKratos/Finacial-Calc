@@ -25,8 +25,10 @@ export default function CategoriesPage() {
   return (
     <PageLayout>
       <div className="page-scroll-container">
-        <div className="glass-header sticky top-0 px-5 pt-4 pb-3">
-          <h1 className="text-[20px] font-bold text-[#F5F5F5] tracking-[-0.02em]">Categories</h1>
+        <div className="app-header">
+          <div className="app-header-left" />
+          <span className="app-header-title">Categories</span>
+          <div className="app-header-right" />
         </div>
 
         <div className="page-container pt-4">
@@ -58,9 +60,6 @@ export default function CategoriesPage() {
                       <p className="text-sm font-bold text-[#F5F5F5] font-mono">{Math.round(pct)}%</p>
                       <p className="text-[10px] text-[#8A8A90]">used</p>
                     </div>
-                  </div>
-                  <div className="h-1 rounded-full bg-[#1C1C1F] mt-3 overflow-hidden">
-                    <div className="h-full rounded-full animate-progress" style={{ width: `${Math.min(100, pct)}%`, background: "rgba(255,255,255,0.15)", "--pct": `${Math.min(100, pct)}%` } as React.CSSProperties} />
                   </div>
                 </div>
               );

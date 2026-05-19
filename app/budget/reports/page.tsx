@@ -37,14 +37,17 @@ export default function ReportsPage() {
   return (
     <PageLayout>
       <div className="page-scroll-container">
-        <div className="glass-header sticky top-0 px-5 pt-4 pb-3 flex items-center gap-2">
-        <h1 className="flex-1 text-[20px] font-bold text-[#F5F5F5] tracking-[-0.02em]">Analytics</h1>
-        <button type="button" onClick={() => setShowMonth(true)} className="flex items-center gap-1 text-sm text-[#8A8A90] font-medium hover:text-white transition-colors px-3 py-1.5 rounded-lg bg-[#141416] border border-[rgba(255,255,255,0.06)]">
-          <span className="hidden sm:inline text-xs">{MONTHS[month]} {year}</span>
-          <span className="sm:hidden text-xs">{MONTHS[month].slice(0,3)}'{String(year).slice(2)}</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-      </div>
+        <div className="app-header">
+          <div className="app-header-left" />
+          <span className="app-header-title">Analytics</span>
+          <div className="app-header-right">
+            <button type="button" onClick={() => setShowMonth(true)} className="app-header-month">
+              <span className="hidden sm:inline">{MONTHS[month]} {year}</span>
+              <span className="sm:hidden">{MONTHS[month].slice(0,3)}"{String(year).slice(2)}</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
 
       <div className="page-container pt-4 space-y-6">
         <div>
@@ -69,9 +72,6 @@ export default function ReportsPage() {
                       <p className="text-sm font-bold text-[#F5F5F5] font-mono">{formatINRShort(bd.spent)}</p>
                       <p className="text-[10px] text-[#8A8A90]">{Math.round(bd.percentSpent)}% of budget</p>
                     </div>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#1C1C1F] overflow-hidden">
-                    <div className="h-full rounded-full animate-progress" style={{ width: `${Math.min(100, bd.percentSpent)}%`, background: "rgba(255,255,255,0.15)", "--pct": `${Math.min(100, bd.percentSpent)}%` } as React.CSSProperties} />
                   </div>
                 </div>
               ))}
