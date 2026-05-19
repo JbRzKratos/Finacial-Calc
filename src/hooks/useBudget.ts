@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { BudgetCategory, Transaction, BudgetSummary } from "@/lib/budget/budgetTypes";
-import { getCategories, saveCategories, getTransactions, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions } from "@/lib/budget/budgetStore";
+import { getCategories, saveCategories, getTransactions, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions, getTotalBudgetOverride, setTotalBudgetOverride, updateCategoryLimit as storeUpdateLimit } from "@/lib/budget/budgetStore";
 import { computeBudgetSummary, generateId } from "@/lib/budget/budgetCalc";
 
 const SEED_CATS: BudgetCategory[] = [
@@ -28,12 +28,21 @@ const now = new Date();
 const CM = now.getMonth();
 const CY = now.getFullYear();
 
+/** Scale all categories proportionally to hit a target total budget */
+function scaleCategoriesToBudget(cats: BudgetCategory[], targetTotal: number): BudgetCategory[] {
+  const currentTotal = cats.reduce((s, c) => s + c.monthlyLimit, 0);
+  if (currentTotal === 0) return cats;
+  const ratio = targetTotal / currentTotal;
+  return cats.map((c) => ({ ...c, monthlyLimit: Math.round(c.monthlyLimit * ratio) }));
+}
+
 export function useBudget() {
   const [categories, setCategories] = useState<BudgetCategory[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [month, setMonth] = useState(CM);
   const [year, setYear] = useState(CY);
   const [loaded, setLoaded] = useState(false);
+  const [totalBudgetOverride, setTotalBudgetOverrideState] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     let cats = getCategories();
@@ -42,6 +51,7 @@ export function useBudget() {
     if (txns.length === 0 && month === CM && year === CY) { txns = seedTxns(month, year); saveTransactions(month, year, txns); }
     setCategories(cats);
     setTransactions(txns);
+    setTotalBudgetOverrideState(getTotalBudgetOverride());
     setLoaded(true);
   }, [month, year]);
 
@@ -84,7 +94,22 @@ export function useBudget() {
 
   const changeMonth = useCallback((m: number, y: number) => { setMonth(m); setYear(y); }, []);
 
-  const summary = useMemo<BudgetSummary>(() => computeBudgetSummary(categories, transactions), [categories, transactions]);
+  const updateTotalBudget = useCallback((value: number | undefined) => {
+    setTotalBudgetOverride(value);
+    setTotalBudgetOverrideState(value);
+  }, []);
 
-  return { loaded, month, year, categories, transactions, summary, addTransaction, deleteTransaction, addCategory, deleteCategory, changeMonth };
+  const updateCategoryLimit = useCallback((id: string, newLimit: number) => {
+    storeUpdateLimit(id, newLimit);
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, monthlyLimit: newLimit } : c)));
+  }, []);
+
+  const summary = useMemo<BudgetSummary>(() => {
+    const cats = totalBudgetOverride && totalBudgetOverride > 0
+      ? scaleCategoriesToBudget(categories, totalBudgetOverride)
+      : categories;
+    return computeBudgetSummary(cats, transactions);
+  }, [categories, transactions, totalBudgetOverride]);
+
+  return { loaded, month, year, categories, transactions, summary, totalBudgetOverride, addTransaction, deleteTransaction, addCategory, deleteCategory, changeMonth, updateTotalBudget, updateCategoryLimit };
 }

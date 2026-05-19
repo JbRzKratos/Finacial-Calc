@@ -7,9 +7,10 @@ interface BudgetGaugeProps {
   totalSpent: number;
   totalRemaining: number;
   totalLimit: number;
+  onBudgetClick?: () => void;
 }
 
-export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLimit }: BudgetGaugeProps) {
+export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLimit, onBudgetClick }: BudgetGaugeProps) {
   const circRef = useRef<SVGCircleElement>(null);
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
@@ -61,10 +62,10 @@ export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLim
           <span className="font-mono text-[#F5F5F5]">{fmt(totalSpent)}</span>
           <span className="text-[#8A8A90] ml-1">spent</span>
         </div>
-        <div className="rounded-full bg-[#1C1C1F] px-3.5 py-1.5 text-xs font-medium touch-target">
+        <button type="button" onClick={onBudgetClick} className="rounded-full bg-[#1C1C1F] px-3.5 py-1.5 text-xs font-medium touch-target transition-all hover:bg-[#222226] active:scale-[0.96]">
           <span className="font-mono text-[#F5F5F5]">{fmt(totalLimit)}</span>
           <span className="text-[#8A8A90] ml-1">budget</span>
-        </div>
+        </button>
       </div>
     </div>
   );

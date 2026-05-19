@@ -5,6 +5,7 @@ const STORAGE_KEY = "fincalc_budget_data";
 interface StoredData {
   categories: BudgetCategory[];
   transactions: Record<string, Transaction[]>; // key: "YYYY-MM"
+  totalBudgetOverride?: number; // optional total budget cap, categories scale proportionally
 }
 
 function getFromStorage(): StoredData {
@@ -69,6 +70,25 @@ export function deleteCategoryTransactions(month: number, year: number, category
   const data = getFromStorage();
   if (data.transactions[key]) {
     data.transactions[key] = data.transactions[key].filter((t) => t.categoryId !== categoryId);
+    setToStorage(data);
+  }
+}
+
+export function getTotalBudgetOverride(): number | undefined {
+  return getFromStorage().totalBudgetOverride;
+}
+
+export function setTotalBudgetOverride(value: number | undefined): void {
+  const data = getFromStorage();
+  data.totalBudgetOverride = value;
+  setToStorage(data);
+}
+
+export function updateCategoryLimit(categoryId: string, newLimit: number): void {
+  const data = getFromStorage();
+  const idx = data.categories.findIndex((c) => c.id === categoryId);
+  if (idx !== -1) {
+    data.categories[idx] = { ...data.categories[idx], monthlyLimit: newLimit };
     setToStorage(data);
   }
 }

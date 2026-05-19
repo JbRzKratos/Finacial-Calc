@@ -10,10 +10,11 @@ interface BudgetCardProps {
   daysLeft: number;
   onClick: () => void;
   onDelete: () => void;
+  onEditLimit?: () => void;
   index: number;
 }
 
-export const BudgetCard = memo(function BudgetCard({ breakdown, daysLeft, onClick, onDelete, index }: BudgetCardProps) {
+export const BudgetCard = memo(function BudgetCard({ breakdown, daysLeft, onClick, onDelete, onEditLimit, index }: BudgetCardProps) {
   const { category, spent, percentSpent, status } = breakdown;
   const cardRef = useRef<HTMLDivElement>(null);
   const deleteBtnRef = useRef<HTMLButtonElement>(null);
@@ -49,7 +50,14 @@ export const BudgetCard = memo(function BudgetCard({ breakdown, daysLeft, onClic
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
             <p className="text-[15px] font-semibold text-[#F5F5F5]">{category.name}</p>
-            <p className={`budget-mono text-sm font-bold`} style={{ color }}>{formatINR(spent)}</p>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onEditLimit?.(); }}
+              className={`budget-mono text-sm font-bold hover:opacity-80 transition-opacity active:scale-95`}
+              style={{ color }}
+            >
+              {formatINR(spent)}
+            </button>
           </div>
           <p className="text-xs text-[#8A8A90] mt-0.5">
             {daysLeft}d left &bull; {Math.round(percentSpent)}% spent

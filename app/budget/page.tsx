@@ -3,11 +3,14 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBudget } from "@/hooks/useBudget";
+import type { BudgetCategory } from "@/lib/budget/budgetTypes";
 import { BudgetGauge } from "@/components/budget/BudgetGauge";
 import { BudgetCard } from "@/components/budget/BudgetCard";
 import { MonthSelector } from "@/components/budget/MonthSelector";
 import { AddTransactionSheet } from "@/components/budget/AddTransactionSheet";
 import { AddBudgetSheet } from "@/components/budget/AddBudgetSheet";
+import { BudgetScaleSheet } from "@/components/budget/BudgetScaleSheet";
+import { EditBudgetLimitSheet } from "@/components/budget/EditBudgetLimitSheet";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { formatINR } from "@/lib/budget/budgetCalc";
 
@@ -15,12 +18,13 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 
 export default function BudgetDashboard() {
   const navigate = useNavigate();
-  const { loaded, month, year, categories, summary, addTransaction, addCategory, deleteCategory, changeMonth } = useBudget();
+  const { loaded, month, year, categories, summary, totalBudgetOverride, addTransaction, addCategory, deleteCategory, changeMonth, updateTotalBudget } = useBudget();
   const [showMonth, setShowMonth] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showBudget, setShowBudget] = useState(false);
+  const [showScale, setShowScale] = useState(false);
+  const [editCategory, setEditCategory] = useState<BudgetCategory | null>(null);
 
-  const handleFab = useCallback(() => setShowAdd(true), []);
   const handleAddTxn = useCallback((d: Parameters<typeof addTransaction>[0]) => addTransaction(d), [addTransaction]);
   const handleAddCat = useCallback((d: Parameters<typeof addCategory>[0]) => addCategory(d), [addCategory]);
   const handleDelete = useCallback((id: string) => { if (confirm("Delete this category and all its transactions?")) deleteCategory(id); }, [deleteCategory]);
@@ -56,12 +60,12 @@ export default function BudgetDashboard() {
         </div>
 
         <div className="page-container pt-4">
-          <BudgetGauge percentSpent={summary.percentSpent} totalSpent={summary.totalSpent} totalRemaining={summary.totalRemaining} totalLimit={summary.totalLimit} />
+          <BudgetGauge percentSpent={summary.percentSpent} totalSpent={summary.totalSpent} totalRemaining={summary.totalRemaining} totalLimit={summary.totalLimit} onBudgetClick={() => setShowScale(true)} />
 
           <p className="text-xs font-semibold text-[#8A8A90] uppercase tracking-wider mt-6 mb-3">Categories</p>
 
           {summary.categoryBreakdown.map((bd, i) => (
-            <BudgetCard key={bd.category.id} breakdown={bd} daysLeft={summary.daysLeftInMonth} onClick={() => navigate(`/budget/transactions?category=${bd.category.id}`)} onDelete={() => handleDelete(bd.category.id)} index={i} />
+            <BudgetCard key={bd.category.id} breakdown={bd} daysLeft={summary.daysLeftInMonth} onClick={() => navigate(`/budget/transactions?category=${bd.category.id}`)} onDelete={() => handleDelete(bd.category.id)} onEditLimit={() => setEditCategory(bd.category)} index={i} />
           ))}
         </div>
       </div>
@@ -69,6 +73,8 @@ export default function BudgetDashboard() {
       {showMonth && <MonthSelector month={month} year={year} onChange={changeMonth} onClose={() => setShowMonth(false)} />}
       <AddTransactionSheet categories={categories} open={showAdd} onClose={() => setShowAdd(false)} onSave={handleAddTxn} />
       <AddBudgetSheet open={showBudget} onClose={() => setShowBudget(false)} onSave={handleAddCat} />
+      <BudgetScaleSheet open={showScale} onClose={() => setShowScale(false)} currentTotal={totalBudgetOverride ?? summary.totalLimit} categories={categories} onApply={updateTotalBudget} />
+      {editCategory && <EditBudgetLimitSheet open={!!editCategory} onClose={() => setEditCategory(null)} category={editCategory} onSave={(v) => updateCategoryLimit(editCategory.id, v)} />}
     </PageLayout>
   );
 }
