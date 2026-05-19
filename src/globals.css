@@ -661,8 +661,9 @@
 .glass-card {
   position: relative;
   background: rgba(20,20,22,0.88);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  --gc-blur: blur(14px);
+  -webkit-backdrop-filter: var(--gc-blur);
+  backdrop-filter: var(--gc-blur);
   border-radius: 20px;
   transition: transform 0.3s cubic-bezier(0.22,1,0.36,1),
               box-shadow 0.3s cubic-bezier(0.22,1,0.36,1);
@@ -715,9 +716,10 @@
   justify-content: space-between;
   padding: 0 14px;
   height: 48px;
-  background: rgba(10,10,12,0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(10,10,12,0.92);
+  --h-blur: blur(20px);
+  -webkit-backdrop-filter: var(--h-blur);
+  backdrop-filter: var(--h-blur);
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .app-header-title {
@@ -867,9 +869,10 @@
   max-width: 400px;
   padding: 0 6px;
   border-radius: 20px;
-  background: rgba(10,10,12,0.38);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
+  background: rgba(10,10,12,0.45);
+  --nb-blur: blur(28px);
+  -webkit-backdrop-filter: var(--nb-blur);
+  backdrop-filter: var(--nb-blur);
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 4px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
   pointer-events: auto;
