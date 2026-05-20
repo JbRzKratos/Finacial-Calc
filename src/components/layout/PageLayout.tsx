@@ -3,6 +3,7 @@
 import { type ReactNode, useState } from "react";
 import { AppBottomNav } from "@/components/layout/AppBottomNav";
 import { MoreSheet } from "@/components/layout/MoreSheet";
+import { Toaster } from "@/components/ui/toaster";
 
 interface PageLayoutProps {
   children: ReactNode;
@@ -23,6 +24,8 @@ export function PageLayout({ children, noNav }: PageLayoutProps) {
             <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
           </>
         )}
+
+        <Toaster />
       </div>
     </div>
   );

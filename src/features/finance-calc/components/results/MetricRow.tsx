@@ -1,32 +1,41 @@
-import { memo } from "react";
+"use client";
+
+import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface MetricRowProps {
   label: string;
   value: string;
   variant?: "default" | "positive" | "negative" | "accent";
-  className?: string;
   index?: number;
 }
 
-function MetricRowInner({ label, value, variant = "default", className, index = 0 }: MetricRowProps) {
-  const valueClass = variant === "positive" ? "text-brand-positive" :
-    variant === "negative" ? "text-brand-negative" :
-    variant === "accent" ? "text-brand-primary" : "text-brand-black";
+export function MetricRow({ label, value, variant = "default", index = 0 }: MetricRowProps) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.animationDelay = (index * 60) + "ms";
+    }
+  }, [index]);
+
   return (
     <div
-      className={cn("animate-metric", className)}
-      style={{ animationDelay: (Math.min(index, 8) * 50) + "ms" }}
+      ref={ref}
+      className="animate-metric flex justify-between items-center py-2.5 px-3 rounded-xl hover:bg-white/[0.02] transition-colors"
     >
-      <div className="flex justify-between items-center py-3 px-1">
-        <span className="text-[13px] text-brand-gray-text font-normal">{label}</span>
-        <span className={cn("text-[15px] font-bold tabular-nums tracking-[-0.01em]", valueClass)}>{value}</span>
-      </div>
-      {index < 7 && (
-        <hr className="border-0 h-px bg-gradient-to-r from-brand-gray-mid via-brand-gray-mid to-transparent opacity-60" />
-      )}
+      <span className="text-xs font-semibold tracking-[0.06em] text-white/40 uppercase">{label}</span>
+      <span
+        className={cn(
+          "text-sm font-bold font-mono tabular-nums",
+          variant === "default" && "text-white/70",
+          variant === "positive" && "text-[#16a34a]",
+          variant === "negative" && "text-[#dc2626]",
+          variant === "accent" && "text-orange-500"
+        )}
+      >
+        {value}
+      </span>
     </div>
   );
 }
-
-export const MetricRow = memo(MetricRowInner);

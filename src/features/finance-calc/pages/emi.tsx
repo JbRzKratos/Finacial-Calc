@@ -15,6 +15,7 @@ import { MetricRow } from "@/features/finance-calc/components/results/MetricRow"
 import { InsightBanner } from "@/features/finance-calc/components/results/InsightBanner";
 import { SegmentedResult } from "@/features/finance-calc/components/results/SegmentedResult";
 import { ResultChart } from "@/features/finance-calc/components/results/ResultChart";
+import { Card, CardContent } from "@/components/ui/card";
 
 const loanPresets = [
   { value: "home", label: "HOME" },
@@ -51,13 +52,6 @@ function calcFn(inputs: Record<string, unknown>) {
     interestRatio: totalPayment > 0 ? (totalInterest / totalPayment) * 100 : 0,
   };
 }
-
-const speedStops = [
-  { value: 1, label: "MINIMUM" },
-  { value: 0.75, label: "STANDARD" },
-  { value: 0.5, label: "FAST" },
-  { value: 0.25, label: "VERY FAST" },
-];
 
 export default function EMIPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("emi", defaultInputs, calcFn);
@@ -101,12 +95,6 @@ export default function EMIPage() {
       updateInput("preset", preset);
     }
   };
-
-  const basePreset = presetMap[String(inputs.preset || "home")] || defaultInputs;
-  const currentSpeed = basePreset.years > 0 ? Number(inputs.years) / basePreset.years : 1;
-  const closestSpeed = speedStops.reduce((prev, curr) =>
-    Math.abs(curr.value - currentSpeed) < Math.abs(prev.value - currentSpeed) ? curr : prev
-  );
 
   return (
     <SplitShell
@@ -192,12 +180,14 @@ export default function EMIPage() {
                 className="mt-5"
               />
 
-              <div className="mt-1">
-                <MetricRow label="Principal Amount" value={formatINRFull(r.amount)} index={0} />
-                <MetricRow label="Total Interest" value={formatINRFull(r.totalInterest)} variant="negative" index={1} />
-                <MetricRow label="Total Payment" value={formatINRFull(r.totalPayment)} index={2} />
-                <MetricRow label="Interest to Loan Ratio" value={r.interestRatio.toFixed(1) + "%"} variant="negative" index={3} />
-              </div>
+              <Card className="bg-card border-border mt-4">
+                <CardContent className="p-4 flex flex-col gap-1">
+                  <MetricRow label="Principal Amount" value={formatINRFull(r.amount)} index={0} />
+                  <MetricRow label="Total Interest" value={formatINRFull(r.totalInterest)} variant="negative" index={1} />
+                  <MetricRow label="Total Payment" value={formatINRFull(r.totalPayment)} index={2} />
+                  <MetricRow label="Interest to Loan Ratio" value={r.interestRatio.toFixed(1) + "%"} variant="negative" index={3} />
+                </CardContent>
+              </Card>
 
               {insights.length > 0 && (
                 <InsightBanner title={insights[0].title} body={insights[0].description} />

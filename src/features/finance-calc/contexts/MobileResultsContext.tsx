@@ -1,10 +1,10 @@
 ﻿"use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface MobileResultsContextType {
   showMobileResults: boolean;
-  setShowMobileResults: (v: boolean) => void;
+  setShowMobileResults: (show: boolean) => void;
 }
 
 const MobileResultsContext = createContext<MobileResultsContextType>({
@@ -14,16 +14,6 @@ const MobileResultsContext = createContext<MobileResultsContextType>({
 
 export function MobileResultsProvider({ children }: { children: ReactNode }) {
   const [showMobileResults, setShowMobileResults] = useState(false);
-
-  useEffect(() => {
-    if (showMobileResults) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [showMobileResults]);
-
   return (
     <MobileResultsContext.Provider value={{ showMobileResults, setShowMobileResults }}>
       {children}

@@ -2,13 +2,13 @@
 
 import { cn } from "@/lib/utils";
 
-interface Segment {
+export interface SegmentedResultSegments {
   value: string;
   label: string;
 }
 
 interface SegmentedResultProps {
-  segments: Segment[];
+  segments: SegmentedResultSegments[];
   value: string;
   onChange: (value: string) => void;
   className?: string;
@@ -16,20 +16,23 @@ interface SegmentedResultProps {
 
 export function SegmentedResult({ segments, value, onChange, className }: SegmentedResultProps) {
   return (
-    <div className={cn("flex flex-wrap gap-2 p-0.5", className)}>
+    <div className={cn("flex bg-white/[0.03] border border-white/[0.06] rounded-2xl p-1 w-max", className)}>
       {segments.map((seg) => {
-        const selected = value === seg.value;
+        const active = seg.value === value;
         return (
           <button
             key={seg.value}
             type="button"
             onClick={() => onChange(seg.value)}
             className={cn(
-              "h-10 text-[12px] font-bold uppercase tracking-[0.06em] px-4 flex-1 min-w-[80px] whitespace-nowrap transition-all duration-250",
-              selected
-                ? "seg-selected bg-[#1A1A1A] text-white shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
-                : "seg-unselected bg-brand-gray-light text-brand-gray-dark border border-brand-gray-mid"
+              "px-4 py-2 text-xs font-semibold tracking-[0.04em] transition-all duration-200",
+              active
+                ? "seg-selected bg-[#FF6B00]/10 text-orange-500 border border-orange-500/30"
+                : "seg-unselected text-white/40 hover:text-white/70"
             )}
+            style={{
+              borderRadius: "12px",
+            }}
           >
             {seg.label}
           </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocation, useNavigate } from "react-router-dom";
+import { Home, Calculator, Wallet } from "lucide-react";
 
 interface AppBottomNavProps {
   onCalculatorOpen: () => void;
@@ -24,23 +25,9 @@ export function AppBottomNav({ onCalculatorOpen }: AppBottomNavProps) {
   };
 
   const tabs = [
-    { id: "home", label: "Home", icon: (a: boolean) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? "#FF6B00" : "rgba(255,255,255,0.35)"} strokeWidth={a ? 2 : 1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-      </svg>
-    )},
-    { id: "calculators", label: "Calculators", icon: (a: boolean) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? "#FF6B00" : "rgba(255,255,255,0.35)"} strokeWidth={a ? 2 : 1.8} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="4" y="4" width="16" height="16" rx="2"/>
-        <path d="M9 8v8M12 8v8M15 8v8M18 8v8"/>
-      </svg>
-    )},
-    { id: "budget", label: "Budget", icon: (a: boolean) => (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a ? "#FF6B00" : "rgba(255,255,255,0.35)"} strokeWidth={a ? 2 : 1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2v20M2 12h20"/>
-        <circle cx="12" cy="12" r="2" fill={a ? "#FF6B00" : "rgba(255,255,255,0.35)"} fillOpacity={a ? "1" : "0.35"}/>
-      </svg>
-    )},
+    { id: "home", label: "Home", icon: Home },
+    { id: "calculators", label: "Calculators", icon: Calculator },
+    { id: "budget", label: "Budget", icon: Wallet },
   ];
 
   return (
@@ -48,6 +35,7 @@ export function AppBottomNav({ onCalculatorOpen }: AppBottomNavProps) {
       <div className="app-bottom-nav-inner">
         {tabs.map((tab) => {
           const active = isActive(tab.id);
+          const Icon = tab.icon;
           return (
             <button
               key={tab.id}
@@ -56,10 +44,16 @@ export function AppBottomNav({ onCalculatorOpen }: AppBottomNavProps) {
               className="app-bottom-nav-btn"
             >
               <div className="app-bottom-nav-icon-wrap">
-                {tab.icon(active)}
+                <Icon
+                  size={22}
+                  className={active ? "text-orange-500" : "text-white/35"}
+                  strokeWidth={active ? 2 : 1.8}
+                />
                 {active && <div className="app-bottom-nav-dot" />}
               </div>
-              <span className="app-bottom-nav-label">{tab.label}</span>
+              <span className="app-bottom-nav-label" style={{ color: active ? "#FF6B00" : undefined }}>
+                {tab.label}
+              </span>
             </button>
           );
         })}

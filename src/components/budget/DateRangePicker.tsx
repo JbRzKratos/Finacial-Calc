@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import type { DateRange } from "@/lib/budget/budgetTypes";
 import { getMonthDateRange, getTodayISO } from "@/lib/budget/budgetCalc";
 
@@ -19,16 +20,6 @@ export function DateRangePicker({ range, onChange, onClose }: DateRangePickerPro
     setTo(range.endDate);
   }, [range]);
 
-  const handleBackdrop = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
-  }, [onClose]);
-
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", h);
-    return () => window.removeEventListener("keydown", h);
-  }, [onClose]);
-
   const applyPreset = useCallback((startDate: string, endDate: string) => {
     setFrom(startDate);
     setTo(endDate);
@@ -44,7 +35,6 @@ export function DateRangePicker({ range, onChange, onClose }: DateRangePickerPro
   const now = new Date();
   const cy = now.getFullYear();
   const cm = now.getMonth();
-  const cd = now.getDate();
 
   const presets = [
     {
@@ -77,8 +67,11 @@ export function DateRangePicker({ range, onChange, onClose }: DateRangePickerPro
   const today = getTodayISO();
 
   return (
-    <div className="modal-backdrop" onClick={handleBackdrop}>
-      <div className="modal-panel" style={{ maxHeight: "80vh" }} onClick={(e) => e.stopPropagation()}>
+    <Sheet open={true} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <SheetContent
+        side="bottom"
+        className="bg-[#141416] border-t border-white/[0.06] rounded-t-3xl px-0 pb-0 max-h-[80vh] overflow-y-auto [&>button]:hidden"
+      >
         <div className="w-9 h-1 rounded-full bg-[#333] mx-auto mt-3 mb-2" />
         <div className="px-5 pb-[calc(24px+env(safe-area-inset-bottom))]">
           <div className="flex items-center justify-between mb-4">
@@ -145,7 +138,7 @@ export function DateRangePicker({ range, onChange, onClose }: DateRangePickerPro
             Apply Range
           </button>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }

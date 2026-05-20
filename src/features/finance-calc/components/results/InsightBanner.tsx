@@ -1,21 +1,24 @@
-import { memo } from "react";
+"use client";
+
+import { SegmentedResultSegments } from "./SegmentedResult";
 
 interface InsightBannerProps {
   title: string;
   body: string;
 }
 
-function InsightBannerInner({ title, body }: InsightBannerProps) {
+export function InsightBanner({ title, body }: InsightBannerProps) {
   return (
-    <div className="my-5 animate-metric relative rounded-2xl bg-white border border-[rgba(0,0,0,0.06)] p-5" style={{ animationDelay: "200ms" }}>
-      <p className="text-[clamp(18px,2.5vw,22px)] font-bold text-brand-black mb-1.5">
-        {title}
-      </p>
-      <p className="text-[14px] text-brand-gray-text font-normal leading-relaxed">
-        {body}
-      </p>
+    <div className="calc-card !p-4 mt-4 animate-banner-reveal relative overflow-hidden">
+      <div className="flex gap-3 items-start">
+        <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0 mt-0.5">
+          <span className="text-sm">💡</span>
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-sm font-semibold text-white/85 mb-1">{title}</h4>
+          <p className="text-xs text-white/50 leading-relaxed">{body}</p>
+        </div>
+      </div>
     </div>
   );
 }
-
-export const InsightBanner = memo(InsightBannerInner);

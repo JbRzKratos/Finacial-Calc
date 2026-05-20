@@ -1,3 +1,5 @@
+"use client";
+
 interface TimelineBarProps {
   currentAge: number;
   retirementAge: number;
@@ -6,19 +8,40 @@ interface TimelineBarProps {
 
 export function TimelineBar({ currentAge, retirementAge, lifeExpectancy }: TimelineBarProps) {
   const total = lifeExpectancy - currentAge;
-  const retirePct = ((retirementAge - currentAge) / total) * 100;
+  const workingPct = ((retirementAge - currentAge) / total) * 100;
+  const retiredPct = ((lifeExpectancy - retirementAge) / total) * 100;
+
   return (
-    <div className="mt-6 mb-2 animate-metric">
-      <div className="relative h-1.5 bg-[rgba(0,0,0,0.06)] rounded-full overflow-hidden">
-        <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-brand-primary to-[#FF8C38] rounded-full transition-all duration-700" style={{ width: retirePct + "%" }} />
-        <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-brand-primary border-[3px] border-white shadow-[0_2px_8px_rgba(0,0,0,0.12)]" style={{ left: "0%" }} />
-        <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-brand-black border-[3px] border-white shadow-[0_2px_8px_rgba(0,0,0,0.15)]" style={{ left: retirePct + "%" }} />
-        <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-brand-gray-mid border-[3px] border-white" style={{ left: "100%" }} />
+    <div className="mt-6 animate-chart">
+      <p className="text-[11px] font-semibold tracking-[0.08em] text-white/40 uppercase mb-3">Life Timeline</p>
+      <div className="relative h-10 flex items-center">
+        <div className="absolute inset-0 flex rounded-full overflow-hidden">
+          <div
+            className="bg-orange-500/20 border border-orange-500/30"
+            style={{ width: workingPct + "%" }}
+          />
+          <div
+            className="bg-white/5 border border-white/10"
+            style={{ width: retiredPct + "%" }}
+          />
+        </div>
+        <div className="relative z-10 flex w-full px-3">
+          <span className="text-[10px] font-semibold text-white/60">
+            {currentAge}
+          </span>
+          <div className="flex-1" />
+          <span className="text-[10px] font-semibold text-orange-400">
+            {retirementAge}
+          </span>
+          <div className="flex-1" />
+          <span className="text-[10px] font-semibold text-white/40">
+            {lifeExpectancy}
+          </span>
+        </div>
       </div>
-      <div className="flex justify-between mt-2.5 text-[11px] text-brand-gray-text font-medium">
-        <span>Now (Age {currentAge})</span>
-        <span>Retire (Age {retirementAge})</span>
-        <span>End (Age {lifeExpectancy})</span>
+      <div className="flex justify-between mt-1.5">
+        <span className="text-[10px] text-white/30">Working phase</span>
+        <span className="text-[10px] text-white/30">Retirement phase</span>
       </div>
     </div>
   );

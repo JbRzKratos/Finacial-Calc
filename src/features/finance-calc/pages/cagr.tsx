@@ -2,94 +2,44 @@
 
 import { useMemo, useState } from "react";
 import { useCalculator } from "@/features/finance-calc/hooks/useCalculator";
-import { formatINR, formatINRFull } from "@/features/finance-calc/utils/formatter";
+import { formatINRFull } from "@/features/finance-calc/utils/formatter";
 import { cagr, ruleOf72 } from "@/features/finance-calc/utils/math";
 import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
 import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
-import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
 import { MetricRow } from "@/features/finance-calc/components/results/MetricRow";
 import { InsightBanner } from "@/features/finance-calc/components/results/InsightBanner";
-import { SegmentedResult } from "@/features/finance-calc/components/results/SegmentedResult";
-import { ResultChart } from "@/features/finance-calc/components/results/ResultChart";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-const defaultInputs = { initial: 100000, final: 200000, years: 5, benchmark: "nifty" };
-
-const benchmarkMap: Record<string, number> = {
-  fd: 7,
-  nifty: 12,
-  gold: 8,
-};
+const defaultInputs = { initial: 100000, final: 250000, years: 5 };
+const benchmarkMap: Record<string, number> = { nifty: 12, fd: 7 };
+const benchmarkNames: Record<string, string> = { nifty: "Nifty 50", fd: "FD (7%)" };
 
 function calcFn(inputs: Record<string, unknown>) {
-  const initial = Math.max(1, Number(inputs.initial) || 1);
-  const finalVal = Math.max(0, Number(inputs.final) || 0);
+  const initial = Math.max(0, Number(inputs.initial) || 0);
+  const final = Math.max(0, Number(inputs.final) || 0);
   const years = Math.max(1, Number(inputs.years) || 1);
-  const cagrVal = cagr(initial, finalVal, years);
-  const returns = finalVal - initial;
-  const absReturn = initial > 0 ? ((returns / initial) * 100) : 0;
-  const doubleYears = cagrVal > 0 ? Math.round(ruleOf72(cagrVal)) : 0;
-  return {
-    cagr: cagrVal,
-    initial: Math.round(initial),
-    final: Math.round(finalVal),
-    returns: Math.round(returns),
-    absReturn,
-    doubleYears,
-  };
+  const cagrVal = cagr(initial, final, years);
+  const absReturn = final - initial;
+  const doubleYears = Math.round(ruleOf72(cagrVal));
+  return { cagr: cagrVal, absReturn, doubleYears, initial, final, years };
 }
 
 export default function CAGRPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("cagr", defaultInputs, calcFn);
   const [segment, setSegment] = useState("my");
   const r = result as ReturnType<typeof calcFn> | null;
+
   const benchmarkKey = String(inputs.benchmark || "nifty");
   const benchmarkRate = benchmarkMap[benchmarkKey] ?? 12;
-  const benchmarkNames: Record<string, string> = { nifty: "Nifty 50", fd: "FD (7%)", gold: "Gold (8%)" };
-  const selectedBenchmark = benchmarkNames[benchmarkKey] ?? "Benchmark";
-
-  const chartConfig = useMemo(() => r ? {
-    type: "line" as const,
-    data: {
-      labels: Array.from({ length: Number(inputs.years) + 1 }, (_, i) => "Y" + i),
-      datasets: [
-        {
-          label: "My Investment",
-          data: Array.from({ length: Number(inputs.years) + 1 }, (_, i) => Math.round(r.initial * Math.pow(1 + r.cagr / 100, i))),
-          borderColor: "#FF6B00",
-          backgroundColor: "rgba(255,107,0,0.08)",
-          fill: true,
-        },
-        {
-          label: selectedBenchmark,
-          data: Array.from({ length: Number(inputs.years) + 1 }, (_, i) => Math.round(r.initial * Math.pow(1 + benchmarkRate / 100, i))),
-          borderColor: "#1A1A1A",
-          borderDash: [6, 3] as [number, number],
-          backgroundColor: "transparent",
-          fill: false,
-        },
-      ]
-    },
-    options: {
-      plugins: { legend: { position: "bottom" as const } },
-    }
-  } : null, [r, inputs.years, inputs.benchmark]);
+  const selectedBenchmark = benchmarkNames[benchmarkKey] || "Nifty 50";
+  const outperformance = r ? r.cagr - benchmarkRate : 0;
 
   const insights = r ? generateInsights("cagr", r, inputs) : [];
-
-  const cagrVal = r?.cagr ?? 0;
-  const badgeText = cagrVal >= 12 ? "BEATS NIFTY AVERAGE"
-    : cagrVal >= 7 ? "BEATS FD RETURNS"
-    : cagrVal > 0 ? "BELOW FD RATE"
-    : "LOSS MAKING";
-
-  const badgeColor = cagrVal >= 12 ? "bg-brand-positive text-white"
-    : cagrVal >= 7 ? "bg-brand-primary text-white"
-    : cagrVal > 0 ? "bg-brand-warning text-white"
-    : "bg-brand-negative text-white";
 
   return (
     <SplitShell
@@ -101,23 +51,23 @@ export default function CAGRPage() {
           </p>
           <InputRow
             fields={[
-              { value: Number(inputs.initial), onChange: (v) => updateInput("initial", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "INITIAL VALUE" },
-              { value: Number(inputs.final), onChange: (v) => updateInput("final", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "FINAL VALUE" },
-              { value: Number(inputs.years), onChange: (v) => updateInput("years", parseFloat(v) || 1), label: "PERIOD", suffix: "yr" },
+              { value: Number(inputs.initial), onChange: (v) => updateInput("initial", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "INITIAL" },
+              { value: Number(inputs.final), onChange: (v) => updateInput("final", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "FINAL" },
+              { value: Number(inputs.years), onChange: (v) => updateInput("years", parseFloat(v) || 1), label: "YEARS", suffix: "yr" },
             ]}
             className="mb-5"
           />
 
           <NeonSlider
-            label="INITIAL VALUE"
+            label="INITIAL INVESTMENT"
             value={Number(inputs.initial)}
             onChange={(v) => updateInput("initial", v)}
             min={1000}
-            max={1000000}
+            max={10000000}
             step={1000}
             unit="₹"
             editable
-            tickLabels={["1K", "250K", "500K", "750K", "1M"]}
+            tickLabels={["1K", "2.5M", "5M", "7.5M", "10M"]}
           />
 
           <NeonSlider
@@ -125,15 +75,15 @@ export default function CAGRPage() {
             value={Number(inputs.final)}
             onChange={(v) => updateInput("final", v)}
             min={1000}
-            max={5000000}
+            max={50000000}
             step={1000}
             unit="₹"
             editable
-            tickLabels={["1K", "1.25M", "2.5M", "3.75M", "5M"]}
+            tickLabels={["1K", "12.5M", "25M", "37.5M", "50M"]}
           />
 
           <NeonSlider
-            label="YEARS"
+            label="INVESTMENT PERIOD"
             value={Number(inputs.years)}
             onChange={(v) => updateInput("years", v)}
             min={1}
@@ -141,20 +91,6 @@ export default function CAGRPage() {
             step={1}
             unit="YRS"
             tickLabels={["1 YR", "8 YR", "15 YR", "22 YR", "30 YR"]}
-          />
-
-          <div className="section-divider" />
-          <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
-            Compare Against
-          </p>
-          <ToggleGroup
-            options={[
-              { value: "nifty", label: "NIFTY (12%)" },
-              { value: "fd", label: "FD (7%)" },
-              { value: "gold", label: "GOLD (8%)" },
-            ]}
-            value={String(inputs.benchmark || "nifty")}
-            onChange={(v) => updateInput("benchmark", v)}
           />
 
           <ActionButtonRow onClear={resetInputs} />
@@ -166,42 +102,24 @@ export default function CAGRPage() {
             <ResultHero value="" subtitle="" showEmptyState />
           ) : (
             <>
-              <ResultHero
-                value={(r?.cagr ?? 0).toFixed(2) + "%"}
-                subtitle="Compound Annual Growth Rate"
-                variant={cagrVal >= 0 ? "positive" : "negative"}
-              />
+              <ResultHero value={r.cagr.toFixed(2) + "%"} subtitle="Compound Annual Growth Rate" variant="accent" />
 
-              <div className={"badge-pill inline-block px-3 py-1.5 mt-2 text-[11px] font-bold uppercase tracking-[0.06em] " + badgeColor}>
-                {badgeText}
-              </div>
-
-              <SegmentedResult
-                segments={[
-                  { value: "my", label: "MY INVESTMENT" },
-                  { value: "vs", label: "VS BENCHMARK" },
-                  { value: "compare", label: "COMPARE" },
-                ]}
-                value={segment}
-                onChange={setSegment}
-                className="mt-5"
-              />
-
-              <div className="mt-1">
-                <MetricRow label="Absolute Return" value={(r?.absReturn ?? 0).toFixed(1) + "%"} variant="positive" index={0} />
-                <MetricRow label="Money Doubled in" value={r ? (r.doubleYears + " years") : "-"} index={1} />
-                <MetricRow label="CAGR vs FD (7%)" value={r ? ((r.cagr - 7).toFixed(2) + "%") : "-"} variant={r && r.cagr >= 7 ? "positive" : "negative"} index={2} />
-                <MetricRow label="CAGR vs Nifty (12%)" value={r ? ((r.cagr - 12).toFixed(2) + "%") : "-"} variant={r && r.cagr >= 12 ? "positive" : "negative"} index={3} />
-              </div>
+              <Card className="bg-card border-border mt-4">
+                <CardContent className="p-4 flex flex-col gap-1">
+                  <MetricRow label="Absolute Return" value={formatINRFull(r.absReturn)} variant="positive" index={0} />
+                  <MetricRow label="Total Growth" value={(r.absReturn / r.initial * 100).toFixed(1) + "%"} index={1} />
+                  <MetricRow label="Doubling Period" value={r.doubleYears + " yrs"} index={2} />
+                  <div className="flex justify-between items-center py-2.5 px-3">
+                    <span className="text-xs font-semibold tracking-[0.06em] text-white/40 uppercase">vs {selectedBenchmark}</span>
+                    <Badge className={outperformance >= 0 ? "bg-green-500/10 text-green-400 border-green-500/20 text-[10px] font-semibold" : "bg-destructive/10 text-destructive border-destructive/20 text-[10px] font-semibold"}>
+                      {outperformance >= 0 ? "+" : ""}{outperformance.toFixed(2)}%
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
 
               {insights.length > 0 && (
                 <InsightBanner title={insights[0].title} body={insights[0].description} />
-              )}
-
-              {chartConfig && (
-                <div className="mt-6">
-                  <ResultChart config={chartConfig} height={240} />
-                </div>
               )}
             </>
           )}

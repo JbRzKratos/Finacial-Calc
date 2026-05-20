@@ -15,6 +15,7 @@ import { MetricRow } from "@/features/finance-calc/components/results/MetricRow"
 import { InsightBanner } from "@/features/finance-calc/components/results/InsightBanner";
 import { SegmentedResult } from "@/features/finance-calc/components/results/SegmentedResult";
 import { ResultChart } from "@/features/finance-calc/components/results/ResultChart";
+import { Card, CardContent } from "@/components/ui/card";
 
 const defaultInputs = { amount: 5000, years: 10, rate: 12, stepUp: "0" };
 
@@ -55,24 +56,6 @@ function calcFn(inputs: Record<string, unknown>) {
     growthPct: invested > 0 ? ((returns / invested) * 100) : 0,
   };
 }
-
-const durationStops = [
-  { value: 1, label: "1yr" },
-  { value: 5, label: "5yr" },
-  { value: 10, label: "10yr" },
-  { value: 20, label: "20yr" },
-  { value: 30, label: "30yr" },
-  { value: 40, label: "40yr" },
-];
-
-const rateStops = [
-  { value: 6, label: "6%" },
-  { value: 8, label: "8%" },
-  { value: 10, label: "10%" },
-  { value: 12, label: "12%" },
-  { value: 15, label: "15%" },
-  { value: 20, label: "20%" },
-];
 
 export default function SIPPage() {
   const { inputs, result, updateInput, resetInputs } = useCalculator("sip", defaultInputs, calcFn);
@@ -184,12 +167,14 @@ export default function SIPPage() {
                 className="mt-5"
               />
 
-              <div className="mt-1">
-                <MetricRow label="Invested Amount" value={formatINRFull(r?.invested ?? 0)} index={0} />
-                <MetricRow label="Estimated Returns" value={formatINRFull(r?.returns ?? 0)} variant="positive" index={1} />
-                <MetricRow label="Growth Rate" value={(r?.growthPct ?? 0).toFixed(1) + "%"} index={2} />
-                <MetricRow label="Total Value" value={formatINRFull(r?.maturity ?? 0)} variant="accent" index={3} />
-              </div>
+              <Card className="bg-card border-border mt-4">
+                <CardContent className="p-4 flex flex-col gap-1">
+                  <MetricRow label="Invested Amount" value={formatINRFull(r?.invested ?? 0)} index={0} />
+                  <MetricRow label="Estimated Returns" value={formatINRFull(r?.returns ?? 0)} variant="positive" index={1} />
+                  <MetricRow label="Growth Rate" value={(r?.growthPct ?? 0).toFixed(1) + "%"} index={2} />
+                  <MetricRow label="Total Value" value={formatINRFull(r?.maturity ?? 0)} variant="accent" index={3} />
+                </CardContent>
+              </Card>
 
               {insights.length > 0 && (
                 <InsightBanner title={insights[0].title} body={insights[0].description} />

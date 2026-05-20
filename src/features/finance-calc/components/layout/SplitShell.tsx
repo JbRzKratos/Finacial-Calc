@@ -2,7 +2,8 @@
 
 import { ReactNode, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
 import { AppBottomNav } from "@/components/layout/AppBottomNav";
 import { MoreSheet } from "@/components/layout/MoreSheet";
 import { MobileResultsProvider, useMobileResults } from "@/features/finance-calc/contexts/MobileResultsContext";
@@ -33,12 +34,15 @@ function SplitShellContent({ left, right }: SplitShellProps) {
           <div className="absolute inset-0 bg-noise pointer-events-none opacity-[0.025]" />
           <header className="app-header">
             <div className="app-header-left">
-              <button type="button" onClick={() => navigate("/")} className="app-header-btn" aria-label="Back to home">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-                <span>Home</span>
-              </button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/")}
+                className="gap-1 text-orange-500 hover:text-orange-400 hover:bg-orange-500/10 px-2 h-9"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span className="text-sm font-medium">Home</span>
+              </Button>
             </div>
             <span className="app-header-title">Calculator</span>
             <div className="app-header-right" />
@@ -48,6 +52,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
             {left}
           </div>
         </section>
+
         <section
           id="results"
           className="bg-[#FAFAF9] overflow-y-auto scroll-fade-bottom max-md:hidden relative"
@@ -66,14 +71,15 @@ function SplitShellContent({ left, right }: SplitShellProps) {
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
           <div className="px-5 pt-4" style={{ paddingBottom: "calc(96px + env(safe-area-inset-bottom))" }}>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowMobileResults(false)}
-              className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-primary mb-4 hover:opacity-80 transition-opacity"
+              className="gap-1.5 text-orange-500 hover:text-orange-400 hover:bg-orange-500/10 mb-4 h-9"
             >
-              <ArrowLeft size={14} />
-              Back to Inputs
-            </button>
+              <ChevronLeft className="w-4 h-4" />
+              <span className="text-xs font-semibold uppercase tracking-wider">Back to Inputs</span>
+            </Button>
             {right}
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 interface MonthSelectorProps {
   month: number;
@@ -12,16 +13,12 @@ interface MonthSelectorProps {
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function MonthSelector({ month, year, onChange, onClose }: MonthSelectorProps) {
-  const handleBackdrop = useCallback((e: React.MouseEvent) => { if (e.target === e.currentTarget) onClose(); }, [onClose]);
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", h);
-    return () => window.removeEventListener("keydown", h);
-  }, [onClose]);
-
   return (
-    <div className="modal-backdrop" onClick={handleBackdrop}>
-      <div className="modal-panel" style={{ maxHeight: "70vh" }} onClick={(e) => e.stopPropagation()}>
+    <Sheet open={true} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <SheetContent
+        side="bottom"
+        className="bg-[#141416] border-t border-white/[0.06] rounded-t-3xl px-0 pb-0 max-h-[70vh] overflow-y-auto [&>button]:hidden"
+      >
         <div className="w-9 h-1 rounded-full bg-[#333] mx-auto mt-3 mb-5" />
         <div className="px-6 pb-8">
           <p className="text-xs font-semibold text-[#8A8A90] uppercase tracking-wider mb-4">Select Month</p>
@@ -47,7 +44,7 @@ export function MonthSelector({ month, year, onChange, onClose }: MonthSelectorP
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }
