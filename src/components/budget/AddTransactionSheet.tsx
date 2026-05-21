@@ -27,7 +27,8 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
   useEffect(() => {
     if (open) {
       setType(defaultType); setAmount(""); setCategoryId(""); setNote(""); setDate(getTodayISO()); setShowDatePicker(false);
-      setTimeout(() => inputRef.current?.focus(), 400);
+      const timer = setTimeout(() => inputRef.current?.focus(), 400);
+      return () => clearTimeout(timer);
     }
   }, [open, defaultType]);
 

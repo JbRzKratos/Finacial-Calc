@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -116,23 +114,9 @@
 
 @layer utilities {
   .tabular-nums { font-variant-numeric: tabular-nums; }
-  .tracking-widest { letter-spacing: 0.2em; }
-  .budget-body {
-    font-family: 'DM Sans', system-ui, sans-serif;
-    background: var(--bg-base);
-    color: var(--text-primary);
-    -webkit-font-smoothing: antialiased;
-  }
   .budget-mono {
     font-family: 'DM Mono', monospace;
     font-variant-numeric: tabular-nums;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
   }
   .hide-scrollbar {
     -ms-overflow-style: none;
@@ -299,12 +283,6 @@
   .glass-card:active {
     transform: translateY(0) scale(0.99);
   }
-  .glass-card-accent {
-    border-left: 2px solid var(--accent-primary);
-  }
-  .glass-card-accent::before {
-    background: linear-gradient(135deg, rgba(255,107,0,0.15), rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-  }
 
   /* ─── Calculator card wrapper ─── */
   .calc-card {
@@ -339,98 +317,6 @@
   }
   .calc-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
   .calc-card:hover::after { opacity: 1; }
-  .calc-card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-  .calc-card-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: rgba(255, 107, 0, 0.12);
-    border: 1px solid rgba(255, 107, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .calc-card-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: #F5F5F5;
-  }
-  .calc-result-box {
-    position: relative;
-    margin-top: 20px;
-    padding: 18px;
-    background: linear-gradient(145deg, rgba(255,107,0,0.05), rgba(255,107,0,0.02));
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .calc-result-box::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(255,107,0,0.25), rgba(255,107,0,0.08), transparent);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-  .calc-result-box::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    background: radial-gradient(100% 60% at 20% 0%, rgba(255,107,0,0.06), transparent 80%);
-    pointer-events: none;
-  }
-  .calc-result-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.35);
-    text-transform: uppercase;
-  }
-  .calc-result-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 28px;
-    font-weight: 700;
-    color: #FF6B00;
-    letter-spacing: -0.02em;
-  }
-  .calc-result-breakdown {
-    display: flex;
-    gap: 16px;
-    margin-top: 4px;
-    flex-wrap: wrap;
-  }
-  .breakdown-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .breakdown-label {
-    font-size: 10px;
-    color: rgba(255,255,255,0.3);
-    letter-spacing: 0.06em;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .breakdown-value {
-    font-size: 13px;
-    font-family: 'DM Mono', monospace;
-    color: rgba(255,255,255,0.7);
-    font-weight: 500;
-  }
 
   /* ─── Unified App Header ─── */
   .app-header {
@@ -497,23 +383,6 @@
   .app-header-btn span { color: #FF6B00; }
   .app-header-btn:hover { background: rgba(255,107,0,0.08); }
   .app-header-btn:active { background: rgba(255,107,0,0.14); transform: scale(0.96); }
-  .app-header-action {
-    background: none;
-    border: 1px solid rgba(255,107,0,0.35);
-    border-radius: 8px;
-    padding: 7px 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: #FF6B00;
-    cursor: pointer;
-    min-height: 34px;
-    white-space: nowrap;
-    transition: background 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .app-header-action:hover { background: rgba(255,107,0,0.08); }
-  .app-header-action:active { transform: scale(0.96); }
   .app-header-action-primary {
     background: #FF6B00;
     border: none;
@@ -638,13 +507,6 @@
   }
   .app-bottom-nav-btn:has(.app-bottom-nav-dot) .app-bottom-nav-label {
     color: #FF6B00;
-  }
-  .bottom-nav-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 80px 1fr 1fr;
-    align-items: start;
-    height: 100%;
-    padding-top: 4px;
   }
 
   /* ─── Slider ─── */
@@ -842,26 +704,6 @@
   }
 
   /* ─── More Sheet ─── */
-  .more-sheet-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-overlay);
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    animation: moreSheetBackdropIn 0.25s ease both;
-  }
-  .more-sheet {
-    width: 100%;
-    max-width: 480px;
-    background: #141416;
-    border-radius: 24px 24px 0 0;
-    padding: 16px 20px calc(24px + env(safe-area-inset-bottom, 0px));
-    animation: moreSheetSlideUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
-    max-height: 70vh;
-    overflow-y: auto;
-  }
   .more-sheet-btn {
     display: flex;
     flex-direction: column;
@@ -916,42 +758,6 @@
     color: #FF6B00;
   }
 
-  /* ─── Calc amount input ─── */
-  .calc-amount-input {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 22px;
-    font-weight: 600;
-    color: #F5F5F5;
-    text-align: center;
-    outline: none;
-    transition: border-color 0.2s ease;
-  }
-  .calc-amount-input:focus {
-    border-color: rgba(255, 107, 0, 0.5);
-    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
-  }
-  .calc-amount-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.35);
-    text-align: center;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
-  .calc-amount-range-hint {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.25);
-    text-align: center;
-    margin-top: 4px;
-  }
-
   /* ─── Empty state ─── */
   .empty-state {
     display: flex;
@@ -975,40 +781,6 @@
     mask-composite: exclude;
     pointer-events: none;
   }
-  .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
-  .empty-state-title { font-size: 16px; font-weight: 600; color: var(--brand-gray-text); margin-bottom: 6px; }
-  .empty-state-sub { font-size: 13px; color: var(--brand-gray-text); opacity: 0.7; }
-
-  /* ─── Modal ─── */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: var(--z-overlay);
-  }
-  .modal-panel {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: var(--z-modal);
-    background: linear-gradient(180deg, #1A1A1D 0%, #141416 100%);
-    border-radius: 24px 24px 0 0;
-    max-height: 85vh;
-    overflow-y: auto;
-    padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
-  }
-  .modal-panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-    pointer-events: none;
-  }
 
   /* ─── Background noise ─── */
   .bg-noise::before {
@@ -1019,10 +791,6 @@
     opacity: 0.03;
     pointer-events: none;
     z-index: 0;
-  }
-  .bg-dot-grid {
-    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 20px 20px;
   }
 
   /* ─── Touch target ─── */
@@ -1039,9 +807,6 @@
     padding-left: clamp(12px, 4vw, 20px);
     padding-right: clamp(12px, 4vw, 20px);
   }
-  .content-below-nav {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-  }
   .page-scroll-container {
     height: 100dvh;
     overflow-y: auto;
@@ -1050,13 +815,6 @@
     box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
-  }
-  .toast-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: var(--z-toast);
   }
   .scroll-fade-bottom {
     position: relative;
@@ -1123,16 +881,6 @@
     background: #0A0A0C;
   }
 
-  /* ─── Category card (budget) ─── */
-  .category-card,
-  .transaction-item {
-    contain: layout style;
-  }
-  .transaction-list {
-    content-visibility: auto;
-    contain-intrinsic-size: 0 400px;
-  }
-
   /* ─── Animations ─── */
   @keyframes badgePulse {
     0%   { transform: scale(0.8); opacity: 0; }
@@ -1147,10 +895,52 @@
     from { opacity: 0; transform: translateX(-12px); }
     to   { opacity: 1; transform: translateX(0); }
   }
+  @keyframes pageEnter {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes panelEnter {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
   @keyframes resultPop {
     0%   { transform: scale(0.95); opacity: 0.7; }
     60%  { transform: scale(1.03); }
     100% { transform: scale(1);    opacity: 1; }
+  }
+  @keyframes metricSlideIn {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes chartReveal {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes bannerReveal {
+    0%   { opacity: 0; transform: scaleX(0.8) translateY(-10px); border-radius: 20px; }
+    60%  { transform: scaleX(1.02) translateY(2px); }
+    100% { opacity: 1; transform: scaleX(1) translateY(0); border-radius: 12px; }
+  }
+  @keyframes trophyBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25%      { transform: translateY(-6px) rotate(-5deg); }
+    75%      { transform: translateY(-3px) rotate(3deg); }
+  }
+  @keyframes cardSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  @keyframes homeCardIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(100%); }
   }
   @keyframes metricSlideIn {
     from { opacity: 0; transform: translateX(12px); }
@@ -1239,10 +1029,6 @@
   }
 
   /* Animation utility classes */
-  .badge-pill {
-    border-radius: 999px;
-    animation: badgePulse 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-  }
   .animate-page-enter { animation: pageEnter 0.3s cubic-bezier(0.22,1,0.36,1) forwards; }
   .animate-panel-enter { animation: panelEnter 0.25s ease forwards; }
   .animate-result-pop { animation: resultPop 0.4s cubic-bezier(0.34,1.56,0.64,1); }
@@ -1253,29 +1039,8 @@
     transform-origin: top center;
   }
   .animate-trophy { display: inline-block; animation: trophyBounce 1s ease 0.5s 2; }
-  .animate-spin-slow { animation: spin 0.8s linear infinite; }
-  .animate-logo-brand { animation: logoSlideIn 0.4s ease 0.1s both; }
-  .animate-logo-accent { animation: logoFadeGlow 0.5s ease 0.2s both; }
   .animate-slide-up { animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-  .ripple-btn { position: relative; overflow: hidden; }
-  .ripple-btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: rgba(255,255,255,0.2);
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .ripple-btn:active::after { animation: ripple 0.4s ease-out; }
-  .animate-donut { animation: donutFill 0.8s ease-out forwards; }
-  .animate-progress { animation: progressFill 0.6s ease-out forwards; }
-  .animate-modal-in { animation: modalSlideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-  .animate-modal-out { animation: modalSlideDown 0.25s ease-in forwards; }
   .animate-slide-out { animation: slideOutRight 0.25s ease-in forwards; }
-  .animate-page-in { animation: pageSlideIn 0.3s cubic-bezier(0.22,1,0.36,1) forwards; }
-  .animate-page-out { animation: pageSlideOut 0.2s ease-in forwards; }
 
   /* Staggered card entry */
   @media (prefers-reduced-motion: no-preference) {
@@ -1291,24 +1056,6 @@
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-[data-state="open"] .sheet-content {
-  animation: sheet-slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-state="closed"] .sheet-content {
-  animation: sheet-slide-down 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes sheet-slide-up {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-@keyframes sheet-slide-down {
-  from { transform: translateY(0); }
-  to { transform: translateY(100%); }
-}
-
 /* ─── Input date on dark ─── */
 input[type="date"] { color-scheme: dark; }
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -1319,17 +1066,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* ─── Mobile responsive ─── */
 @media (max-width: 767px) {
   body { overflow: auto; }
-  .toggle-group-4 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .input-row-3 { grid-template-columns: 1fr 1fr; }
-  .input-row-3 > :nth-child(3) { grid-column: span 2; }
-}
-
-@media (min-width: 768px) {
-  .input-row-3 { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 400px) {
@@ -1337,7 +1073,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .app-header-title { font-size: 14px; max-width: 90px; }
   .app-header-btn span { display: none; }
   .app-header-btn { padding: 6px; min-width: 36px; justify-content: center; }
-  .app-header-action { font-size: 11px; padding: 5px 7px; }
   .app-header-action-primary { font-size: 11px; padding: 5px 7px; }
   .app-header-month { font-size: 11px; padding: 5px 7px; }
   .app-header-right { gap: 4px; }

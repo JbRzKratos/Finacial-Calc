@@ -24,7 +24,7 @@ export function BudgetEmptyState({ title = "Nothing here yet", subtitle = "Start
           </button>
         )}
         {onClose && (
-          <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors">
+          <button type="button" onClick={onClose} aria-label="Close" className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors">
             <X size={16} className="text-[#8A8A90]" />
           </button>
         )}

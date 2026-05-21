@@ -50,8 +50,8 @@ export function SpendingChart({ transactions, daysInRange, dateRange }: Spending
     <div className="rounded-2xl bg-[#141416] border border-[rgba(255,255,255,0.06)] p-4">
       <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" preserveAspectRatio="none">
         {/* Grid lines */}
-        {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-          <line key={i} x1={pad} y1={pad + chartH * pct} x2={pad + chartW} y2={pad + chartH * pct} stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+        {[0, 0.25, 0.5, 0.75, 1].map((pct) => (
+          <line key={`grid-${pct}`} x1={pad} y1={pad + chartH * pct} x2={pad + chartW} y2={pad + chartH * pct} stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
         ))}
         {/* Area fill */}
         <polygon points={areaPoints.join(" ")} fill="rgba(255,107,0,0.08)" />

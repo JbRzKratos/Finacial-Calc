@@ -1,7 +1,5 @@
 "use client";
 
-import { SegmentedResultSegments } from "./SegmentedResult";
-
 interface InsightBannerProps {
   title: string;
   body: string;

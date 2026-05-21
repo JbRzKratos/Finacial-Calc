@@ -4,19 +4,6 @@
   return monthly * ((Math.pow(1 + r, months) - 1) / r) * (1 + r);
 }
 
-export function sipYearlyBreakdown(monthly: number, years: number, ratePct: number): { year: number; invested: number; returns: number; corpus: number }[] {
-  const rows: { year: number; invested: number; returns: number; corpus: number }[] = [];
-  let cumulativeCorpus = 0;
-  for (let y = 1; y <= years; y++) {
-    const months = y * 12;
-    const corpus = sipFV(monthly, months, ratePct);
-    const invested = monthly * months;
-    cumulativeCorpus = corpus;
-    rows.push({ year: y, invested: Math.round(invested), returns: Math.round(corpus - invested), corpus: Math.round(corpus) });
-  }
-  return rows;
-}
-
 export function emi(principal: number, annualRate: number, months: number): number {
   if (annualRate === 0) return principal / months;
   const r = annualRate / 12 / 100;

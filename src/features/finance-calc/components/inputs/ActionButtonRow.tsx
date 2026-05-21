@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useMobileResults } from "@/features/finance-calc/contexts/MobileResultsContext";
 

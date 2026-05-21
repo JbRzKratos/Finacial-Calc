@@ -115,6 +115,8 @@ function useToast() {
     return () => {
       const index = listeners.indexOf(setState)
       if (index > -1) listeners.splice(index, 1)
+      toastTimeouts.forEach((timeout) => clearTimeout(timeout))
+      toastTimeouts.clear()
     }
   }, [state])
 

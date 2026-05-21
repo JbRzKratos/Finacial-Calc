@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useCalculator } from "@/features/finance-calc/hooks/useCalculator";
-import { formatINR, formatINRFull } from "@/features/finance-calc/utils/formatter";
+import { formatINRFull } from "@/features/finance-calc/utils/formatter";
 import { sipFV, ruleOf72 } from "@/features/finance-calc/utils/math";
 import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";

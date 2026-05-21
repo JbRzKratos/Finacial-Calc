@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useCallback, useMemo } from "react";
+import { Suspense, useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useBudget } from "@/hooks/useBudget";
 import { AddTransactionSheet } from "@/components/budget/AddTransactionSheet";
@@ -17,6 +17,9 @@ function TransactionsContent() {
   const [showAdd, setShowAdd] = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const deleteTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => () => clearTimeout(deleteTimerRef.current), []);
 
   const cat = categories.find((c) => c.id === catId);
   const catTxns = useMemo(() => (catId ? transactions.filter((t) => t.categoryId === catId) : transactions).sort((a, b) => b.date.localeCompare(a.date)), [transactions, catId]);
@@ -25,7 +28,7 @@ function TransactionsContent() {
 
   const handleDelete = useCallback((id: string) => {
     setDeletingId(id);
-    setTimeout(() => { deleteTransaction(id); setDeletingId(null); setConfirmId(null); }, 250);
+    deleteTimerRef.current = setTimeout(() => { deleteTransaction(id); setDeletingId(null); setConfirmId(null); }, 250);
   }, [deleteTransaction]);
 
   const totalExp = catTxns.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);

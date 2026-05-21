@@ -1,11 +1,10 @@
 ﻿"use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { AppBottomNav } from "@/components/layout/AppBottomNav";
-import { MoreSheet } from "@/components/layout/MoreSheet";
 import { MobileResultsProvider, useMobileResults } from "@/features/finance-calc/contexts/MobileResultsContext";
 
 interface SplitShellProps {
@@ -17,7 +16,6 @@ function SplitShellContent({ left, right }: SplitShellProps) {
   const pathname = useLocation().pathname;
   const navigate = useNavigate();
   const { showMobileResults, setShowMobileResults } = useMobileResults();
-  const [moreOpen, setMoreOpen] = useState(false);
 
   return (
     <>
@@ -85,8 +83,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
         </div>
       )}
 
-      <AppBottomNav onCalculatorOpen={() => setMoreOpen(true)} />
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <AppBottomNav />
     </>
   );
 }

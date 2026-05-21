@@ -17,8 +17,6 @@ export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLim
   const pct = Math.min(100, percentSpent);
   const offset = circumference * (1 - pct / 100);
 
-  const color = "rgba(255,255,255,0.15)";
-
   useEffect(() => {
     if (circRef.current) {
       circRef.current.style.transition = "stroke-dashoffset 0.8s ease-out";
@@ -42,7 +40,7 @@ export function BudgetGauge({ percentSpent, totalSpent, totalRemaining, totalLim
           cy="100"
           r={radius}
           fill="none"
-          stroke={color}
+          stroke="rgba(255,255,255,0.15)"
           strokeWidth="16"
           strokeLinecap="round"
           strokeDasharray={circumference}

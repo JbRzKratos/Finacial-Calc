@@ -123,7 +123,7 @@ export function NeonSlider({ label, value, onChange, min, max, step, unit, tickL
       </div>
       <div className="slider-ticks-row">
         {defaultTicks.map((t, i) => (
-          <span key={i} className="tick-label">{t}</span>
+          <span key={`${t}-${i}`} className="tick-label">{t}</span>
         ))}
       </div>
     </div>

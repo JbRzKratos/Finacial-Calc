@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
 import { useCalculator } from "@/features/finance-calc/hooks/useCalculator";
 import { formatINRFull } from "@/features/finance-calc/utils/formatter";
 import { loanVsInvest } from "@/features/finance-calc/utils/math";

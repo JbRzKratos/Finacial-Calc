@@ -20,7 +20,7 @@ export function InputRow({ fields, className }: InputRowProps) {
   return (
     <div className={cn("flex gap-3", className)}>
       {fields.map((field, i) => (
-        <div key={i} className="flex-1 flex flex-col gap-1.5">
+        <div key={`${field.label}-${i}`} className="flex-1 flex flex-col gap-1.5">
           <Label className="text-[10px] font-semibold tracking-[0.12em] text-white/40 uppercase">
             {field.label}
           </Label>

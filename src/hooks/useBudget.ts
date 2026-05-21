@@ -95,8 +95,7 @@ export function useBudget() {
 
   const addCategory = useCallback((cat: Omit<BudgetCategory, "id" | "createdAt">) => {
     const newCat: BudgetCategory = { ...cat, id: generateId(), createdAt: new Date().toISOString() };
-    const cats = getCategories();
-    cats.push(newCat);
+    const cats = [...getCategories(), newCat];
     saveCategories(cats);
     setCategories(cats);
     return newCat;

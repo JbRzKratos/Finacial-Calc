@@ -60,7 +60,7 @@ export function AddBudgetSheet({ open, onClose, onSave }: AddBudgetSheetProps) {
               {ICON_NAMES.map((name) => {
                 const I = getIcon(name);
                 return (
-                  <button key={name} type="button" onClick={() => setIcon(name)} className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${icon === name ? "bg-[#FF6B00] scale-110 shadow-md" : "bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)]"}`}>
+                  <button key={name} type="button" onClick={() => setIcon(name)} aria-label={`Icon: ${name}`} className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${icon === name ? "bg-[#FF6B00] scale-110 shadow-md" : "bg-[#141416] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)]"}`}>
                     {I ? <I size={20} className={icon === name ? "text-white" : "text-white/70"} /> : null}
                   </button>
                 );

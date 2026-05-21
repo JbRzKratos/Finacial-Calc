@@ -13,6 +13,7 @@ interface ResultHeroProps {
 function animateValue(ref: HTMLSpanElement, start: number, end: number, duration: number) {
   const startTime = performance.now();
   const isFloat = end % 1 !== 0;
+  let rafId: number;
   const step = (now: number) => {
     const elapsed = now - startTime;
     const progress = Math.min(elapsed / duration, 1);
@@ -25,9 +26,10 @@ function animateValue(ref: HTMLSpanElement, start: number, end: number, duration
         ref.textContent = "₹" + Math.round(current).toLocaleString("en-IN");
       }
     }
-    if (progress < 1) requestAnimationFrame(step);
+    if (progress < 1) rafId = requestAnimationFrame(step);
   };
-  requestAnimationFrame(step);
+  rafId = requestAnimationFrame(step);
+  return () => cancelAnimationFrame(rafId);
 }
 
 function parseValue(value: string): number {
@@ -48,7 +50,8 @@ export function ResultHero({ value, subtitle, variant = "default", showEmptyStat
   useEffect(() => {
     if (!mounted || showEmptyState || !displayRef.current || !value) return;
     const endVal = parseValue(value);
-    animateValue(displayRef.current, 0, endVal, 800);
+    const cancel = animateValue(displayRef.current, 0, endVal, 800);
+    return cancel;
   }, [value, mounted, showEmptyState]);
 
   if (showEmptyState) {

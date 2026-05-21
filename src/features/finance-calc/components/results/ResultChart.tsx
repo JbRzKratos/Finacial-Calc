@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import { useEffect, useRef } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, PointElement, LineElement, Filler } from "chart.js";
 import { Doughnut, Bar, Line } from "react-chartjs-2";
 
