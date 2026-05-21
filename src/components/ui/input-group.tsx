@@ -43,7 +43,7 @@ function InputGroupInput({
     <Input
       data-slot="input-group-input"
       className={cn(
-        "border-0 bg-transparent rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10",
+        "border-0 bg-transparent rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 h-10 text-white/80 placeholder:text-white/25 text-sm font-medium text-center",
         className
       )}
       {...props}

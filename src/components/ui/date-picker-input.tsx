@@ -86,7 +86,7 @@ export function DatePickerInput({ label, value, onChange, id, placeholder = "Sel
               </InputGroupButton>
             </PopoverTrigger>
             <PopoverContent
-              className="w-auto overflow-hidden p-0"
+              className="calendar-popover-content"
               align="end"
               alignOffset={-8}
               sideOffset={10}

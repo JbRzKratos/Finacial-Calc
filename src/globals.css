@@ -1,3 +1,5 @@
+@import "react-day-picker/style.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -61,10 +63,11 @@
 
     --z-base: 1;
     --z-card: 10;
-    --z-sticky: 100;
+    --z-sticky: 99;
+    --z-nav: 100;
     --z-fab: 150;
+    --z-overlay: 150;
     --z-dropdown: 200;
-    --z-overlay: 900;
     --z-modal: 1000;
     --z-toast: 1100;
 
@@ -76,7 +79,7 @@
     --text-2xl: clamp(22px, 5.5vw, 30px);
     --text-3xl: clamp(26px, 6.5vw, 36px);
 
-    --content-bottom-padding: calc(96px + env(safe-area-inset-bottom, 0px));
+    --content-bottom-padding: calc(clamp(56px, 14vw, 72px) + clamp(56px, 14vw, 72px) + env(safe-area-inset-bottom, 0px));
     --slider-track-height: 6px;
     --slider-thumb-size: 22px;
   }
@@ -289,7 +292,7 @@
     position: relative;
     background: linear-gradient(145deg, #141416, #121214);
     border-radius: 20px;
-    padding: 24px 20px;
+    padding: clamp(16px, 3vw, 24px) clamp(14px, 3vw, 20px);
     margin-bottom: 16px;
     transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
   }
@@ -326,8 +329,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 14px;
-    height: 48px;
+    padding: 0 clamp(10px, 3vw, 16px);
+    height: clamp(44px, 12vw, 52px);
     background: rgba(10,10,12,0.92);
     --h-blur: blur(20px);
     -webkit-backdrop-filter: var(--h-blur);
@@ -339,7 +342,7 @@
     left: 50%;
     transform: translateX(-50%);
     font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
+    font-size: clamp(14px, 4vw, 17px);
     font-weight: 700;
     color: #F5F5F5;
     letter-spacing: -0.01em;
@@ -347,7 +350,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 120px;
+    max-width: clamp(90px, 30vw, 140px);
     text-align: center;
   }
   .app-header-left {
@@ -428,11 +431,11 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: var(--z-sticky);
+    z-index: var(--z-nav, 100);
     display: flex;
     justify-content: center;
     padding: 0 10px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px));
     pointer-events: none;
   }
   .app-bottom-nav-inner {
@@ -441,10 +444,10 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    height: 58px;
+    height: clamp(56px, 14vw, 72px);
     width: 100%;
     max-width: 400px;
-    padding: 0 6px;
+    padding: 0 clamp(4px, 1.5vw, 8px);
     border-radius: 20px;
     background: rgba(10,10,12,0.45);
     --nb-blur: blur(28px);
@@ -468,15 +471,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px 12px;
-    min-width: 56px;
-    min-height: 48px;
+    padding: clamp(4px, 1.5vw, 8px) clamp(8px, 3vw, 16px);
+    min-width: 44px;
+    min-height: 44px;
     -webkit-tap-highlight-color: transparent;
     transition: opacity 0.2s ease;
+    flex: 1;
   }
   .app-bottom-nav-btn:active { opacity: 0.6; }
   .app-bottom-nav-icon-wrap {
@@ -484,8 +488,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: clamp(20px, 5vw, 26px);
+    height: clamp(20px, 5vw, 26px);
   }
   .app-bottom-nav-dot {
     position: absolute;
@@ -499,7 +503,7 @@
   }
   .app-bottom-nav-label {
     font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
+    font-size: clamp(10px, 2.5vw, 12px);
     font-weight: 500;
     color: rgba(255,255,255,0.35);
     letter-spacing: 0.02em;
@@ -579,7 +583,7 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.5);
@@ -665,8 +669,236 @@
     border-bottom: 1px solid rgba(255,255,255,0.15);
     margin-bottom: 14px;
   }
+  .section-header {
+    font-size: clamp(11px, 3vw, 13px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: clamp(6px, 1.5vw, 10px);
+  }
 
-  /* ─── Budget Scale Slider ─── */
+  /* ─── Action Button Row (Calculate / Clear) ─── */
+  .action-btn-row {
+    position: sticky;
+    bottom: clamp(56px, 14vw, 72px);
+    z-index: var(--z-sticky, 99);
+    display: flex;
+    gap: clamp(6px, 1.8vw, 10px);
+    padding: 8px 0 4px;
+    background: #0A0A0C;
+  }
+  .action-btn-row .calc-btn {
+    flex: 1;
+    min-height: 40px;
+    min-width: 0;
+    border-radius: 22px;
+    font-size: clamp(12px, 3vw, 14px);
+    padding: 0 clamp(8px, 2vw, 16px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .action-btn-row .clear-btn {
+    width: clamp(64px, 18vw, 80px);
+    min-height: 40px;
+    border-radius: 22px;
+    font-size: clamp(10px, 2.4vw, 12px);
+    flex-shrink: 0;
+  }
+
+  /* ─── Stepper / Loan Details Row ─── */
+  .stepper-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: clamp(6px, 2vw, 12px);
+  }
+  .stepper-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .stepper-col-label {
+    font-size: clamp(9px, 2.3vw, 11px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: rgba(255,255,255,0.4);
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .stepper-control {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 4px;
+  }
+  .stepper-btn {
+    width: clamp(26px, 7vw, 34px);
+    height: clamp(26px, 7vw, 34px);
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    padding: 0;
+    font-size: clamp(16px, 4.5vw, 20px);
+    font-weight: 300;
+  }
+  .stepper-btn:hover {
+    background: rgba(255,255,255,0.12);
+    color: #FFF;
+  }
+  .stepper-btn:active {
+    transform: scale(0.92);
+  }
+  .stepper-btn svg {
+    width: clamp(8px, 2.2vw, 12px);
+    height: clamp(8px, 2.2vw, 12px);
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+  .stepper-value-box {
+    flex: 1;
+    min-width: 0;
+    height: clamp(36px, 10vw, 46px);
+    border-radius: clamp(8px, 2vw, 10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0 clamp(4px, 1.5vw, 8px);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .stepper-value-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    white-space: nowrap;
+    gap: 1px;
+  }
+  .stepper-number {
+    font-size: clamp(14px, 4vw, 18px);
+    font-weight: 700;
+    color: #FFFFFF;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: 'DM Mono', monospace;
+    text-align: center;
+    min-width: 0;
+    width: auto;
+    -moz-appearance: textfield;
+    padding: 0;
+    line-height: 1;
+  }
+  .stepper-number:focus {
+    outline: none;
+  }
+  .stepper-unit {
+    font-size: clamp(10px, 2.8vw, 13px);
+    font-weight: 400;
+    color: #AAAAAA;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  /* ─── Inline Badge Input Row (orange bordered) ─── */
+  .badge-input-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: clamp(28px, 8vw, 38px);
+    padding: 0 clamp(3px, 1.2vw, 8px);
+    border-radius: 30px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    background: rgba(255,107,0,0.1);
+    border: 1px solid rgba(255,107,0,0.3);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .badge-input-row:focus-within {
+    border-color: rgba(255,107,0,0.7);
+    box-shadow: 0 0 0 3px rgba(255,107,0,0.12);
+  }
+  .badge-currency-symbol {
+    font-size: clamp(10px, 2.5vw, 13px);
+    flex-shrink: 0;
+    color: #FF6B00;
+    font-weight: 600;
+  }
+  .badge-input-value {
+    font-size: clamp(11px, 2.8vw, 14px);
+    font-weight: 700;
+    color: #FF6B00;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: none;
+    border: none;
+    outline: none;
+    font-family: 'DM Mono', monospace;
+    text-align: right;
+    width: clamp(44px, 12vw, 64px);
+    -moz-appearance: textfield;
+  }
+  .badge-input-value::-webkit-outer-spin-button,
+  .badge-input-value::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* ─── Non-editable badge chip ─── */
+  .badge-chip {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    background: rgba(255,107,0,0.12);
+    border: 1px solid rgba(255,107,0,0.3);
+    border-radius: clamp(6px, 1.5vw, 10px);
+    padding: clamp(2px, 0.8vw, 5px) clamp(5px, 1.5vw, 10px);
+    overflow: visible;
+  }
+  .badge-chip-value {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(10px, 2.5vw, 13px);
+    font-weight: 600;
+    color: #FF6B00;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  .badge-chip-unit {
+    font-size: clamp(7px, 2vw, 9px);
+    font-weight: 600;
+    color: rgba(255,107,0,0.55);
+    letter-spacing: 0.08em;
+  }
   .budget-scale-slider {
     -webkit-appearance: none;
     appearance: none;
@@ -728,53 +960,12 @@
     from { opacity: 0; transform: translateX(-12px); }
     to   { opacity: 1; transform: translateX(0); }
   }
-  @keyframes pageEnter {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes panelEnter {
-    from { opacity: 0; transform: translateX(-12px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
   @keyframes resultPop {
     0%   { transform: scale(0.95); opacity: 0.7; }
     60%  { transform: scale(1.03); }
     100% { transform: scale(1);    opacity: 1; }
   }
-  @keyframes metricSlideIn {
-    from { opacity: 0; transform: translateX(12px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes chartReveal {
-    from { opacity: 0; transform: translateY(20px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  @keyframes bannerReveal {
-    0%   { opacity: 0; transform: scaleX(0.8) translateY(-10px); border-radius: 20px; }
-    60%  { transform: scaleX(1.02) translateY(2px); }
-    100% { opacity: 1; transform: scaleX(1) translateY(0); border-radius: 12px; }
-  }
-  @keyframes trophyBounce {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    25%      { transform: translateY(-6px) rotate(-5deg); }
-    75%      { transform: translateY(-3px) rotate(3deg); }
-  }
-  @keyframes cardSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
-  }
-  @keyframes homeCardIn {
-    from { opacity: 0; transform: translateY(24px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  @keyframes slideOutRight {
-    from { opacity: 1; transform: translateX(0); }
-    to { opacity: 0; transform: translateX(100%); }
-  }
+
   @keyframes metricSlideIn {
     from { opacity: 0; transform: translateX(12px); }
     to   { opacity: 1; transform: translateX(0); }
@@ -898,13 +1089,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* ─── react-day-picker dark theme ─── */
 .rdp-root {
+  width: 100%;
   --rdp-day-font: inherit;
   color: #F5F5F5;
 }
 .rdp-root button:where([data-slot="day-button"]) {
-  color: rgba(255,255,255,0.7);
-  font-size: 13px;
+  color: rgba(255,255,255,0.85);
   font-weight: 500;
+  font-size: inherit;
+  line-height: 1;
+  transition: background-color 0.12s ease, color 0.12s ease;
 }
 .rdp-root button:where([data-slot="day-button"]):hover {
   background: rgba(255,255,255,0.08);
@@ -922,6 +1116,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .rdp-root [data-today]:not([data-selected]) button:where([data-slot="day-button"]) {
   color: #FF6B00;
   font-weight: 700;
+  box-shadow: inset 0 0 0 1.5px rgba(255,107,0,0.4);
 }
 .rdp-root [data-outside] button:where([data-slot="day-button"]) {
   color: rgba(255,255,255,0.2);
@@ -930,37 +1125,65 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: rgba(255,255,255,0.2);
 }
 .rdp-root .rdp-month_caption {
-  font-size: 14px;
-  font-weight: 600;
-  color: #F5F5F5;
-  padding: 0 0 8px;
+  font-size: clamp(14px, 3.8vw, 17px);
+  font-weight: 700;
+  color: #FFFFFF;
+  padding: 0 0 10px;
+  letter-spacing: -0.02em;
 }
 .rdp-root .rdp-nav button {
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.5);
   border-radius: 6px;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .rdp-root .rdp-nav button:hover {
   background: rgba(255,255,255,0.08);
   color: #F5F5F5;
 }
 .rdp-root .rdp-weekday {
-  font-size: 11px;
+  font-size: clamp(10px, 2.6vw, 12px);
   font-weight: 600;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
-  padding-bottom: 4px;
+  color: rgba(255,255,255,0.5);
+  padding-bottom: 6px;
+  letter-spacing: 0.04em;
+  text-align: center;
 }
-.rdp-root [data-range-start] button:where([data-slot="day-button"]),
-.rdp-root [data-range-end] button:where([data-slot="day-button"]) {
-  background: #FF6B00;
-  color: #000;
-  font-weight: 700;
-  border-radius: 8px;
+.rdp-root .rdp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
 }
-.rdp-root [data-range-middle] button:where([data-slot="day-button"]) {
-  background: rgba(255, 107, 0, 0.15);
-  color: #F5F5F5;
-  border-radius: 0;
+.rdp-root .rdp-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.rdp-root .rdp-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rdp-root .rdp-day_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* ─── Responsive Calendar Popover ─── */
+.calendar-popover-content {
+  width: clamp(280px, 85vw, 360px) !important;
+  padding: clamp(12px, 3.5vw, 18px) !important;
+  background: #1A1A1C !important;
+  border-radius: clamp(12px, 3vw, 16px) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  max-height: calc(100svh - 80px - env(safe-area-inset-bottom));
+  overflow-y: auto;
 }
 
 /* ─── Mobile responsive ─── */
@@ -969,25 +1192,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (max-width: 400px) {
-  .app-header { padding: 0 10px; }
-  .app-header-title { font-size: 14px; max-width: 90px; }
+  .app-header { padding: 0 clamp(6px, 2vw, 10px); }
+  .app-header-title { font-size: clamp(13px, 3.5vw, 15px); max-width: clamp(70px, 22vw, 100px); }
   .app-header-btn span { display: none; }
-  .app-header-btn { padding: 6px; min-width: 36px; justify-content: center; }
-  .app-header-action-primary { font-size: 11px; padding: 5px 7px; }
-  .app-header-month { font-size: 11px; padding: 5px 7px; }
-  .app-header-right { gap: 4px; }
-  .app-header-left { gap: 2px; }
+  .app-header-btn { padding: clamp(4px, 1.5vw, 6px); min-width: 36px; justify-content: center; }
+  .app-header-action-primary { font-size: clamp(10px, 2.8vw, 11px); padding: clamp(4px, 1.5vw, 7px); }
+  .app-header-month { font-size: clamp(10px, 2.8vw, 11px); padding: clamp(4px, 1.5vw, 6px); }
+  .app-header-right { gap: clamp(2px, 1vw, 4px); }
+  .app-header-left { gap: clamp(1px, 0.5vw, 2px); }
 }
 
 @media (max-width: 360px) {
-  .bottom-nav-label { display: none; }
-  .slider-value-number { font-size: 15px; }
-  .tick-label { font-size: 9px; }
-  .slider-wrapper { padding: 12px 0; }
-}
-
-@media (max-width: 375px) {
-  .slider-value-input { width: 64px; font-size: 14px; }
+  .app-bottom-nav-label { font-size: 9px; }
 }
 
 @media (pointer: coarse) {

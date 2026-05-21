@@ -1,0 +1,18 @@
+export const spacing = {
+  pagePadding: "clamp(12px, 4vw, 20px)",
+  pageMaxWidth: "480px",
+  contentBottomPadding: "calc(clamp(56px, 14vw, 72px) + clamp(56px, 14vw, 72px) + env(safe-area-inset-bottom, 0px))",
+  navHeight: "clamp(56px, 14vw, 72px)",
+  navMaxWidth: "400px",
+  sectionGap: "clamp(6px, 2vw, 12px)",
+  sectionMargin: "clamp(6px, 1.5vw, 10px)",
+  headerHeight: "clamp(44px, 12vw, 52px)",
+  cardPadding: "clamp(16px, 3vw, 24px) clamp(14px, 3vw, 20px)",
+  cardBorderRadius: "20px",
+  bottomNavBorderRadius: "20px",
+  sliderTrackHeight: "6px",
+  sliderThumbSize: "22px",
+  sliderThumbSizeTouch: "26px",
+  touchTarget: "44px",
+  minButtonHeight: "40px",
+} as const;

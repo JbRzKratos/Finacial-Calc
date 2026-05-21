@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { BudgetCategory, Transaction, BudgetSummary, DateRange } from "@/lib/budget/budgetTypes";
-import { getCategories, saveCategories, getTransactionsForRange, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions as storeDeleteCatTxns, getTotalBudgetOverride, setTotalBudgetOverride, updateCategoryLimit as storeUpdateLimit } from "@/lib/budget/budgetStore";
-import { computeBudgetSummary, generateId, getMonthDateRange } from "@/lib/budget/budgetCalc";
+import type { BudgetCategory, Transaction, BudgetSummary, DateRange } from "@/types";
+import { getCategories, saveCategories, getTransactionsForRange, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions as storeDeleteCatTxns, getTotalBudgetOverride, setTotalBudgetOverride, updateCategoryLimit as storeUpdateLimit } from "@/store";
+import { computeBudgetSummary, generateId, getMonthDateRange } from "@/utils/calculations";
 
 const SEED_CATS: BudgetCategory[] = [
   { id: "cat_food", name: "Food", icon: "fork-knife", iconBg: "#FF6B00", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01" },

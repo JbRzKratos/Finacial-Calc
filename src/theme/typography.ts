@@ -1,0 +1,38 @@
+export const typography = {
+  fontFamily: {
+    sans: "'DM Sans', system-ui, sans-serif",
+    mono: "'DM Mono', monospace",
+  },
+  fontSize: {
+    xs: "clamp(10px, 2.5vw, 12px)",
+    sm: "clamp(12px, 2.8vw, 14px)",
+    base: "clamp(14px, 3.2vw, 16px)",
+    lg: "clamp(16px, 3.8vw, 20px)",
+    xl: "clamp(18px, 4.5vw, 24px)",
+    "2xl": "clamp(22px, 5.5vw, 30px)",
+    "3xl": "clamp(26px, 6.5vw, 36px)",
+    hero: "clamp(32px, 8vw, 36px)",
+    micro: "clamp(9px, 2.3vw, 10px)",
+    tiny: "clamp(8.5px, 2.2vw, 11px)",
+    small: "clamp(10px, 2.6vw, 12px)",
+    stepperValue: "clamp(14px, 4vw, 18px)",
+    stepperUnit: "clamp(10px, 2.8vw, 13px)",
+    badgeValue: "clamp(10px, 2.5vw, 13px)",
+    badgeUnit: "clamp(7px, 2vw, 9px)",
+    sectionHeader: "clamp(11px, 3vw, 13px)",
+  },
+  fontWeight: {
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+  },
+  letterSpacing: {
+    tight: "-0.01em",
+    wide: "0.02em",
+    wider: "0.04em",
+    widest: "0.06em",
+    superWide: "0.08em",
+    ultraWide: "0.12em",
+  },
+} as const;

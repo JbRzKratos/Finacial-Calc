@@ -1,19 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import SIPPage from "@/features/finance-calc/pages/sip";
-import EMIPage from "@/features/finance-calc/pages/emi";
-import FDPage from "@/features/finance-calc/pages/fd";
-import CAGRPage from "@/features/finance-calc/pages/cagr";
-import RetirementPage from "@/features/finance-calc/pages/retirement";
-import TaxPage from "@/features/finance-calc/pages/tax";
-import LoanVsInvestPage from "@/features/finance-calc/pages/loan-vs-invest";
+import SIPPage from "@/components/calculators/SIPCalculator/SIPCalculator";
+import EMIPage from "@/components/calculators/LoanCalculator/LoanCalculator";
+import FDPage from "@/components/calculators/FDCalculator/FDCalculator";
+import CAGRPage from "@/components/calculators/CAGRCalculator/CAGRCalculator";
+import RetirementPage from "@/components/calculators/RetirementCalculator/RetirementCalculator";
+import TaxPage from "@/components/calculators/TaxCalculator/TaxCalculator";
+import LoanVsInvestPage from "@/components/calculators/MutualFundCalculator/MutualFundCalculator";
 
-import HomePage from "@app/page";
-import BudgetDashboard from "@app/budget/page";
-import AddPage from "@app/budget/add/page";
-import CategoriesPage from "@app/budget/categories/page";
-import ReportsPage from "@app/budget/reports/page";
-import TransactionsPage from "@app/budget/transactions/page";
+import HomePage from "@/screens/HomeScreen/page";
+import BudgetDashboard from "@/screens/BudgetScreen/page";
+import AddPage from "@/screens/BudgetScreen/add/page";
+import CategoriesPage from "@/screens/BudgetScreen/categories/page";
+import ReportsPage from "@/screens/BudgetScreen/reports/page";
+import TransactionsPage from "@/screens/BudgetScreen/transactions/page";
 
 export function App() {
   return (

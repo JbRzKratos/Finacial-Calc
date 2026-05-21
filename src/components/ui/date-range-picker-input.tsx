@@ -19,9 +19,9 @@ import {
 
 function formatDate(date: Date | undefined) {
   if (!date) return ""
-  return date.toLocaleDateString("en-IN", {
+  return date.toLocaleDateString("en-US", {
     day: "2-digit",
-    month: "short",
+    month: "long",
     year: "numeric",
   })
 }
@@ -40,102 +40,142 @@ interface DateRangePickerInputProps {
 }
 
 export function DateRangePickerInput({ label, from, to, onChange, id }: DateRangePickerInputProps) {
-  const [open, setOpen] = React.useState(false)
-  const [month, setMonth] = React.useState<Date | undefined>(from)
-  const [inputFrom, setInputFrom] = React.useState(formatDate(from))
-  const [inputTo, setInputTo] = React.useState(formatDate(to))
+  const [fromOpen, setFromOpen] = React.useState(false)
+  const [toOpen, setToOpen] = React.useState(false)
+  const [fromMonth, setFromMonth] = React.useState<Date | undefined>(from ?? new Date())
+  const [toMonth, setToMonth] = React.useState<Date | undefined>(to ?? new Date())
+  const [fromValue, setFromValue] = React.useState(formatDate(from))
+  const [toValue, setToValue] = React.useState(formatDate(to))
 
   React.useEffect(() => {
-    setInputFrom(formatDate(from))
-    setInputTo(formatDate(to))
-    if (from) setMonth(from)
-  }, [from, to])
+    setFromValue(formatDate(from))
+    if (from) setFromMonth(from)
+  }, [from])
 
-  const handleSelect = (range: { from?: Date; to?: Date } | undefined) => {
-    if (!range) return
-    onChange(range.from, range.to)
-    setInputFrom(formatDate(range.from))
-    setInputTo(formatDate(range.to))
-    if (range.to) setOpen(false)
-  }
+  React.useEffect(() => {
+    setToValue(formatDate(to))
+    if (to) setToMonth(to)
+  }, [to])
 
   return (
-    <Field>
-      {label && <FieldLabel>{label}</FieldLabel>}
-      <div className="flex gap-2">
-        <InputGroup className="flex-1">
+    <div className="flex items-end gap-3">
+      {/* From date */}
+      <Field className="flex-1 min-w-0">
+        <FieldLabel htmlFor={id ? `${id}-from` : "date-from"}>From</FieldLabel>
+        <InputGroup>
           <InputGroupInput
-            value={inputFrom}
-            placeholder="From date"
-            readOnly
-            onClick={() => setOpen(true)}
+            id={id ? `${id}-from` : "date-from"}
+            value={fromValue}
+            placeholder="Start date"
+            onChange={(e) => {
+              const date = new Date(e.target.value)
+              setFromValue(e.target.value)
+              if (isValidDate(date)) {
+                onChange(date, to)
+                setFromMonth(date)
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                e.preventDefault()
+                setFromOpen(true)
+              }
+            }}
           />
           <InputGroupAddon align="inline-end">
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={fromOpen} onOpenChange={setFromOpen}>
               <PopoverTrigger asChild>
                 <InputGroupButton
+                  id={id ? `${id}-from-picker` : "date-from-picker"}
                   variant="ghost"
                   size="icon-xs"
-                  aria-label="Select date"
+                  aria-label="Select start date"
                 >
                   <CalendarIcon className="size-4" />
+                  <span className="sr-only">Select start date</span>
                 </InputGroupButton>
               </PopoverTrigger>
               <PopoverContent
-                className="w-auto overflow-hidden p-0"
-                align="start"
+                className="calendar-popover-content"
+                align="end"
                 alignOffset={-8}
                 sideOffset={10}
               >
                 <Calendar
-                  mode="range"
-                  selected={{ from, to }}
-                  month={month}
-                  onMonthChange={setMonth}
-                  onSelect={handleSelect}
-                  numberOfMonths={1}
+                  mode="single"
+                  selected={from}
+                  month={fromMonth}
+                  onMonthChange={setFromMonth}
+                  onSelect={(date) => {
+                    onChange(date, to)
+                    setFromValue(formatDate(date))
+                    setFromOpen(false)
+                  }}
                 />
               </PopoverContent>
             </Popover>
           </InputGroupAddon>
         </InputGroup>
-        <InputGroup className="flex-1">
+      </Field>
+
+      {/* To date */}
+      <Field className="flex-1 min-w-0">
+        <FieldLabel htmlFor={id ? `${id}-to` : "date-to"}>To</FieldLabel>
+        <InputGroup>
           <InputGroupInput
-            value={inputTo}
-            placeholder="To date"
-            readOnly
-            onClick={() => setOpen(true)}
+            id={id ? `${id}-to` : "date-to"}
+            value={toValue}
+            placeholder="End date"
+            onChange={(e) => {
+              const date = new Date(e.target.value)
+              setToValue(e.target.value)
+              if (isValidDate(date)) {
+                onChange(from, date)
+                setToMonth(date)
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") {
+                e.preventDefault()
+                setToOpen(true)
+              }
+            }}
           />
           <InputGroupAddon align="inline-end">
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={toOpen} onOpenChange={setToOpen}>
               <PopoverTrigger asChild>
                 <InputGroupButton
+                  id={id ? `${id}-to-picker` : "date-to-picker"}
                   variant="ghost"
                   size="icon-xs"
-                  aria-label="Select date"
+                  aria-label="Select end date"
                 >
                   <CalendarIcon className="size-4" />
+                  <span className="sr-only">Select end date</span>
                 </InputGroupButton>
               </PopoverTrigger>
               <PopoverContent
-                className="w-auto overflow-hidden p-0"
-                align="start"
+                className="calendar-popover-content"
+                align="end"
                 alignOffset={-8}
                 sideOffset={10}
               >
                 <Calendar
-                  mode="range"
-                  selected={{ from, to }}
-                  month={month}
-                  onMonthChange={setMonth}
-                  onSelect={handleSelect}
-                  numberOfMonths={1}
+                  mode="single"
+                  selected={to}
+                  month={toMonth}
+                  onMonthChange={setToMonth}
+                  onSelect={(date) => {
+                    onChange(from, date)
+                    setToValue(formatDate(date))
+                    setToOpen(false)
+                  }}
                 />
               </PopoverContent>
             </Popover>
           </InputGroupAddon>
         </InputGroup>
-      </div>
-    </Field>
+      </Field>
+    </div>
   )
 }
