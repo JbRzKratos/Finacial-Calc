@@ -71,18 +71,18 @@ const StepperCol = memo(function StepperCol({ field, id, hasStep }: StepperColPr
     <div className="stepper-col">
       <label htmlFor={id} className="stepper-col-label">{field.label}</label>
       <div className="stepper-control">
-        {hasStep && (
-          <button
-            type="button"
-            onClick={() => stepVal(-1)}
-            className="stepper-btn"
-            aria-label={`Decrease ${field.label.toLowerCase()}`}
-            tabIndex={-1}
-          >
-            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14"/></svg>
-          </button>
-        )}
         <div className="stepper-value-box">
+          {hasStep && (
+            <button
+              type="button"
+              onClick={() => stepVal(-1)}
+              className="stepper-btn"
+              aria-label={`Decrease ${field.label.toLowerCase()}`}
+              tabIndex={-1}
+            >
+              <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          )}
           <div className="stepper-value-inner">
             <input
               id={id}
@@ -97,18 +97,18 @@ const StepperCol = memo(function StepperCol({ field, id, hasStep }: StepperColPr
             />
             {field.suffix && <span className="stepper-unit">{field.suffix}</span>}
           </div>
+          {hasStep && (
+            <button
+              type="button"
+              onClick={() => stepVal(1)}
+              className="stepper-btn"
+              aria-label={`Increase ${field.label.toLowerCase()}`}
+              tabIndex={-1}
+            >
+              <svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg>
+            </button>
+          )}
         </div>
-        {hasStep && (
-          <button
-            type="button"
-            onClick={() => stepVal(1)}
-            className="stepper-btn"
-            aria-label={`Increase ${field.label.toLowerCase()}`}
-            tabIndex={-1}
-          >
-            <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14"/></svg>
-          </button>
-        )}
       </div>
     </div>
   );
