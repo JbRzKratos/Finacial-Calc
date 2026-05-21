@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ToggleOption {
   value: string;
@@ -20,17 +21,15 @@ export function ToggleGroup({ options, value, onChange, className }: ToggleGroup
       {options.map((opt) => {
         const active = opt.value === value;
         return (
-          <button
+          <Button
             key={opt.value}
             type="button"
+            variant="ghost"
             onClick={() => onChange(opt.value)}
-            className={cn(
-              "stepup-option-btn",
-              active && "active"
-            )}
+            className={cn("stepup-option-btn", active && "active")}
           >
             {opt.label}
-          </button>
+          </Button>
         );
       })}
     </div>

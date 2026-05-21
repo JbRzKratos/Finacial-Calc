@@ -8,8 +8,8 @@ import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
 import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
-import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
 import { MetricRow } from "@/features/finance-calc/components/results/MetricRow";
 import { InsightBanner } from "@/features/finance-calc/components/results/InsightBanner";
@@ -101,7 +101,7 @@ export default function SIPPage() {
             fields={[{
               value: Number(inputs.amount),
               onChange: (v) => updateInput("amount", parseFloat(v.replace(/[,\s]/g, "")) || 0),
-              label: "AMOUNT",
+              label: "AMOUNT", step: 500,
             }]}
             className="mb-5"
           />
@@ -133,17 +133,15 @@ export default function SIPPage() {
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Step-up SIP Yearly
           </p>
-          <ToggleGroup
-            options={[
-              { value: "0", label: "OFF" },
-              { value: "5", label: "5%" },
-              { value: "10", label: "10%" },
-              { value: "15", label: "15%" },
-              { value: "20", label: "20%" },
-            ]}
-            value={String(inputs.stepUp || "0")}
-            onChange={(v) => updateInput("stepUp", v)}
-          />
+          <Tabs value={String(inputs.stepUp || "0")} onValueChange={(v) => updateInput("stepUp", v)}>
+            <TabsList className="w-full">
+              <TabsTrigger value="0" className="flex-1">OFF</TabsTrigger>
+              <TabsTrigger value="5" className="flex-1">5%</TabsTrigger>
+              <TabsTrigger value="10" className="flex-1">10%</TabsTrigger>
+              <TabsTrigger value="15" className="flex-1">15%</TabsTrigger>
+              <TabsTrigger value="20" className="flex-1">20%</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
           <ActionButtonRow onClear={resetInputs} />
         </>

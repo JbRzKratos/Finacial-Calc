@@ -44,15 +44,15 @@ export default function TaxPage() {
           </p>
           <InputRow
             fields={[
-              { value: Number(inputs.income), onChange: (v) => updateInput("income", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "ANNUAL INCOME" },
-              { value: Number(inputs.deduction80C), onChange: (v) => updateInput("deduction80C", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "80C (PF/ELSS)" },
+              { value: Number(inputs.income), onChange: (v) => updateInput("income", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "ANNUAL INCOME", step: 50000 },
+              { value: Number(inputs.deduction80C), onChange: (v) => updateInput("deduction80C", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "80C (PF/ELSS)", step: 10000 },
             ]}
             className="mb-5"
           />
           <InputRow
             fields={[
-              { value: Number(inputs.deduction80D), onChange: (v) => updateInput("deduction80D", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "80D (MEDICAL)" },
-              { value: Number(inputs.hra), onChange: (v) => updateInput("hra", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "HRA" },
+              { value: Number(inputs.deduction80D), onChange: (v) => updateInput("deduction80D", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "80D (MEDICAL)", step: 5000 },
+              { value: Number(inputs.hra), onChange: (v) => updateInput("hra", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "HRA", step: 5000 },
             ]}
             className="mb-5"
           />

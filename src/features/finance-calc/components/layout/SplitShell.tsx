@@ -53,10 +53,10 @@ function SplitShellContent({ left, right }: SplitShellProps) {
 
         <section
           id="results"
-          className="bg-[#FAFAF9] overflow-y-auto scroll-fade-bottom max-md:hidden relative"
+          className="bg-[#0A0A0C] overflow-y-auto scroll-fade-bottom max-md:hidden relative"
           style={{ height: "100dvh" }}
         >
-          <div className="absolute inset-0 bg-noise pointer-events-none opacity-[0.015]" />
+          <div className="absolute inset-0 bg-noise pointer-events-none opacity-[0.025]" />
           <div className="max-w-[560px] mx-auto px-5 pt-6 md:px-9 md:pt-8 pb-24 animate-page-enter relative z-[1]">
             {right}
           </div>
@@ -65,7 +65,7 @@ function SplitShellContent({ left, right }: SplitShellProps) {
 
       {showMobileResults && (
         <div
-          className="md:hidden fixed inset-0 z-[60] bg-[#FAFAF9] overflow-y-auto animate-slide-up"
+          className="md:hidden fixed inset-0 z-[60] bg-[#0A0A0C] overflow-y-auto animate-slide-up"
           style={{ paddingTop: "env(safe-area-inset-top)" }}
         >
           <div className="px-5 pt-4" style={{ paddingBottom: "calc(96px + env(safe-area-inset-bottom))" }}>

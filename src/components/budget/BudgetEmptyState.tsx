@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 interface BudgetEmptyStateProps {
@@ -19,14 +20,14 @@ export function BudgetEmptyState({ title = "Nothing here yet", subtitle = "Start
         <p className="text-[#F5F5F5] font-semibold text-base mb-1">{title}</p>
         <p className="text-[#8A8A90] text-sm mb-6 max-w-xs">{subtitle}</p>
         {onAction && (
-          <button type="button" onClick={onAction} className="bg-[#FF6B00] text-white font-semibold px-6 py-3 rounded-xl text-sm shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 active:scale-[0.97] transition-all">
+          <Button type="button" onClick={onAction} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white font-semibold px-6 py-3 rounded-xl text-sm shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 active:scale-[0.97] h-auto">
             {actionLabel}
-          </button>
+          </Button>
         )}
         {onClose && (
-          <button type="button" onClick={onClose} aria-label="Close" className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors">
+          <Button type="button" variant="ghost" onClick={onClose} aria-label="Close" className="absolute top-4 right-4 w-8 h-8 rounded-lg bg-[#1C1C1F] hover:bg-[#222226] p-0 flex items-center justify-center">
             <X size={16} className="text-[#8A8A90]" />
-          </button>
+          </Button>
         )}
       </CardContent>
     </Card>

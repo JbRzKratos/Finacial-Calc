@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export interface SegmentedResultSegments {
   value: string;
@@ -20,12 +21,13 @@ export function SegmentedResult({ segments, value, onChange, className }: Segmen
       {segments.map((seg) => {
         const active = seg.value === value;
         return (
-          <button
+          <Button
             key={seg.value}
             type="button"
+            variant="ghost"
             onClick={() => onChange(seg.value)}
             className={cn(
-              "px-4 py-2 text-xs font-semibold tracking-[0.04em] transition-all duration-200",
+              "px-4 py-2 text-xs font-semibold tracking-[0.04em]",
               active
                 ? "seg-selected bg-[#FF6B00]/10 text-orange-500 border border-orange-500/30"
                 : "seg-unselected text-white/40 hover:text-white/70"
@@ -35,7 +37,7 @@ export function SegmentedResult({ segments, value, onChange, className }: Segmen
             }}
           >
             {seg.label}
-          </button>
+          </Button>
         );
       })}
     </div>

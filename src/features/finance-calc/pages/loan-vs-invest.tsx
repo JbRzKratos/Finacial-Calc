@@ -7,9 +7,9 @@ import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
 import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
-import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetricRow } from "@/features/finance-calc/components/results/MetricRow";
 import { InsightBanner } from "@/features/finance-calc/components/results/InsightBanner";
 import { WinnerBanner } from "@/features/finance-calc/components/results/WinnerBanner";
@@ -43,15 +43,12 @@ export default function LoanVsInvestPage() {
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Investment Mode
           </p>
-          <ToggleGroup
-            options={[
-              { value: "lump", label: "LUMP SUM" },
-              { value: "sip", label: "SIP" },
-            ]}
-            value={String(inputs.mode || "lump")}
-            onChange={(v) => updateInput("mode", v)}
-            className="mb-5"
-          />
+          <Tabs value={String(inputs.mode || "lump")} onValueChange={(v) => updateInput("mode", v)}>
+            <TabsList className="w-full">
+              <TabsTrigger value="lump" className="flex-1">LUMP SUM</TabsTrigger>
+              <TabsTrigger value="sip" className="flex-1">SIP</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
           <div className="section-divider" />
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
@@ -61,7 +58,7 @@ export default function LoanVsInvestPage() {
             fields={[{
               value: Number(inputs.amount),
               onChange: (v) => updateInput("amount", parseFloat(v.replace(/[,\s]/g, "")) || 0),
-              label: String(inputs.mode) === "sip" ? "MONTHLY" : "AMOUNT",
+              label: String(inputs.mode) === "sip" ? "MONTHLY" : "AMOUNT", step: 50000,
             }]}
             className="mb-5"
           />

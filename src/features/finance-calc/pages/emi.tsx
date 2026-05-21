@@ -7,10 +7,10 @@ import { emi, emiBreakdown } from "@/features/finance-calc/utils/math";
 import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
-import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetricRow } from "@/features/finance-calc/components/results/MetricRow";
 import { InsightBanner } from "@/features/finance-calc/components/results/InsightBanner";
 import { SegmentedResult } from "@/features/finance-calc/components/results/SegmentedResult";
@@ -70,7 +70,7 @@ export default function EMIPage() {
     options: {
       plugins: { legend: { position: "bottom" as const } },
       scales: {
-        y: { stacked: true, grid: { color: "rgba(0,0,0,0.06)", borderDash: [4, 4] as [number, number] }, border: { display: false } },
+        y: { stacked: true, grid: { color: "rgba(255,255,255,0.06)", borderDash: [4, 4] as [number, number] }, border: { display: false } },
         x: { stacked: true, grid: { display: false }, border: { display: false } },
       }
     }
@@ -104,12 +104,13 @@ export default function EMIPage() {
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Loan Type
           </p>
-          <ToggleGroup
-            options={loanPresets}
-            value={String(inputs.preset || "home")}
-            onChange={applyPreset}
-            className="mb-5"
-          />
+          <Tabs value={String(inputs.preset || "home")} onValueChange={applyPreset}>
+            <TabsList className="w-full">
+              {loanPresets.map((p) => (
+                <TabsTrigger key={p.value} value={p.value} className="flex-1">{p.label}</TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
 
           <div className="section-divider" />
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
@@ -117,9 +118,9 @@ export default function EMIPage() {
           </p>
           <InputRow
             fields={[
-              { value: Number(inputs.amount), onChange: (v) => { updateInput("amount", parseFloat(v.replace(/[,\s]/g, "")) || 0); updateInput("preset", "other"); }, label: "AMOUNT" },
-              { value: Number(inputs.rate), onChange: (v) => { updateInput("rate", parseFloat(v) || 0); updateInput("preset", "other"); }, label: "INTEREST", suffix: "%" },
-              { value: Number(inputs.years), onChange: (v) => { updateInput("years", parseFloat(v) || 1); updateInput("preset", "other"); }, label: "TENURE", suffix: "yr" },
+              { value: Number(inputs.amount), onChange: (v) => { updateInput("amount", parseFloat(v.replace(/[,\s]/g, "")) || 0); updateInput("preset", "other"); }, label: "AMOUNT", step: 50000 },
+              { value: Number(inputs.rate), onChange: (v) => { updateInput("rate", parseFloat(v) || 0); updateInput("preset", "other"); }, label: "INTEREST", suffix: "%", step: 0.5 },
+              { value: Number(inputs.years), onChange: (v) => { updateInput("years", parseFloat(v) || 1); updateInput("preset", "other"); }, label: "TENURE", suffix: "yr", step: 1 },
             ]}
             className="mb-5"
           />

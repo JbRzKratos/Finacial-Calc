@@ -2,6 +2,8 @@
 
 import { useEffect, useCallback, useState } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { DateRangePickerInput } from "@/components/ui/date-range-picker-input";
 import type { DateRange } from "@/lib/budget/budgetTypes";
 import { getMonthDateRange, getTodayISO } from "@/lib/budget/budgetCalc";
 
@@ -100,43 +102,31 @@ export function DateRangePicker({ range, onChange, onClose }: DateRangePickerPro
             })}
           </div>
 
-          {/* From date */}
-          <div className="mb-4">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">From</label>
-            <input
-              type="date"
-              value={from}
-              max={to || today}
-              onChange={(e) => setFrom(e.target.value)}
-              className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 px-4 text-white text-sm outline-none focus:border-[#FF6B00]/50 transition-all"
-            />
-          </div>
-
-          {/* To date */}
+          {/* Date Range Picker */}
           <div className="mb-6">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">To</label>
-            <input
-              type="date"
-              value={to}
-              min={from}
-              onChange={(e) => setTo(e.target.value)}
-              className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 px-4 text-white text-sm outline-none focus:border-[#FF6B00]/50 transition-all"
+            <DateRangePickerInput
+              from={from ? new Date(from + "T00:00:00") : undefined}
+              to={to ? new Date(to + "T00:00:00") : undefined}
+              onChange={(f, t) => {
+                setFrom(f ? f.toISOString().slice(0, 10) : "")
+                setTo(t ? t.toISOString().slice(0, 10) : "")
+              }}
             />
           </div>
 
           {/* Apply button */}
-          <button
+          <Button
             type="button"
             onClick={handleApply}
             disabled={!from || !to || from > to}
-            className={`w-full rounded-xl py-3.5 text-base font-bold transition-all active:scale-[0.97] ${
+            className={`w-full rounded-xl py-3.5 text-base font-bold transition-all active:scale-[0.97] h-auto ${
               from && to && from <= to
-                ? "bg-[#FF6B00] text-black shadow-lg shadow-orange-500/30"
+                ? "bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-black shadow-lg shadow-orange-500/30"
                 : "bg-[#141416] text-[#55555C] cursor-not-allowed"
             }`}
           >
             Apply Range
-          </button>
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

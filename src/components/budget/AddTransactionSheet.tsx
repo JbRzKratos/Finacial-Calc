@@ -5,7 +5,9 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import type { BudgetCategory } from "@/lib/budget/budgetTypes";
 import { getTodayISO } from "@/lib/budget/budgetCalc";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { CategoryIcon } from "@/components/budget/CategoryIcon";
+import { DatePickerInput } from "@/components/ui/date-picker-input";
 
 interface AddTransactionSheetProps {
   categories: BudgetCategory[];
@@ -21,12 +23,11 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
   const [categoryId, setCategoryId] = useState("");
   const [note, setNote] = useState("");
   const [date, setDate] = useState(getTodayISO());
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) {
-      setType(defaultType); setAmount(""); setCategoryId(""); setNote(""); setDate(getTodayISO()); setShowDatePicker(false);
+      setType(defaultType); setAmount(""); setCategoryId(""); setNote(""); setDate(getTodayISO());
       const timer = setTimeout(() => inputRef.current?.focus(), 400);
       return () => clearTimeout(timer);
     }
@@ -51,9 +52,9 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
           {/* Header */}
           <div className="flex items-center justify-between mb-5">
             <p className="text-[17px] font-semibold text-[#F5F5F5]">Add Transaction</p>
-            <button type="button" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors" aria-label="Close">
+            <Button type="button" variant="ghost" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] hover:bg-[#222226] p-0 flex items-center justify-center" aria-label="Close">
               <X size={16} className="text-[#8A8A90]" />
-            </button>
+            </Button>
           </div>
 
           {/* Type toggle */}
@@ -68,8 +69,10 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
           {/* Amount */}
           <div className="mb-5">
             <div className="relative">
+              <label htmlFor="txn-amount" className="sr-only">Amount</label>
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#55555C] font-mono text-lg">₹</span>
               <input
+                id="txn-amount"
                 ref={inputRef}
                 type="number"
                 inputMode="decimal"
@@ -83,7 +86,7 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
 
           {/* Category pills */}
           <div className="mb-5">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-3 block">Category</label>
+            <p className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-3 block">Category</p>
             <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
               {categories.map((cat) => {
                 const active = categoryId === cat.id;
@@ -100,35 +103,35 @@ export function AddTransactionSheet({ categories, open, defaultType = "expense",
           {/* Note */}
           <div className="mb-5">
             <div className="relative">
+              <label htmlFor="txn-note" className="sr-only">Note</label>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#55555C" strokeWidth="2" strokeLinecap="round" className="absolute left-3 top-1/2 -translate-y-1/2">
                 <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
               </svg>
-              <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note..." className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 pl-9 pr-4 text-white text-sm outline-none focus:border-[#FF6B00]/50 transition-all placeholder:text-[#55555C]" />
+              <input id="txn-note" type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Add a note..." className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 pl-9 pr-4 text-white text-sm outline-none focus:border-[#FF6B00]/50 transition-all placeholder:text-[#55555C]" />
             </div>
           </div>
 
           {/* Date */}
           <div className="mb-6">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">Date</label>
-            <div className="flex gap-2">
+            <DatePickerInput
+              label="Date"
+              value={date ? new Date(date + "T00:00:00") : undefined}
+              onChange={(d) => setDate(d ? d.toISOString().slice(0, 10) : getTodayISO())}
+              placeholder="Select date"
+            />
+            <div className="flex gap-2 mt-2">
               {[{ label: "Today", value: getTodayISO() }, { label: "Yesterday", value: new Date(Date.now() - 86400000).toISOString().slice(0, 10) }].map((opt) => (
-                <button key={opt.label} type="button" onClick={() => { setDate(opt.value); setShowDatePicker(false); }} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${date === opt.value ? "bg-[#FF6B00] text-white" : "bg-[#141416] text-[#8A8A90] hover:bg-[#1C1C1F]"}`}>
+                <button key={opt.label} type="button" onClick={() => setDate(opt.value)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${date === opt.value ? "bg-[#FF6B00]/10 text-orange-500 border border-orange-500/30" : "bg-[#1C1C1F] text-[#8A8A90] hover:bg-[#222226] hover:text-white"}`}>
                   {opt.label}
                 </button>
               ))}
-              <button type="button" onClick={() => setShowDatePicker(!showDatePicker)} className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${showDatePicker ? "bg-[#FF6B00] text-white" : "bg-[#141416] text-[#8A8A90] hover:bg-[#1C1C1F]"}`}>
-                Pick Date
-              </button>
             </div>
-            {showDatePicker && (
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full mt-2 bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 px-4 text-white text-sm outline-none focus:border-[#FF6B00]/50 transition-all" />
-            )}
           </div>
 
           {/* Submit */}
-          <button type="button" onClick={handleSubmit} disabled={!amount || !categoryId} className={`w-full rounded-xl py-4 text-base font-bold transition-all active:scale-[0.97] ${amount && categoryId ? "bg-[#FF6B00] text-white shadow-lg shadow-orange-500/30" : "bg-[#141416] text-[#55555C] cursor-not-allowed"}`}>
+          <Button type="button" onClick={handleSubmit} disabled={!amount || !categoryId} className={`w-full rounded-xl py-4 text-base font-bold transition-all active:scale-[0.97] h-auto ${amount && categoryId ? "bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white shadow-lg shadow-orange-500/30" : "bg-[#141416] text-[#55555C] cursor-not-allowed"}`}>
             Add {type === "expense" ? "Expense" : "Income"}
-          </button>
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

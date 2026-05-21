@@ -51,9 +51,9 @@ export default function CAGRPage() {
           </p>
           <InputRow
             fields={[
-              { value: Number(inputs.initial), onChange: (v) => updateInput("initial", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "INITIAL" },
-              { value: Number(inputs.final), onChange: (v) => updateInput("final", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "FINAL" },
-              { value: Number(inputs.years), onChange: (v) => updateInput("years", parseFloat(v) || 1), label: "YEARS", suffix: "yr" },
+              { value: Number(inputs.initial), onChange: (v) => updateInput("initial", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "INITIAL", step: 1000 },
+              { value: Number(inputs.final), onChange: (v) => updateInput("final", parseFloat(v.replace(/[,\s]/g, "")) || 0), label: "FINAL", step: 1000 },
+              { value: Number(inputs.years), onChange: (v) => updateInput("years", parseFloat(v) || 1), label: "YEARS", suffix: "yr", step: 1 },
             ]}
             className="mb-5"
           />

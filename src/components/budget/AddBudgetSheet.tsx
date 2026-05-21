@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { getIcon, ICON_NAMES } from "@/lib/budget/iconMap";
 const COLORS = ["#FF6B00", "#14B8A6", "#8B5CF6", "#3B82F6", "#EF4444", "#22C55E", "#F59E0B", "#EC4899"];
 
@@ -36,26 +37,26 @@ export function AddBudgetSheet({ open, onClose, onSave }: AddBudgetSheetProps) {
         <div className="px-5 pb-[calc(24px+env(safe-area-inset-bottom))]">
           <div className="flex items-center justify-between mb-5">
             <p className="text-[17px] font-semibold text-[#F5F5F5]">New Budget</p>
-            <button type="button" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors" aria-label="Close">
+            <Button type="button" variant="ghost" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] hover:bg-[#222226] p-0 flex items-center justify-center" aria-label="Close">
               <X size={16} className="text-[#8A8A90]" />
-            </button>
+            </Button>
           </div>
 
           <div className="mb-5">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">Category Name</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Entertainment" className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 px-4 text-white text-sm outline-none focus:border-[#FF6B00]/50 transition-all placeholder:text-[#55555C]" />
+            <label htmlFor="budget-category-name" className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">Category Name</label>
+            <input id="budget-category-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Entertainment" className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 px-4 text-white text-sm outline-none focus:border-[#FF6B00]/50 transition-all placeholder:text-[#55555C]" />
           </div>
 
           <div className="mb-5">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">Monthly Limit</label>
+            <label htmlFor="budget-monthly-limit" className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">Monthly Limit</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#55555C] font-mono">₹</span>
-              <input type="number" inputMode="numeric" value={monthlyLimit} onChange={(e) => setMonthlyLimit(e.target.value)} placeholder="5,000" className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 pl-8 pr-4 text-white font-mono text-lg font-bold outline-none focus:border-[#FF6B00]/50 transition-all placeholder:text-[#55555C]" />
+              <input id="budget-monthly-limit" type="number" inputMode="numeric" value={monthlyLimit} onChange={(e) => setMonthlyLimit(e.target.value)} placeholder="5,000" className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-3 pl-8 pr-4 text-white font-mono text-lg font-bold outline-none focus:border-[#FF6B00]/50 transition-all placeholder:text-[#55555C]" />
             </div>
           </div>
 
           <div className="mb-5">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-3 block">Icon</label>
+            <p className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-3 block">Icon</p>
             <div className="flex flex-wrap gap-2">
               {ICON_NAMES.map((name) => {
                 const I = getIcon(name);
@@ -69,7 +70,7 @@ export function AddBudgetSheet({ open, onClose, onSave }: AddBudgetSheetProps) {
           </div>
 
           <div className="mb-6">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-3 block">Color</label>
+            <p className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-3 block">Color</p>
             <div className="flex gap-2">
               {COLORS.map((c) => (
                 <button key={c} type="button" onClick={() => setColor(c)} className={`w-9 h-9 rounded-xl transition-all border-2 ${color === c ? "border-[#FF6B00] scale-110" : "border-transparent hover:border-white/20"}`} style={{ background: c }} aria-label={`Color ${c}`} />
@@ -77,9 +78,9 @@ export function AddBudgetSheet({ open, onClose, onSave }: AddBudgetSheetProps) {
             </div>
           </div>
 
-          <button type="button" onClick={handleSubmit} disabled={!name.trim() || !monthlyLimit} className={`w-full rounded-xl py-4 text-base font-bold transition-all active:scale-[0.97] ${name.trim() && monthlyLimit ? "bg-[#FF6B00] text-white shadow-lg shadow-orange-500/30" : "bg-[#141416] text-[#55555C] cursor-not-allowed"}`}>
+          <Button type="button" onClick={handleSubmit} disabled={!name.trim() || !monthlyLimit} className={`w-full rounded-xl py-4 text-base font-bold transition-all active:scale-[0.97] h-auto ${name.trim() && monthlyLimit ? "bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white shadow-lg shadow-orange-500/30" : "bg-[#141416] text-[#55555C] cursor-not-allowed"}`}>
             Create Budget
-          </button>
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

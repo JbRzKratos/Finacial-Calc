@@ -509,174 +509,7 @@
     color: #FF6B00;
   }
 
-  /* ─── Slider ─── */
-  .slider-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    contain: layout style;
-  }
-  .slider-label-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .slider-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    color: rgba(255, 255, 255, 0.45);
-    text-transform: uppercase;
-  }
-  .slider-value-display {
-    display: flex;
-    align-items: baseline;
-    gap: 3px;
-    background: rgba(255, 107, 0, 0.12);
-    border: 1px solid rgba(255, 107, 0, 0.3);
-    border-radius: 8px;
-    padding: 4px 10px;
-  }
-  .slider-value-number {
-    font-family: 'DM Mono', monospace;
-    font-size: 17px;
-    font-weight: 600;
-    color: #FF6B00;
-    line-height: 1;
-  }
-  .slider-value-unit {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: rgba(255, 107, 0, 0.55);
-    letter-spacing: 0.08em;
-  }
-  .slider-value-input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    background: rgba(255, 107, 0, 0.1);
-    border: 1px solid rgba(255, 107, 0, 0.3);
-    border-radius: 8px;
-    padding: 4px 10px;
-    cursor: text;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  .slider-value-input-wrap:focus-within {
-    border-color: rgba(255, 107, 0, 0.7);
-    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.12);
-  }
-  .slider-currency-symbol {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: #FF6B00;
-    line-height: 1;
-    user-select: none;
-  }
-  .slider-value-input {
-    background: none;
-    border: none;
-    outline: none;
-    font-family: 'DM Mono', monospace;
-    font-size: 16px;
-    font-weight: 600;
-    color: #FF6B00;
-    width: 80px;
-    text-align: right;
-    padding: 0;
-    margin: 0;
-    -moz-appearance: textfield;
-  }
-  .slider-value-input::-webkit-outer-spin-button,
-  .slider-value-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  .slider-track-container {
-    position: relative;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    touch-action: none;
-  }
-  .slider-track-container::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 6px;
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 100px;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .slider-fill-track {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 6px;
-    background: linear-gradient(90deg, #FF4500 0%, #FF6B00 70%, #FFAA40 100%);
-    border-radius: 100px;
-    pointer-events: none;
-    z-index: 1;
-    box-shadow: 0 0 10px rgba(255, 107, 0, 0.7), 0 0 24px rgba(255, 107, 0, 0.3);
-    transition: width 0.05s ease;
-  }
-  .slider-thumb-dot {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: #0A0A0C;
-    border: 2.5px solid #FF6B00;
-    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2), 0 0 12px rgba(255, 107, 0, 0.6);
-    pointer-events: none;
-    z-index: 4;
-    transition: left 0.05s ease;
-  }
-  .slider-track-container.active .slider-thumb-dot {
-    transform: translate(-50%, -50%) scale(1.2);
-  }
-  .slider-thumb-bubble {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 0;
-    transform: translateX(-50%);
-    background: #FF6B00;
-    color: #000000;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 6px;
-    pointer-events: none;
-    z-index: 10;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(255, 107, 0, 0.5);
-    transition: left 0.05s ease;
-  }
-  .slider-thumb-bubble::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid #FF6B00;
-  }
+  /* ─── Slider (using shadcn Slider component) ─── */
   input.custom-slider {
     position: absolute;
     left: 0;
@@ -1061,6 +894,73 @@ input[type="date"] { color-scheme: dark; }
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(0.7);
   cursor: pointer;
+}
+
+/* ─── react-day-picker dark theme ─── */
+.rdp-root {
+  --rdp-day-font: inherit;
+  color: #F5F5F5;
+}
+.rdp-root button:where([data-slot="day-button"]) {
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 500;
+}
+.rdp-root button:where([data-slot="day-button"]):hover {
+  background: rgba(255,255,255,0.08);
+  color: #F5F5F5;
+}
+.rdp-root [data-selected] button:where([data-slot="day-button"]) {
+  background: #FF6B00;
+  color: #000;
+  font-weight: 700;
+}
+.rdp-root [data-selected] button:where([data-slot="day-button"]):hover {
+  background: #FF6B00;
+  color: #000;
+}
+.rdp-root [data-today]:not([data-selected]) button:where([data-slot="day-button"]) {
+  color: #FF6B00;
+  font-weight: 700;
+}
+.rdp-root [data-outside] button:where([data-slot="day-button"]) {
+  color: rgba(255,255,255,0.2);
+}
+.rdp-root [data-disabled] button:where([data-slot="day-button"]) {
+  color: rgba(255,255,255,0.2);
+}
+.rdp-root .rdp-month_caption {
+  font-size: 14px;
+  font-weight: 600;
+  color: #F5F5F5;
+  padding: 0 0 8px;
+}
+.rdp-root .rdp-nav button {
+  color: rgba(255,255,255,0.4);
+  border-radius: 6px;
+}
+.rdp-root .rdp-nav button:hover {
+  background: rgba(255,255,255,0.08);
+  color: #F5F5F5;
+}
+.rdp-root .rdp-weekday {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  padding-bottom: 4px;
+}
+.rdp-root [data-range-start] button:where([data-slot="day-button"]),
+.rdp-root [data-range-end] button:where([data-slot="day-button"]) {
+  background: #FF6B00;
+  color: #000;
+  font-weight: 700;
+  border-radius: 8px;
+}
+.rdp-root [data-range-middle] button:where([data-slot="day-button"]) {
+  background: rgba(255, 107, 0, 0.15);
+  color: #F5F5F5;
+  border-radius: 0;
 }
 
 /* ─── Mobile responsive ─── */

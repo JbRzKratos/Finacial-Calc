@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Home, Calculator, Wallet } from "lucide-react";

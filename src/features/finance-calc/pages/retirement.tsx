@@ -50,9 +50,9 @@ export default function RetirementPage() {
           </p>
           <InputRow
             fields={[
-              { value: Number(inputs.currentAge), onChange: (v) => updateInput("currentAge", parseFloat(v) || 1), label: "CURRENT AGE", suffix: "yr" },
-              { value: Number(inputs.retirementAge), onChange: (v) => updateInput("retirementAge", parseFloat(v) || 1), label: "RETIRE AGE", suffix: "yr" },
-              { value: Number(inputs.lifeExpectancy), onChange: (v) => updateInput("lifeExpectancy", parseFloat(v) || 1), label: "LIFE EXPECT", suffix: "yr" },
+              { value: Number(inputs.currentAge), onChange: (v) => updateInput("currentAge", parseFloat(v) || 1), label: "CURRENT AGE", suffix: "yr", step: 1 },
+              { value: Number(inputs.retirementAge), onChange: (v) => updateInput("retirementAge", parseFloat(v) || 1), label: "RETIRE AGE", suffix: "yr", step: 1 },
+              { value: Number(inputs.lifeExpectancy), onChange: (v) => updateInput("lifeExpectancy", parseFloat(v) || 1), label: "LIFE EXPECT", suffix: "yr", step: 1 },
             ]}
             className="mb-5"
           />
@@ -65,7 +65,7 @@ export default function RetirementPage() {
             fields={[{
               value: Number(inputs.monthlyExpense),
               onChange: (v) => updateInput("monthlyExpense", parseFloat(v.replace(/[,\s]/g, "")) || 0),
-              label: "EXPENSES",
+              label: "EXPENSES", step: 5000,
             }]}
             className="mb-5"
           />

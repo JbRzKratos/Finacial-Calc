@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { formatINR } from "@/lib/budget/budgetCalc";
 import { CategoryIcon } from "@/components/budget/CategoryIcon";
 import type { BudgetCategory } from "@/lib/budget/budgetTypes";
@@ -37,9 +38,9 @@ export function EditBudgetLimitSheet({ open, onClose, category, onSave }: EditBu
         <div className="px-5 pb-[calc(24px+env(safe-area-inset-bottom))]">
           <div className="flex items-center justify-between mb-5">
             <p className="text-[17px] font-semibold text-[#F5F5F5]">Adjust Limit</p>
-            <button type="button" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors" aria-label="Close">
+            <Button type="button" variant="ghost" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] hover:bg-[#222226] p-0 flex items-center justify-center" aria-label="Close">
               <X size={16} className="text-[#8A8A90]" />
-            </button>
+            </Button>
           </div>
 
           <div className="flex items-center gap-3 bg-[#141416] rounded-xl p-3.5 mb-6">
@@ -53,10 +54,11 @@ export function EditBudgetLimitSheet({ open, onClose, category, onSave }: EditBu
           </div>
 
           <div className="mb-6">
-            <label className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">New Monthly Limit</label>
+            <label htmlFor="edit-budget-limit" className="text-[11px] font-semibold text-[#8A8A90] uppercase tracking-wider mb-2 block">New Monthly Limit</label>
             <div className="relative">
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#55555C] font-mono text-lg">₹</span>
               <input
+                id="edit-budget-limit"
                 type="number"
                 inputMode="numeric"
                 value={value}
@@ -93,14 +95,14 @@ export function EditBudgetLimitSheet({ open, onClose, category, onSave }: EditBu
             })}
           </div>
 
-          <button
+          <Button
             type="button"
             onClick={handleSave}
             disabled={!value || Number(value) <= 0}
-            className={`w-full rounded-xl py-3.5 text-base font-bold transition-all active:scale-[0.97] ${value && Number(value) > 0 ? "bg-[#FF6B00] text-black shadow-lg shadow-orange-500/30" : "bg-[#141416] text-[#55555C] cursor-not-allowed"}`}
+            className={`w-full rounded-xl py-3.5 text-base font-bold transition-all active:scale-[0.97] h-auto ${value && Number(value) > 0 ? "bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-black shadow-lg shadow-orange-500/30" : "bg-[#141416] text-[#55555C] cursor-not-allowed"}`}
           >
             Save Limit
-          </button>
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

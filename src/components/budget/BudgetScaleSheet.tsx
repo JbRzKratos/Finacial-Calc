@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import type { BudgetCategory } from "@/lib/budget/budgetTypes";
 import { formatINR } from "@/lib/budget/budgetCalc";
@@ -65,9 +66,9 @@ export function BudgetScaleSheet({ open, onClose, currentTotal, categories, onAp
         <div className="px-5 pb-[calc(24px+env(safe-area-inset-bottom))]">
           <div className="flex items-center justify-between mb-5">
             <p className="text-[17px] font-semibold text-[#F5F5F5]">Scale Budget</p>
-            <button type="button" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] flex items-center justify-center hover:bg-[#222226] transition-colors" aria-label="Close">
+            <Button type="button" variant="ghost" onClick={onClose} className="w-8 h-8 rounded-lg bg-[#1C1C1F] hover:bg-[#222226] p-0 flex items-center justify-center" aria-label="Close">
               <X size={16} className="text-[#8A8A90]" />
-            </button>
+            </Button>
           </div>
 
           {/* Large animated number */}
@@ -99,6 +100,7 @@ export function BudgetScaleSheet({ open, onClose, currentTotal, categories, onAp
           {/* Slider */}
           <div className="mb-6">
             <input
+              id="budget-scale-slider"
               ref={inputRef}
               type="range"
               min={0}
@@ -106,6 +108,7 @@ export function BudgetScaleSheet({ open, onClose, currentTotal, categories, onAp
               step={500}
               value={value}
               onChange={handleSlider}
+              aria-label="Budget scale"
               className="budget-scale-slider"
             />
             <div className="flex justify-between text-[10px] text-[#55555C] mt-1 px-0.5 font-mono">
@@ -117,8 +120,10 @@ export function BudgetScaleSheet({ open, onClose, currentTotal, categories, onAp
           {/* Custom input */}
           <div className="flex items-center gap-3 mb-5">
             <div className="relative flex-1">
+              <label htmlFor="budget-scale-custom" className="sr-only">Custom amount</label>
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#55555C] font-mono text-sm">₹</span>
               <input
+                id="budget-scale-custom"
                 type="text"
                 inputMode="numeric"
                 value={value || ""}
@@ -127,13 +132,9 @@ export function BudgetScaleSheet({ open, onClose, currentTotal, categories, onAp
                 className="w-full bg-[#141416] border border-[rgba(255,255,255,0.06)] rounded-xl py-2.5 pl-7 pr-3.5 text-white font-mono text-sm outline-none focus:border-[#FF6B00]/50 transition-all placeholder:text-[#55555C]"
               />
             </div>
-            <button
-              type="button"
-              onClick={handleApply}
-              className="bg-[#FF6B00] text-black font-bold text-sm px-5 py-2.5 rounded-xl hover:opacity-90 active:scale-[0.97] transition-all whitespace-nowrap"
-            >
+            <Button type="button" onClick={handleApply} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-black font-bold text-sm px-5 py-2.5 rounded-xl h-auto active:scale-[0.97] transition-all whitespace-nowrap">
               Apply
-            </button>
+            </Button>
           </div>
 
           {/* Live category preview */}

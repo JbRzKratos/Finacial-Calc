@@ -8,9 +8,9 @@ import { generateInsights } from "@/features/finance-calc/utils/insights";
 import { SplitShell } from "@/features/finance-calc/components/layout/SplitShell";
 import { InputRow } from "@/features/finance-calc/components/inputs/InputRow";
 import { NeonSlider } from "@/features/finance-calc/components/inputs/NeonSlider";
-import { ToggleGroup } from "@/features/finance-calc/components/inputs/ToggleGroup";
 import { ActionButtonRow } from "@/features/finance-calc/components/inputs/ActionButtonRow";
 import { ResultHero } from "@/features/finance-calc/components/results/ResultHero";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MetricRow } from "@/features/finance-calc/components/results/MetricRow";
 import { InsightBanner } from "@/features/finance-calc/components/results/InsightBanner";
 import { SegmentedResult } from "@/features/finance-calc/components/results/SegmentedResult";
@@ -78,15 +78,12 @@ export default function FDPage() {
           <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
             Deposit Type
           </p>
-          <ToggleGroup
-            options={[
-              { value: "fd", label: "FIXED DEPOSIT" },
-              { value: "rd", label: "RECURRING DEPOSIT" },
-            ]}
-            value={String(inputs.depositType || "fd")}
-            onChange={(v) => updateInput("depositType", v)}
-            className="mb-5"
-          />
+          <Tabs value={String(inputs.depositType || "fd")} onValueChange={(v) => updateInput("depositType", v)}>
+            <TabsList className="w-full">
+              <TabsTrigger value="fd" className="flex-1">FIXED DEPOSIT</TabsTrigger>
+              <TabsTrigger value="rd" className="flex-1">RECURRING DEPOSIT</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
           <div className="section-divider" />
           {String(inputs.depositType) === "rd" ? (
@@ -102,7 +99,7 @@ export default function FDPage() {
             fields={[{
               value: Number(inputs.amount),
               onChange: (v) => updateInput("amount", parseFloat(v.replace(/[,\s]/g, "")) || 0),
-              label: String(inputs.depositType) === "rd" ? "MONTHLY" : "AMOUNT",
+              label: String(inputs.depositType) === "rd" ? "MONTHLY" : "AMOUNT", step: 5000,
             }]}
             className="mb-5"
           />
@@ -135,11 +132,13 @@ export default function FDPage() {
               <p className="text-[13px] font-semibold uppercase tracking-[0.05em] text-white/85 mb-2">
                 Compounding Frequency
               </p>
-              <ToggleGroup
-                options={compoundingOptions}
-                value={String(inputs.compounding || "quarterly")}
-                onChange={(v) => updateInput("compounding", v)}
-              />
+              <Tabs value={String(inputs.compounding || "quarterly")} onValueChange={(v) => updateInput("compounding", v)}>
+                <TabsList className="w-full">
+                  {compoundingOptions.map((opt) => (
+                    <TabsTrigger key={opt.value} value={opt.value} className="flex-1">{opt.label}</TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
             </>
           )}
 
