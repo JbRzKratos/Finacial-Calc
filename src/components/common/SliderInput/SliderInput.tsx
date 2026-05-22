@@ -1,4 +1,3 @@
-"use client";
 
 import { memo, useCallback, useRef, useState, useEffect, ChangeEvent, FocusEvent } from "react";
 import { Slider } from "@/components/ui/slider";

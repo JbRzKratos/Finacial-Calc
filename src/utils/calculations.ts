@@ -265,13 +265,14 @@ export function loanVsInvest(amount: number, loanRate: number, investRate: numbe
   } else {
     fv = amount * Math.pow(1 + r, months);
   }
-  const netDifference = fv - totalPaid;
+  const fvSavedEMIs = r === 0 ? emiAmt * months : emiAmt * ((Math.pow(1 + r, months) - 1) / r);
+  const netDifference = fv - fvSavedEMIs;
   const rows: { year: number; investValue: number; totalPaid: number }[] = [];
   for (let y = 1; y <= years; y++) {
     rows.push({
       year: y,
       investValue: Math.round(amount * Math.pow(1 + r, y * 12)),
-      totalPaid: Math.round((emiAmt * y * 12))
+      totalPaid: Math.round(r === 0 ? emiAmt * y * 12 : emiAmt * ((Math.pow(1 + r, y * 12) - 1) / r))
     });
   }
   return { totalInterest: Math.round(totalInterest), finalInvestValue: Math.round(fv), netDifference: Math.round(netDifference), rows };

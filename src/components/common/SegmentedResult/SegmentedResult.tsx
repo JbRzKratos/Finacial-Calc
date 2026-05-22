@@ -1,4 +1,3 @@
-"use client";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ export function SegmentedResult({ segments, value, onChange, className }: Segmen
             className={cn(
               "px-4 py-2 text-xs font-semibold tracking-[0.04em]",
               active
-                ? "seg-selected bg-[#FF6B00]/10 text-orange-500 border border-orange-500/30"
+                ? "seg-selected bg-primary/10 text-primary border border-primary/30"
                 : "seg-unselected text-white/40 hover:text-white/70"
             )}
             style={{

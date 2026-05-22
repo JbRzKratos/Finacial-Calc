@@ -1,4 +1,3 @@
-"use client";
 
 import { memo, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -66,10 +65,10 @@ function ResultHeroInner({ value, subtitle, variant = "default", showEmptyState 
         ref={displayRef}
         className={cn(
           "block text-[32px] md:text-[36px] font-bold font-mono tabular-nums animate-result-pop",
-          variant === "accent" && "text-orange-500",
+          variant === "accent" && "text-primary",
           variant === "positive" && "text-[#16a34a]",
           variant === "negative" && "text-[#dc2626]",
-          variant === "default" && "text-[#FF6B00]"
+          variant === "default" && "text-primary"
         )}
       >
         {value || "—"}

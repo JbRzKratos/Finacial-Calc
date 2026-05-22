@@ -11,6 +11,7 @@ export interface BudgetCategory {
   monthlyLimit: number;
   color: string;
   createdAt: string;
+  subCategories?: string[];
 }
 
 export interface Transaction {
@@ -20,6 +21,7 @@ export interface Transaction {
   note: string;
   date: string;
   type: "expense" | "income";
+  subCategory?: string;
 }
 
 export interface CategoryBreakdown {

@@ -7,7 +7,23 @@
     <meta name="description" content="Premium financial calculator suite — SIP, EMI, FD, CAGR, retirement planning, tax savings, loan vs invest." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>FinCalc Pro — Financial Calculator Suite</title>
-    <style>body{background:#0A0A0C;margin:0}</style>
+    <style>
+      html.light body { background: hsl(34 18.9% 94.7%); }
+      html:not(.light) body { background: #0A0A0C; }
+      body { margin: 0; }
+    </style>
+    <script>
+      (function() {
+        const saved = localStorage.getItem("theme");
+        if (saved === "light") {
+          document.documentElement.classList.add("light");
+          document.documentElement.classList.remove("dark");
+        } else {
+          document.documentElement.classList.remove("light");
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

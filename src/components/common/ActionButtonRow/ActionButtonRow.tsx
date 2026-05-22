@@ -1,4 +1,3 @@
-"use client";
 
 import { memo } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ function ActionButtonRowInner({ onClear }: ActionButtonRowProps) {
     <div className="action-btn-row">
       <Button
         onClick={() => setShowMobileResults(true)}
-        className="calc-btn bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-black font-bold"
+        className="calc-btn bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
       >
         Calculate
       </Button>

@@ -8,7 +8,7 @@ function InputGroup({ className, ...props }: React.HTMLAttributes<HTMLDivElement
     <div
       data-slot="input-group"
       className={cn(
-        "flex items-center rounded-xl bg-white/[0.06] border border-white/[0.1] focus-within:border-orange-500/50 focus-within:ring-1 focus-within:ring-orange-500/10 transition-all overflow-hidden",
+        "flex items-center rounded-xl bg-white/[0.06] border border-white/[0.1] focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/10 transition-all overflow-hidden",
         className
       )}
       {...props}
@@ -62,7 +62,7 @@ function InputGroupButton({
       data-slot="input-group-button"
       variant={variant}
       size={size}
-      className={cn("rounded-none h-10 w-10 text-white/40 hover:text-white hover:bg-white/[0.08]", className)}
+      className={cn("rounded-none h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-white/[0.08]", className)}
       {...props}
     />
   )

@@ -12,31 +12,35 @@ export default defineConfig({
     },
   },
   build: {
-    target: 'es2018',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.warn', 'console.info'],
-      },
-    },
+    target: 'es2020',
+    minify: 'oxc',
+    cssMinify: true,
+    sourcemap: false,
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('chart.js')) return 'chartjs';
-          if (id.includes('node_modules/react')) return 'vendor';
+          // React core — smallest possible vendor chunk
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) {
+            return 'vendor';
+          }
+          // All Radix UI primitives into one chunk
+          if (id.includes('node_modules/@radix-ui/')) {
+            return 'radix';
+          }
+          // All calculator components into a separate on-demand chunk
+          if (id.includes('src/components/calculators/')) {
+            return 'calculators';
+          }
         },
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
       },
     },
-    chunkSizeWarningLimit: 600,
-    sourcemap: false,
-    cssCodeSplit: true,
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'chart.js'],
+    include: ['react', 'react-dom'],
   },
 })

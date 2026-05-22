@@ -1,4 +1,3 @@
-"use client";
 
 interface WinnerBannerProps {
   winner: "invest" | "repay";
@@ -19,7 +18,7 @@ export function WinnerBanner({ winner, difference, investValue, repayValue }: Wi
       <div className="flex gap-4 p-4">
         <div className="flex-1 text-center">
           <p className="text-[10px] font-semibold tracking-[0.06em] text-white/40 uppercase mb-1">Investment Value</p>
-          <p className="text-sm font-bold font-mono text-orange-500">{investValue}</p>
+          <p className="text-sm font-bold font-mono text-primary">{investValue}</p>
         </div>
         <div className="w-px bg-white/[0.06]" />
         <div className="flex-1 text-center">

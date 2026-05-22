@@ -1,4 +1,3 @@
-"use client";
 
 import { memo, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -31,7 +30,7 @@ function MetricRowInner({ label, value, variant = "default", index = 0 }: Metric
           variant === "default" && "text-white/70",
           variant === "positive" && "text-[#16a34a]",
           variant === "negative" && "text-[#dc2626]",
-          variant === "accent" && "text-orange-500"
+          variant === "accent" && "text-primary"
         )}
       >
         {value}

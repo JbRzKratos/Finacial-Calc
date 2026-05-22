@@ -1,4 +1,3 @@
-"use client";
 
 interface TimelineBarProps {
   currentAge: number;
@@ -17,7 +16,7 @@ export function TimelineBar({ currentAge, retirementAge, lifeExpectancy }: Timel
       <div className="relative h-10 flex items-center">
         <div className="absolute inset-0 flex rounded-full overflow-hidden">
           <div
-            className="bg-orange-500/20 border border-orange-500/30"
+            className="bg-primary/20 border border-primary/30"
             style={{ width: workingPct + "%" }}
           />
           <div
@@ -30,7 +29,7 @@ export function TimelineBar({ currentAge, retirementAge, lifeExpectancy }: Timel
             {currentAge}
           </span>
           <div className="flex-1" />
-          <span className="text-[10px] font-semibold text-orange-400">
+          <span className="text-[10px] font-semibold text-primary">
             {retirementAge}
           </span>
           <div className="flex-1" />

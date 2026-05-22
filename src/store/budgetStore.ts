@@ -1,15 +1,12 @@
-"use client";
-
 const STORAGE_KEY = "fincalc_budget_data";
 
 interface StoredData {
   categories: import("@/types").BudgetCategory[];
   transactions: Record<string, import("@/types").Transaction[]>;
-  totalBudgetOverride: number | null;
 }
 
 function emptyData(): StoredData {
-  return { categories: [], transactions: {}, totalBudgetOverride: null };
+  return { categories: [], transactions: {} };
 }
 
 let cached: StoredData | null = null;
@@ -125,19 +122,11 @@ export function deleteCategoryTransactions(
   scheduleWrite();
 }
 
-export function getTotalBudgetOverride(): number | undefined {
-  return ensureData().totalBudgetOverride ?? undefined;
-}
-
-export function setTotalBudgetOverride(val: number | undefined) {
-  ensureData().totalBudgetOverride = val ?? null;
-  scheduleWrite();
-}
-
-export function updateCategoryLimit(catId: string, newLimit: number) {
-  const cat = ensureData().categories.find((c) => c.id === catId);
-  if (cat) {
-    cat.monthlyLimit = newLimit;
+export function updateCategory(catId: string, updates: Partial<import("@/types").BudgetCategory>) {
+  const data = ensureData();
+  const index = data.categories.findIndex((c) => c.id === catId);
+  if (index !== -1) {
+    data.categories[index] = { ...data.categories[index], ...updates };
     scheduleWrite();
   }
 }

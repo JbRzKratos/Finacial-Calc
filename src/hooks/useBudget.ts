@@ -1,26 +1,30 @@
-"use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { BudgetCategory, Transaction, BudgetSummary, DateRange } from "@/types";
-import { getCategories, saveCategories, getTransactionsForRange, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions as storeDeleteCatTxns, getTotalBudgetOverride, setTotalBudgetOverride, updateCategoryLimit as storeUpdateLimit } from "@/store";
+import { getCategories, saveCategories, getTransactions, getTransactionsForRange, saveTransactions, addTransaction as storeAddTxn, deleteTransaction as storeDeleteTxn, deleteCategoryTransactions as storeDeleteCatTxns, updateCategory as storeUpdateCategory } from "@/store";
 import { computeBudgetSummary, generateId, getMonthDateRange } from "@/utils/calculations";
 
 const SEED_CATS: BudgetCategory[] = [
-  { id: "cat_food", name: "Food", icon: "fork-knife", iconBg: "#FF6B00", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01" },
-  { id: "cat_groceries", name: "Groceries", icon: "shopping-cart", iconBg: "#14B8A6", monthlyLimit: 5000, color: "#14B8A6", createdAt: "2025-01-01" },
-  { id: "cat_subs", name: "Subscriptions", icon: "repeat", iconBg: "#8B5CF6", monthlyLimit: 2000, color: "#8B5CF6", createdAt: "2025-01-01" },
-  { id: "cat_transport", name: "Transport", icon: "car", iconBg: "#3B82F6", monthlyLimit: 3000, color: "#3B82F6", createdAt: "2025-01-01" },
+  { id: "cat_food", name: "Food", icon: "fork-knife", iconBg: "#FF6B00", monthlyLimit: 8000, color: "#FF6B00", createdAt: "2025-01-01", subCategories: ["Restaurants", "Cafes", "Delivery"] },
+  { id: "cat_groceries", name: "Groceries", icon: "shopping-cart", iconBg: "#14B8A6", monthlyLimit: 5000, color: "#14B8A6", createdAt: "2025-01-01", subCategories: ["Supermarket", "Fruits & Veggies", "Dairy"] },
+  { id: "cat_subs", name: "Subscriptions", icon: "repeat", iconBg: "#8B5CF6", monthlyLimit: 2000, color: "#8B5CF6", createdAt: "2025-01-01", subCategories: ["Streaming", "Software", "Gym"] },
+  { id: "cat_transport", name: "Transport", icon: "car", iconBg: "#3B82F6", monthlyLimit: 3000, color: "#3B82F6", createdAt: "2025-01-01", subCategories: ["Fuel", "Cabs", "Public Transit"] },
+  { id: "cat_ent", name: "Entertainment", icon: "tv", iconBg: "#EC4899", monthlyLimit: 4000, color: "#EC4899", createdAt: "2025-01-01", subCategories: ["Movies", "Gaming", "Concerts"] },
+  { id: "cat_utils", name: "Utilities & Bills", icon: "zap", iconBg: "#EAB308", monthlyLimit: 6000, color: "#EAB308", createdAt: "2025-01-01", subCategories: ["Electricity", "Water", "Internet", "Mobile"] },
+  { id: "cat_health", name: "Health & Fitness", icon: "heart", iconBg: "#EF4444", monthlyLimit: 3000, color: "#EF4444", createdAt: "2025-01-01", subCategories: ["Medicine", "Checkups", "Gym"] },
+  { id: "cat_shopping", name: "Shopping", icon: "shopping-bag", iconBg: "#06B6D4", monthlyLimit: 5000, color: "#06B6D4", createdAt: "2025-01-01", subCategories: ["Clothing", "Electronics", "Gifts"] },
+  { id: "cat_edu", name: "Education", icon: "graduation-cap", iconBg: "#F97316", monthlyLimit: 2000, color: "#F97316", createdAt: "2025-01-01", subCategories: ["Books", "Courses", "Stationery"] },
 ];
 
 function seedTxns(month: number, year: number): Transaction[] {
   const d = (day: number) => `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   return [
-    { id: "seed1", categoryId: "cat_food", amount: 450, note: "Lunch", date: d(3), type: "expense" },
-    { id: "seed2", categoryId: "cat_food", amount: 280, note: "Breakfast", date: d(5), type: "expense" },
-    { id: "seed3", categoryId: "cat_food", amount: 600, note: "Dinner out", date: d(8), type: "expense" },
-    { id: "seed4", categoryId: "cat_groceries", amount: 1800, note: "Weekly groceries", date: d(4), type: "expense" },
-    { id: "seed5", categoryId: "cat_subs", amount: 149, note: "Netflix", date: d(1), type: "expense" },
-    { id: "seed6", categoryId: "cat_transport", amount: 320, note: "Fuel", date: d(6), type: "expense" },
+    { id: "seed1", categoryId: "cat_food", amount: 450, note: "Lunch", date: d(3), type: "expense", subCategory: "Restaurants" },
+    { id: "seed2", categoryId: "cat_food", amount: 280, note: "Breakfast", date: d(5), type: "expense", subCategory: "Cafes" },
+    { id: "seed3", categoryId: "cat_food", amount: 600, note: "Dinner out", date: d(8), type: "expense", subCategory: "Restaurants" },
+    { id: "seed4", categoryId: "cat_groceries", amount: 1800, note: "Weekly groceries", date: d(4), type: "expense", subCategory: "Supermarket" },
+    { id: "seed5", categoryId: "cat_subs", amount: 149, note: "Netflix", date: d(1), type: "expense", subCategory: "Streaming" },
+    { id: "seed6", categoryId: "cat_transport", amount: 320, note: "Fuel", date: d(6), type: "expense", subCategory: "Fuel" },
   ];
 }
 
@@ -47,7 +51,6 @@ export function useBudget() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [dateRange, setDateRange] = useState<DateRange>(DEFAULT_RANGE);
   const [loaded, setLoaded] = useState(false);
-  const [totalBudgetOverride, setTotalBudgetOverrideState] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     let cats = getCategories();
@@ -64,7 +67,6 @@ export function useBudget() {
     }
     setCategories(cats);
     setTransactions(txns);
-    setTotalBudgetOverrideState(getTotalBudgetOverride());
     setLoaded(true);
   }, [dateRange]);
 
@@ -125,22 +127,40 @@ export function useBudget() {
     setDateRange(range);
   }, []);
 
-  const updateTotalBudget = useCallback((value: number | undefined) => {
-    setTotalBudgetOverride(value);
-    setTotalBudgetOverrideState(value);
+  const updateCategory = useCallback((id: string, updates: Partial<BudgetCategory>) => {
+    storeUpdateCategory(id, updates);
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
   }, []);
 
-  const updateCategoryLimit = useCallback((id: string, newLimit: number) => {
-    storeUpdateLimit(id, newLimit);
-    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, monthlyLimit: newLimit } : c)));
+  const updateTransaction = useCallback((id: string, updates: Partial<Transaction>) => {
+    setTransactions((prev) => {
+      const txn = prev.find((t) => t.id === id);
+      if (txn) {
+        const mk = dateToMonthKey(txn.date);
+        const currentTxns = getTransactions(mk.month, mk.year);
+        const updatedTxns = currentTxns.map((t) => (t.id === id ? { ...t, ...updates } : t));
+        saveTransactions(mk.month, mk.year, updatedTxns);
+      }
+      return prev.map((t) => (t.id === id ? { ...t, ...updates } : t));
+    });
   }, []);
 
   const summary = useMemo<BudgetSummary>(() => {
-    const cats = totalBudgetOverride && totalBudgetOverride > 0
-      ? scaleCategoriesToBudget(categories, totalBudgetOverride)
-      : categories;
-    return computeBudgetSummary(cats, transactions, dateRange);
-  }, [categories, transactions, totalBudgetOverride, dateRange]);
+    return computeBudgetSummary(categories, transactions, dateRange);
+  }, [categories, transactions, dateRange]);
 
-  return { loaded, dateRange, categories, transactions, summary, totalBudgetOverride, addTransaction, deleteTransaction, addCategory, deleteCategory, changeDateRange, updateTotalBudget, updateCategoryLimit };
+  return { 
+    loaded, 
+    dateRange, 
+    categories, 
+    transactions, 
+    summary, 
+    addTransaction, 
+    deleteTransaction, 
+    addCategory, 
+    deleteCategory, 
+    changeDateRange, 
+    updateCategory, 
+    updateTransaction 
+  };
 }

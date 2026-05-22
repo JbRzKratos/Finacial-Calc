@@ -31,16 +31,16 @@ function Slider({
     >
       <SliderPrimitive.Track
         data-slot="slider-track"
-        className="relative h-1 w-full grow overflow-hidden rounded-full bg-white/[0.12]"
+        className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-muted border border-border/10"
       >
         <SliderPrimitive.Range
           data-slot="slider-range"
-          className="absolute h-full bg-[#FF6B00]"
+          className="absolute h-full bg-primary"
         />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb
         data-slot="slider-thumb"
-        className="block size-[22px] rounded-full border-2 border-[#FF6B00] bg-[#0A0A0C] ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        className="block size-[22px] rounded-full border-2 border-primary bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
       />
     </SliderPrimitive.Root>
   )

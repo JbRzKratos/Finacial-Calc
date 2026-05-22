@@ -8,7 +8,5 @@ export {
   addTransaction,
   deleteTransaction,
   deleteCategoryTransactions,
-  getTotalBudgetOverride,
-  setTotalBudgetOverride,
-  updateCategoryLimit,
+  updateCategory,
 } from "./budgetStore";

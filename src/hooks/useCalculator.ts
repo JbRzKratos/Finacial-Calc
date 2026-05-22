@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useCallback, useMemo, useEffect, useDeferredValue } from "react";
 import type { CalculatorInputs, CalculatorResult } from "@/types";

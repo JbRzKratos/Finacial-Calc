@@ -1,7 +1,6 @@
-"use client";
+/* src/components/common/PageLayout/PageLayout.tsx */
 
 import { type ReactNode } from "react";
-import { AppBottomNav } from "@/components/common/BottomNav/BottomNav";
 import { Toaster } from "@/components/ui/toaster";
 
 interface PageLayoutProps {
@@ -9,14 +8,11 @@ interface PageLayoutProps {
   noNav?: boolean;
 }
 
-export function PageLayout({ children, noNav }: PageLayoutProps) {
+export function PageLayout({ children }: PageLayoutProps) {
   return (
     <div className="app-root">
       <div className="min-h-dvh bg-[#0A0A0C] bg-noise relative">
         {children}
-
-        {!noNav && <AppBottomNav />}
-
         <Toaster />
       </div>
     </div>
