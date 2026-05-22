@@ -17,6 +17,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 // Native date input used instead of Popover+Calendar (avoids Dialog focus-trap issues)
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import { CategoryBar } from "./CategoryBar";
 import { formatINRFull } from "@/utils/formatters";
 import { BottomNav } from "@/components/layout/BottomNav";
@@ -26,6 +28,10 @@ import {
   ChevronRight,
   Plus,
   Trash2,
+  Settings as SettingsIcon,
+  Moon,
+  Sun,
+  AlertTriangle,
   Utensils,
   Coffee,
   Pizza,
@@ -304,6 +310,50 @@ export default function BudgetPage() {
   const [subCategory, setSubCategory] = React.useState("");
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
+  // Settings Sheet State
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [isDarkMode, setIsDarkMode] = React.useState(() => {
+    return !document.documentElement.classList.contains("light");
+  });
+
+  React.useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+      document.documentElement.setAttribute("data-theme", "light");
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.remove("light");
+      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const handleToggleTheme = (checked: boolean) => {
+    if (checked) {
+      document.documentElement.classList.remove("light");
+      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+      setIsDarkMode(true);
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+      document.documentElement.setAttribute("data-theme", "light");
+      setIsDarkMode(false);
+      localStorage.setItem("theme", "light");
+    }
+  };
+
+  const handleResetAllData = () => {
+    if (window.confirm("Are you absolutely sure you want to reset all app data? This will permanently delete your budget, expenses, limits, categories, and calculator history.")) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+
   // Edit Transaction Modal State
   const [editTxnOpen, setEditTxnOpen] = React.useState(false);
   const [editingTxn, setEditingTxn] = React.useState<import("@/types").Transaction | null>(null);
@@ -558,104 +608,15 @@ export default function BudgetPage() {
             Budgets
           </h1>
 
-          <Dialog open={addOpen} onOpenChange={setAddOpen}>
-            <Button 
-              size="icon" 
-              type="button" 
-              onClick={() => setAddOpen(true)}
-              className="w-10 h-10 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-90"
-            >
-              <Plus className="w-5 h-5" />
-            </Button>
-            <DialogContent aria-describedby={undefined} className="max-w-[90vw] sm:max-w-md rounded-2xl bg-card border-border">
-              <DialogHeader className="text-left">
-                <DialogTitle className="text-lg font-bold flex items-center gap-2">
-                  <span className="text-base leading-none select-none text-primary" aria-hidden="true">$</span>
-                  Add New Expense
-                </DialogTitle>
-              </DialogHeader>
-
-              <form onSubmit={handleSaveTransaction} className="space-y-4 pt-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="amount" className="text-xs font-semibold text-muted-foreground">Amount (₹)</Label>
-                  <div className="relative">
-                    <Input
-                      id="amount"
-                      type="number"
-                      placeholder="0.00"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      required
-                      className="rounded-xl h-11 border-border bg-background focus:ring-primary pl-8 text-base tabular-nums"
-                    />
-                    <span className="absolute left-3 top-3 text-muted-foreground text-sm">₹</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="category" className="text-xs font-semibold text-muted-foreground">Category</Label>
-                  <Select value={categoryId} onValueChange={setCategoryId} required>
-                    <SelectTrigger id="category" className="rounded-xl h-11 border-border bg-background focus:ring-primary">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border rounded-xl">
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id} className="rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                            <span>{cat.name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {categoryId && categories.find(c => c.id === categoryId)?.subCategories?.length ? (
-                  <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                    <Label htmlFor="subcategory" className="text-xs font-semibold text-muted-foreground">Sub-category (Optional)</Label>
-                    <Select value={subCategory} onValueChange={setSubCategory}>
-                      <SelectTrigger id="subcategory" className="rounded-xl h-11 border-border bg-background focus:ring-primary text-xs">
-                        <SelectValue placeholder="Select a sub-category" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-card border-border rounded-xl">
-                        <SelectItem value="" className="text-xs">None</SelectItem>
-                        {categories.find(c => c.id === categoryId)?.subCategories?.map((sub) => (
-                          <SelectItem key={sub} value={sub} className="text-xs">
-                            {sub}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ) : null}
-
-                <div className="space-y-1.5 flex flex-col">
-                  <DatePickerInput
-                    label="Date"
-                    value={date}
-                    onChange={(newDate) => setDate(newDate || new Date())}
-                    id="txn-date"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="note" className="text-xs font-semibold text-muted-foreground">Note / Reference (Optional)</Label>
-                  <Input
-                    id="note"
-                    placeholder="e.g. Lunch with friends"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    className="rounded-xl h-11 border-border bg-background focus:ring-primary"
-                  />
-                </div>
-
-                <Button type="submit" className="w-full h-11 rounded-xl text-primary-foreground font-bold bg-primary hover:bg-primary/90 mt-2 shadow-lg shadow-primary/20">
-                  Save Transaction
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <Button
+            variant="outline"
+            size="icon"
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            className="w-10 h-10 rounded-xl bg-card border-border hover:bg-muted text-muted-foreground hover:text-primary transition-all active:scale-90"
+          >
+            <SettingsIcon className="w-4.5 h-4.5" />
+          </Button>
         </div>
 
         {/* Month Selector */}
@@ -684,7 +645,7 @@ export default function BudgetPage() {
             </PopoverTrigger>
             <PopoverContent
               aria-describedby={undefined}
-              className="w-[95vw] sm:w-[360px] p-4 bg-[#1C1C1F] border border-border rounded-2xl shadow-2xl z-[100]"
+              className="w-[95vw] sm:w-[360px] p-4 bg-white dark:bg-[#1C1C1F] border border-border rounded-2xl shadow-2xl z-[100]"
               onInteractOutside={(e) => e.preventDefault()}
               onPointerDownOutside={(e) => e.preventDefault()}
             >
@@ -936,7 +897,117 @@ export default function BudgetPage() {
               </DialogContent>
             </Dialog>
           </div>
+
         </div>
+
+        {/* Beautiful Wide Call-To-Action Button Card for Add Expense */}
+        <Dialog open={addOpen} onOpenChange={setAddOpen}>
+          <Button
+            type="button"
+            onClick={() => setAddOpen(true)}
+            className="w-full h-16 bg-primary hover:bg-primary/95 text-primary-foreground rounded-2xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/35 transition-all duration-200 active:scale-[0.99] flex items-center justify-between px-4 mt-2 mb-6"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+                <Plus className="w-5 h-5 text-primary-foreground" strokeWidth={3} />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-sm font-black tracking-tight">Add New Expense</span>
+                <span className="text-[10px] text-primary-foreground/75 font-semibold mt-0.5">Quickly log a new transaction</span>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-primary-foreground/70 shrink-0" strokeWidth={2.5} />
+          </Button>
+          <DialogContent aria-describedby={undefined} className="max-w-[90vw] sm:max-w-md rounded-2xl bg-card border-border">
+            <DialogHeader className="text-left">
+              <DialogTitle className="text-lg font-bold flex items-center gap-2">
+                <span className="text-base leading-none select-none text-primary" aria-hidden="true">$</span>
+                Add New Expense
+              </DialogTitle>
+            </DialogHeader>
+
+            <form onSubmit={handleSaveTransaction} className="space-y-4 pt-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="amount" className="text-xs font-semibold text-muted-foreground">Amount (₹)</Label>
+                <div className="relative">
+                  <Input
+                    id="amount"
+                    type="number"
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    required
+                    className="rounded-xl h-11 border-border bg-background focus:ring-primary pl-8 text-base tabular-nums"
+                  />
+                  <span className="absolute left-3 top-3 text-muted-foreground text-sm">₹</span>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="category" className="text-xs font-semibold text-muted-foreground">Category</Label>
+                <Select value={categoryId} onValueChange={setCategoryId} required>
+                  <SelectTrigger id="category" className="rounded-xl h-11 border-border bg-background focus:ring-primary">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border rounded-xl">
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id} className="rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
+                          <span>{cat.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {categoryId && categories.find(c => c.id === categoryId)?.subCategories?.length ? (
+                <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                  <Label htmlFor="subcategory" className="text-xs font-semibold text-muted-foreground">Sub-category (Optional)</Label>
+                  <Select value={subCategory} onValueChange={setSubCategory}>
+                    <SelectTrigger id="subcategory" className="rounded-xl h-11 border-border bg-background focus:ring-primary text-xs">
+                      <SelectValue placeholder="Select a sub-category" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border rounded-xl">
+                      <SelectItem value="" className="text-xs">None</SelectItem>
+                      {categories.find(c => c.id === categoryId)?.subCategories?.map((sub) => (
+                        <SelectItem key={sub} value={sub} className="text-xs">
+                          {sub}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
+
+              <div className="space-y-1.5 flex flex-col">
+                <DatePickerInput
+                  label="Date"
+                  value={date}
+                  onChange={(newDate) => setDate(newDate || new Date())}
+                  id="txn-date"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="note" className="text-xs font-semibold text-muted-foreground">Note / Reference (Optional)</Label>
+                <Input
+                  id="note"
+                  placeholder="e.g. Lunch with friends"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className="rounded-xl h-11 border-border bg-background focus:ring-primary"
+                />
+              </div>
+
+              <Button type="submit" className="w-full h-11 rounded-xl text-primary-foreground font-bold bg-primary hover:bg-primary/90 mt-2 shadow-lg shadow-primary/20">
+                Save Transaction
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+
 
         {/* Period Statistics Card */}
         <div className="mb-6 bg-card/45 border border-border/80 rounded-2xl p-4 mt-2">
@@ -1550,6 +1621,81 @@ export default function BudgetPage() {
         </div>
 
       </div>
+
+      {/* Settings Sheet */}
+      <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <SheetContent
+          side="right"
+          className="w-full max-w-md bg-background border-l border-border px-5 pb-6 overflow-y-auto duration-300 z-[160]"
+        >
+          <SheetHeader className="text-left mb-6">
+            <SheetTitle className="text-xl font-bold flex items-center gap-2">
+              <SettingsIcon className="w-5 h-5 text-primary" />
+              Settings
+            </SheetTitle>
+            <SheetDescription className="text-xs text-muted-foreground">
+              Configure preferences and application options.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-6">
+            {/* Theme Settings */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Appearance</h3>
+              <Card className="bg-card border-border rounded-2xl p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {isDarkMode ? (
+                    <Moon className="w-5 h-5 text-primary" />
+                  ) : (
+                    <Sun className="w-5 h-5 text-primary" />
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-foreground">Dark Mode</span>
+                    <span className="text-[10px] text-muted-foreground mt-0.5">Toggle dark and light backgrounds</span>
+                  </div>
+                </div>
+                <Switch
+                  checked={isDarkMode}
+                  onCheckedChange={handleToggleTheme}
+                />
+              </Card>
+            </div>
+
+            {/* Data Management */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Data Management</h3>
+              <Card className="bg-card border-border rounded-2xl p-4 space-y-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-destructive mt-0.5" />
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-foreground">Reset Storage</span>
+                    <span className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                      This deletes all your local budget categories, expenses, limits, and calculator history. This action is permanent.
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={handleResetAllData}
+                  className="w-full h-10 border-destructive/35 hover:bg-destructive hover:text-destructive-foreground rounded-xl text-xs font-bold text-destructive"
+                >
+                  Reset App Data
+                </Button>
+              </Card>
+            </div>
+
+            {/* About */}
+            <div className="space-y-3 pt-6 border-t border-border/50">
+              <div className="text-center text-muted-foreground">
+                <p className="text-xs font-bold text-foreground">FinCalc Pro</p>
+                <p className="text-[10px] mt-1">Version 1.0.0 • Developed with visual excellence</p>
+              </div>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
       <BottomNav />
     </PageLayout>
   );

@@ -13,7 +13,7 @@ export default function NormalCalculator() {
   // Keypad configuration
   // Each item has: label (displayed), type (number, operator, action), value (optional, for math)
   const buttons = [
-    { label: "C", type: "action", className: "bg-red-500/10 text-red-400 hover:bg-red-500/20 border-red-500/20" },
+    { label: "C", type: "action", className: "bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 border-red-500/20" },
     { label: "⌫", type: "action", className: "bg-muted/40 text-muted-foreground hover:bg-muted/70" },
     { label: "%", type: "operator", value: "%", className: "bg-primary/10 text-primary hover:bg-primary/20 border-primary/20" },
     { label: "÷", type: "operator", value: "÷", className: "bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 font-bold text-lg" },

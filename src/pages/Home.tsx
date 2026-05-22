@@ -163,10 +163,12 @@ export function Home() {
     if (savedTheme === "light") {
       document.documentElement.classList.add("light");
       document.documentElement.classList.remove("dark");
+      document.documentElement.setAttribute("data-theme", "light");
       setIsDarkMode(false);
     } else {
       document.documentElement.classList.remove("light");
       document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
       setIsDarkMode(true);
     }
   }, []); // runs once on mount
@@ -175,11 +177,13 @@ export function Home() {
     if (checked) {
       document.documentElement.classList.remove("light");
       document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
       setIsDarkMode(true);
       localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.classList.add("light");
       document.documentElement.classList.remove("dark");
+      document.documentElement.setAttribute("data-theme", "light");
       setIsDarkMode(false);
       localStorage.setItem("theme", "light");
     }
@@ -516,7 +520,7 @@ export function Home() {
                     </PopoverTrigger>
                     <PopoverContent
                       aria-describedby={undefined}
-                      className="w-[95vw] sm:w-[360px] p-4 bg-[#1C1C1F] border border-border rounded-2xl shadow-2xl z-[170]"
+                      className="w-[95vw] sm:w-[360px] p-4 bg-white dark:bg-[#1C1C1F] border border-border rounded-2xl shadow-2xl z-[170]"
                       onInteractOutside={(e) => e.preventDefault()}
                       onPointerDownOutside={(e) => e.preventDefault()}
                     >

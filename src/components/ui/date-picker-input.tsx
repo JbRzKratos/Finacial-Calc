@@ -163,7 +163,7 @@ export function DatePickerInput({
         {/* Custom Calendar Dropdown */}
         {isOpen && (
           <div 
-            className="absolute left-0 top-full mt-2 w-[285px] p-3.5 bg-[#1C1C1F]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-2xl z-[160] select-none animate-in fade-in slide-in-from-top-2 duration-150"
+            className="absolute left-0 top-full mt-2 w-[285px] p-3.5 bg-white dark:bg-[#1C1C1F]/95 backdrop-blur-xl border border-black/10 dark:border-white/[0.08] rounded-2xl shadow-2xl z-[160] select-none animate-in fade-in slide-in-from-top-2 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header controls */}
@@ -171,7 +171,7 @@ export function DatePickerInput({
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="w-7 h-7 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors"
+                className="w-7 h-7 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -185,7 +185,7 @@ export function DatePickerInput({
                     className="bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer hover:text-primary transition-colors py-0.5 px-1 border-none rounded-md appearance-none"
                   >
                     {monthsList.map((m, idx) => (
-                      <option key={m} value={idx} className="bg-[#1C1C1F] text-foreground text-xs py-1">
+                      <option key={m} value={idx} className="bg-white dark:bg-[#1C1C1F] text-foreground text-xs py-1">
                         {m.substring(0, 3)}
                       </option>
                     ))}
@@ -200,7 +200,7 @@ export function DatePickerInput({
                     className="bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer hover:text-primary transition-colors py-0.5 px-1 border-none rounded-md appearance-none"
                   >
                     {yearsList.map((y) => (
-                      <option key={y} value={y} className="bg-[#1C1C1F] text-foreground text-xs py-1">
+                      <option key={y} value={y} className="bg-white dark:bg-[#1C1C1F] text-foreground text-xs py-1">
                         {y}
                       </option>
                     ))}
@@ -212,7 +212,7 @@ export function DatePickerInput({
                 <button
                   type="button"
                   onClick={handleNextMonth}
-                  className="w-7 h-7 rounded-lg hover:bg-white/5 text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors"
+                  className="w-7 h-7 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -255,8 +255,8 @@ export function DatePickerInput({
                     className={cn(
                       "w-8 h-8 text-[11px] font-bold rounded-lg flex items-center justify-center transition-all cursor-pointer relative",
                       isCurrentMonth 
-                        ? "text-foreground hover:bg-white/5" 
-                        : "text-muted-foreground/25 hover:bg-white/5",
+                        ? "text-foreground hover:bg-black/5 dark:hover:bg-white/5" 
+                        : "text-muted-foreground/25 hover:bg-black/5 dark:hover:bg-white/5",
                       selected && "bg-primary text-primary-foreground font-black shadow-md shadow-primary/25 hover:bg-primary active:scale-95",
                       currentToday && !selected && "border border-primary/50 text-primary"
                     )}

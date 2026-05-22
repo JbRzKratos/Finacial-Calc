@@ -11,7 +11,7 @@ interface PageLayoutProps {
 export function PageLayout({ children }: PageLayoutProps) {
   return (
     <div className="app-root">
-      <div className="min-h-dvh bg-[#0A0A0C] bg-noise relative">
+      <div className="min-h-dvh bg-background bg-noise relative">
         {children}
         <Toaster />
       </div>
