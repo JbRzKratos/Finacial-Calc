@@ -1,0 +1,6 @@
+# Ensure that missing static assets under /assets/* immediately return a 404
+# instead of falling back to index.html (which triggers MIME type errors)
+/assets/* - 404
+
+# Catch-all rule for client-side SPA routing
+/* /index.html 200

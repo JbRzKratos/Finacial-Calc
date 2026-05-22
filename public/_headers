@@ -1,0 +1,11 @@
+# General headers for all HTML pages and SPA routes
+/*
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Extreme caching for production hashed assets
+/assets/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=31536000, immutable
