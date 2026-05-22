@@ -669,20 +669,16 @@
     max-width: 400px;
     padding: 0 8px;
     border-radius: 20px;
-    background: rgba(20, 20, 24, 0.88);
+    /* Semi-transparent background — looks great as solid fallback AND as blur base */
+    background: rgba(20, 20, 24, 0.72);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    backdrop-filter: blur(32px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow: 
       0 12px 40px rgba(0, 0, 0, 0.5), 
       inset 0 1px 0 rgba(255, 255, 255, 0.08),
       inset 0 -1px 0 rgba(0, 0, 0, 0.1);
     pointer-events: auto;
-  }
-  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-    .app-bottom-nav-inner {
-      background: rgba(20, 20, 24, 0.45);
-      backdrop-filter: blur(40px);
-      -webkit-backdrop-filter: blur(40px);
-    }
   }
   /* Top glow / shimmer line */
   .app-bottom-nav-inner::before {
@@ -1505,12 +1501,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @media (max-width: 768px) {
   .glass-card { --gc-blur: blur(8px); }
   .app-header { --h-blur: blur(12px); }
-  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-    .app-bottom-nav-inner {
-      backdrop-filter: blur(32px);
-      -webkit-backdrop-filter: blur(32px);
-    }
-  }
+  /* backdrop-filter already applied directly on .app-bottom-nav-inner — no @supports wrapper needed */
   .glass-card:hover { transform: none; box-shadow: none; }
   .glass-card:hover::after { opacity: 0; }
   .glass-card:active { transform: scale(0.99); }
@@ -1617,18 +1608,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Bottom nav light mode overrides */
 .light .app-bottom-nav-inner {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  backdrop-filter: blur(32px) saturate(180%);
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 
     0 12px 40px rgba(0, 0, 0, 0.08), 
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .light .app-bottom-nav-inner {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-  }
 }
 .light .app-bottom-nav-btn svg {
   color: rgba(0, 0, 0, 0.4);
