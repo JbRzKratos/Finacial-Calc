@@ -1,3 +1,0 @@
-# SPA catch-all: serve index.html for all non-asset routes (react-router handles client-side routing)
-# Cloudflare Pages automatically serves real static files first before applying this rule
-/* /index.html 200

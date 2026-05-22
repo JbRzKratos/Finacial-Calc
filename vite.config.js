@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import fs from 'fs'
 
 export default defineConfig({
   plugins: [
@@ -14,6 +15,18 @@ export default defineConfig({
           /<link rel="stylesheet" crossorigin href="(.*?)">/g,
           '<link rel="stylesheet" href="$1">'
         );
+      },
+    },
+    {
+      name: 'generate-404',
+      // Cloudflare Pages serves 404.html for any path that doesn't match a real static file.
+      // This is the official SPA routing strategy — avoids the infinite-loop _redirects issue.
+      closeBundle() {
+        const src = path.resolve(__dirname, 'dist/index.html');
+        const dest = path.resolve(__dirname, 'dist/404.html');
+        if (fs.existsSync(src)) {
+          fs.copyFileSync(src, dest);
+        }
       },
     },
   ],
