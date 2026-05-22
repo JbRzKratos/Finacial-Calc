@@ -93,7 +93,7 @@ function NeonSliderInner({ label, value, onChange, min, max, step, unit, tickLab
   return (
     <div className="flex flex-col gap-2.5 w-full py-4 border-b border-white/[0.06]">
       <div className="flex items-center justify-between">
-        <span className="text-[clamp(10px,2.6vw,12px)] font-semibold tracking-[0.12em] text-white/45 uppercase">{label}</span>
+        <label htmlFor={inputId} className="text-[clamp(10px,2.6vw,12px)] font-semibold tracking-[0.12em] text-white/45 uppercase cursor-pointer">{label}</label>
         {editable ? (
           <div className="badge-input-row">
             <button
@@ -110,6 +110,7 @@ function NeonSliderInner({ label, value, onChange, min, max, step, unit, tickLab
             <span className="badge-currency-symbol">₹</span>
             <input
               id={inputId}
+              name={inputId}
               type="number"
               className="badge-input-value"
               value={inputText}

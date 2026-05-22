@@ -1,5 +1,6 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
+import { ChevronUp, ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -23,7 +24,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <span className="text-xs leading-none select-none opacity-50" aria-hidden="true">↓</span>
+      <ChevronDown className="w-4 h-4 opacity-50 shrink-0" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))
@@ -36,12 +37,12 @@ const SelectScrollUpButton = React.forwardRef<
   <SelectPrimitive.ScrollUpButton
     ref={ref}
     className={cn(
-      "flex cursor-default items-center justify-center py-1",
+      "flex cursor-default items-center justify-center py-1.5 text-muted-foreground hover:text-foreground transition-colors",
       className
     )}
     {...props}
   >
-    <span className="text-xs leading-none select-none" aria-hidden="true">↑</span>
+    <ChevronUp className="w-3.5 h-3.5" />
   </SelectPrimitive.ScrollUpButton>
 ))
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
@@ -53,12 +54,12 @@ const SelectScrollDownButton = React.forwardRef<
   <SelectPrimitive.ScrollDownButton
     ref={ref}
     className={cn(
-      "flex cursor-default items-center justify-center py-1",
+      "flex cursor-default items-center justify-center py-1.5 text-muted-foreground hover:text-foreground transition-colors",
       className
     )}
     {...props}
   >
-    <span className="text-xs leading-none select-none" aria-hidden="true">↓</span>
+    <ChevronDown className="w-3.5 h-3.5" />
   </SelectPrimitive.ScrollDownButton>
 ))
 SelectScrollDownButton.displayName =
@@ -67,12 +68,16 @@ SelectScrollDownButton.displayName =
 const SelectContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+>(({ className, children, position = "popper", style, ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
+      style={{
+        maxHeight: position === "popper" ? "var(--radix-select-content-available-height)" : "288px",
+        ...style
+      }}
       className={cn(
-        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2",
+        "relative z-50 min-w-[8rem] overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2",
         position === "popper" &&
           "data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2",
         className
@@ -82,10 +87,13 @@ const SelectContent = React.forwardRef<
     >
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
+        style={{
+          maxHeight: position === "popper" ? "calc(min(264px, var(--radix-select-content-available-height) - 24px))" : "264px"
+        }}
         className={cn(
-          "p-1",
+          "p-1 overflow-y-auto custom-scrollbar",
           position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
+            "w-full min-w-[var(--radix-select-trigger-width)]"
         )}
       >
         {children}

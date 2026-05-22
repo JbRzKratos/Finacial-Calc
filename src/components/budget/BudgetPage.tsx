@@ -855,6 +855,24 @@ export default function BudgetPage() {
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Set limits for each individual category. The total budget is the sum of all category limits.
                   </p>
+                  
+                  <div className="p-3.5 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/25 text-primary shrink-0">
+                        <Wallet className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-foreground">Overall Total Budget</div>
+                        <div className="text-[9px] text-muted-foreground/80 mt-0.5">Sum of all category limits</div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-sm font-black text-primary tabular-nums">
+                        ₹ {summary.totalLimit.toLocaleString("en-IN")}
+                      </div>
+                    </div>
+                  </div>
+
                   <ScrollArea className="h-[280px] pr-2">
                     <div className="space-y-3.5">
                       {categories.map((cat) => {
@@ -865,10 +883,12 @@ export default function BudgetPage() {
                               <div className="w-8 h-8 rounded-lg bg-muted/65 flex items-center justify-center border border-border/40 shrink-0 animate-none">
                                 <IconComponent className="w-4 h-4 text-muted-foreground" />
                               </div>
-                              <span className="text-xs font-black text-foreground truncate">{cat.name}</span>
+                              <label htmlFor={`limit-${cat.id}`} className="text-xs font-black text-foreground truncate cursor-pointer">{cat.name}</label>
                             </div>
                             <div className="relative w-28 shrink-0">
                               <Input
+                                id={`limit-${cat.id}`}
+                                name={`limit-${cat.id}`}
                                 type="number"
                                 value={cat.monthlyLimit}
                                 onChange={(e) => {
@@ -932,6 +952,7 @@ export default function BudgetPage() {
                 <div className="relative">
                   <Input
                     id="amount"
+                    name="amount"
                     type="number"
                     placeholder="0.00"
                     value={amount}
@@ -994,6 +1015,7 @@ export default function BudgetPage() {
                 <Label htmlFor="note" className="text-xs font-semibold text-muted-foreground">Note / Reference (Optional)</Label>
                 <Input
                   id="note"
+                  name="note"
                   placeholder="e.g. Lunch with friends"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
@@ -1075,6 +1097,7 @@ export default function BudgetPage() {
                     <Label htmlFor="cat-name" className="text-xs font-semibold text-muted-foreground">Category Name</Label>
                     <Input
                       id="cat-name"
+                      name="cat-name"
                       placeholder="e.g. Gifts, Pet care"
                       value={newCatName}
                       onChange={(e) => setNewCatName(e.target.value)}
@@ -1087,6 +1110,7 @@ export default function BudgetPage() {
                     <div className="relative">
                       <Input
                         id="cat-limit"
+                        name="cat-limit"
                         type="number"
                         placeholder="0.00"
                         value={newCatLimit}
@@ -1104,7 +1128,7 @@ export default function BudgetPage() {
                         <SelectTrigger id="cat-icon" className="rounded-xl h-11 border-border bg-background focus:ring-primary text-xs">
                           <SelectValue placeholder="Select icon" />
                         </SelectTrigger>
-                        <SelectContent className="bg-card border-border rounded-xl max-h-60 overflow-y-auto">
+                        <SelectContent className="bg-card border-border rounded-xl">
                           <SelectItem value="utensils" className="text-xs">🍽 Food & Dining</SelectItem>
                           <SelectItem value="coffee" className="text-xs">☕ Coffee & Café</SelectItem>
                           <SelectItem value="pizza" className="text-xs">🍕 Pizza & Fast Food</SelectItem>
@@ -1190,9 +1214,11 @@ export default function BudgetPage() {
                     </div>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold text-muted-foreground">Sub-categories (Optional)</Label>
+                    <Label htmlFor="new-cat-sub-input" className="text-xs font-semibold text-muted-foreground">Sub-categories (Optional)</Label>
                     <div className="flex gap-2">
                       <Input
+                        id="new-cat-sub-input"
+                        name="new-cat-sub-input"
                         placeholder="e.g. PC games, Cafe, Mobile spend"
                         value={newCatSubInput}
                         onChange={(e) => setNewCatSubInput(e.target.value)}
@@ -1329,6 +1355,7 @@ export default function BudgetPage() {
                 <Label htmlFor="category-edit-name" className="text-xs font-semibold text-muted-foreground">Category Name</Label>
                 <Input
                   id="category-edit-name"
+                  name="category-edit-name"
                   placeholder="e.g. Gifts, Pet care"
                   value={editCatName}
                   onChange={(e) => setEditCatName(e.target.value)}
@@ -1341,6 +1368,7 @@ export default function BudgetPage() {
                 <div className="relative">
                   <Input
                     id="category-edit-limit"
+                    name="category-edit-limit"
                     type="number"
                     placeholder="0.00"
                     value={tempCategoryLimit}
@@ -1352,9 +1380,11 @@ export default function BudgetPage() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-muted-foreground">Sub-categories (Optional)</Label>
+                <Label htmlFor="category-edit-sub-input" className="text-xs font-semibold text-muted-foreground">Sub-categories (Optional)</Label>
                 <div className="flex gap-2">
                   <Input
+                    id="category-edit-sub-input"
+                    name="category-edit-sub-input"
                     placeholder="e.g. PC games, Cafe, Mobile spend"
                     value={editCatSubInput}
                     onChange={(e) => setEditCatSubInput(e.target.value)}
@@ -1427,6 +1457,7 @@ export default function BudgetPage() {
                 <div className="relative">
                   <Input
                     id="edit-amount"
+                    name="edit-amount"
                     type="number"
                     placeholder="0.00"
                     value={editAmount}
@@ -1492,6 +1523,7 @@ export default function BudgetPage() {
                 <Label htmlFor="edit-note" className="text-xs font-semibold text-muted-foreground">Note / Reference (Optional)</Label>
                 <Input
                   id="edit-note"
+                  name="edit-note"
                   placeholder="e.g. Lunch with friends"
                   value={editNote}
                   onChange={(e) => setEditNote(e.target.value)}
