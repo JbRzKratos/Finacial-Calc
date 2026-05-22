@@ -1,6 +1,3 @@
-# Ensure that missing static assets under /assets/* immediately return a 404
-# instead of falling back to index.html (which triggers MIME type errors)
-/assets/* - 404
-
-# Catch-all rule for client-side SPA routing
+# SPA catch-all: serve index.html for all non-asset routes (react-router handles client-side routing)
+# Cloudflare Pages automatically serves real static files first before applying this rule
 /* /index.html 200
