@@ -35,7 +35,7 @@ export default function NormalCalculator() {
     
     { label: "0", type: "number", className: "col-span-2 bg-card/50 text-foreground hover:bg-muted/40" },
     { label: ".", type: "number", className: "bg-card/50 text-foreground hover:bg-muted/40" },
-    { label: "=", type: "action", className: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 font-bold text-lg" },
+    { label: "=", type: "action", className: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md font-bold text-lg" },
   ];
 
   const handleKeyPress = (label: string, type: string, value?: string) => {

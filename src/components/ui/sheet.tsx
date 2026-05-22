@@ -60,7 +60,10 @@ const SheetContent = React.forwardRef<
       <SheetTitle className="sr-only">Sheet</SheetTitle>
       <SheetDescription className="sr-only">Sheet dialog</SheetDescription>
       {children}
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+      <SheetPrimitive.Close className={cn(
+        "absolute right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary z-20",
+        side === "bottom" ? "top-3" : "top-[calc(1rem+env(safe-area-inset-top,0px))]"
+      )}>
         <span className="text-base leading-none select-none" aria-hidden="true">✕</span>
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>

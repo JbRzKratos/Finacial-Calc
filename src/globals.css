@@ -1178,7 +1178,7 @@
     background: #FF6B00;
     cursor: pointer;
     border: 3px solid var(--bg-base);
-    box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     transition: transform 0.15s ease;
   }
   .budget-scale-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
@@ -1190,7 +1190,7 @@
     background: #FF6B00;
     cursor: pointer;
     border: 3px solid var(--bg-base);
-    box-shadow: 0 2px 8px rgba(255,107,0,0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
   .custom-scrollbar::-webkit-scrollbar { width: 3px; }
   .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }

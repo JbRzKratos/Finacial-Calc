@@ -1,1 +1,0 @@
-export { ResultChart } from './ResultChart';

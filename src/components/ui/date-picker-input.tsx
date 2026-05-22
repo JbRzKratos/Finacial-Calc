@@ -257,7 +257,7 @@ export function DatePickerInput({
                       isCurrentMonth 
                         ? "text-foreground hover:bg-black/5 dark:hover:bg-white/5" 
                         : "text-muted-foreground/25 hover:bg-black/5 dark:hover:bg-white/5",
-                      selected && "bg-primary text-primary-foreground font-black shadow-md shadow-primary/25 hover:bg-primary active:scale-95",
+                      selected && "bg-primary text-primary-foreground font-black shadow-md hover:bg-primary active:scale-95",
                       currentToday && !selected && "border border-primary/50 text-primary"
                     )}
                   >

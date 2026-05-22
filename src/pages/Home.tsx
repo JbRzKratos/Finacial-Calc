@@ -459,19 +459,26 @@ export function Home() {
           <SheetContent
             side="bottom"
             aria-describedby={undefined}
-            className="h-[92vh] rounded-t-3xl border-t border-border bg-background px-4 pb-28 overflow-y-auto duration-300"
+            className="h-[88dvh] rounded-t-3xl border-t border-border bg-background p-0 overflow-hidden duration-300 flex flex-col"
           >
-            <div className="mx-auto w-12 h-1.5 bg-muted rounded-full mb-6" />
-            <React.Suspense fallback={<div className="flex items-center justify-center h-40 text-muted-foreground text-sm">Loading...</div>}>
-              {calcId === "sip" && <SIPPage />}
-              {calcId === "emi" && <EMIPage />}
-              {calcId === "fd" && <FDPage />}
-              {calcId === "cagr" && <CAGRPage />}
-              {calcId === "retirement" && <RetirementPage />}
-              {calcId === "tax" && <TaxPage />}
-              {calcId === "loanvsinvest" && <LoanVsInvestPage />}
-              {calcId === "normal" && <NormalPage />}
-            </React.Suspense>
+            {/* Fixed Top Grabber Bar */}
+            <div className="relative w-full h-12 flex items-center justify-center border-b border-border/10 shrink-0 bg-background/95 backdrop-blur-sm z-10">
+              <div className="w-12 h-1.5 bg-muted rounded-full" />
+            </div>
+
+            {/* Scrollable Content Wrapper */}
+            <div className="flex-1 overflow-y-auto px-4 pt-4 pb-28">
+              <React.Suspense fallback={<div className="flex items-center justify-center h-40 text-muted-foreground text-sm">Loading...</div>}>
+                {calcId === "sip" && <SIPPage />}
+                {calcId === "emi" && <EMIPage />}
+                {calcId === "fd" && <FDPage />}
+                {calcId === "cagr" && <CAGRPage />}
+                {calcId === "retirement" && <RetirementPage />}
+                {calcId === "tax" && <TaxPage />}
+                {calcId === "loanvsinvest" && <LoanVsInvestPage />}
+                {calcId === "normal" && <NormalPage />}
+              </React.Suspense>
+            </div>
           </SheetContent>
         </Sheet>
 
@@ -599,7 +606,7 @@ export function Home() {
                               setSelectedDate(null);
                               setRangePopoverOpen(false);
                             }}
-                            className="w-full h-10 rounded-xl text-primary-foreground font-bold bg-primary hover:bg-primary/90 mt-2 shadow-lg shadow-primary/20 text-xs"
+                             className="w-full h-10 rounded-xl text-primary-foreground font-bold bg-primary hover:bg-primary/90 mt-2 shadow-md text-xs"
                           >
                             Apply Month Filter
                           </Button>
@@ -643,7 +650,7 @@ export function Home() {
                               setSelectedDate(null);
                               setRangePopoverOpen(false);
                             }}
-                            className="w-full h-10 rounded-xl text-primary-foreground font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 disabled:opacity-40 text-xs mt-2"
+                             className="w-full h-10 rounded-xl text-primary-foreground font-bold bg-primary hover:bg-primary/90 shadow-md disabled:opacity-40 text-xs mt-2"
                           >
                             Apply Custom Range
                           </Button>

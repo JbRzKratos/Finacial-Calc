@@ -1,1 +1,0 @@
-export { NeonSlider } from './SliderInput';

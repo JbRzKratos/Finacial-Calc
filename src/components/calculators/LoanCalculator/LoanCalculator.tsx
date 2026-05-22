@@ -308,7 +308,7 @@ export default function EMIPage() {
         <Button
           onClick={resetInputs}
           type="button"
-          className="flex-1 rounded-full text-sm font-black h-12 bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-lg shadow-primary/20"
+          className="flex-1 rounded-full text-sm font-black h-12 bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-md"
         >
           Reset Calculator
         </Button>

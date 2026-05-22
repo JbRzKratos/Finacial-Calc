@@ -45,7 +45,7 @@ export function DateStrip({ selectedDate, onSelectDate }: DateStripProps) {
             className={cn(
               "rounded-full px-4 h-11 text-xs font-semibold uppercase tracking-wider transition-all",
               selectedDate === null
-                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                ? "bg-primary text-primary-foreground shadow-md"
                 : "text-muted-foreground hover:text-foreground hover:bg-muted"
             )}
           >
@@ -69,7 +69,7 @@ export function DateStrip({ selectedDate, onSelectDate }: DateStripProps) {
                 className={cn(
                   "flex flex-col items-center justify-center rounded-full w-12 h-14 transition-all py-1",
                   isSelected
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                    ? "bg-primary text-primary-foreground shadow-md"
                     : isToday
                     ? "border border-primary/40 text-primary hover:bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
